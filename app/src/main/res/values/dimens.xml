@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="сornerRadius">14dp</dimen>
+    <dimen name="defaultMargin">10dp</dimen>
+    <dimen name="defaultPadding">10dp</dimen>
+    <dimen name="defaultTextSize">18sp</dimen>
+</resources>
