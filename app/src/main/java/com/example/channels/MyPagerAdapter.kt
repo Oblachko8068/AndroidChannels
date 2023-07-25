@@ -1,12 +1,11 @@
-@file:Suppress("DEPRECATION")
-
 package com.example.channels
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.FragmentPagerAdapter
 
-class MyPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) { // Замените FragmentPagerAdapter на FragmentStatePagerAdapter
+
+class MyPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
