@@ -7,36 +7,33 @@
     tools:context=".MainActivity"
     android:background="@color/main_background">
 
-  <!--  <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/channelList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/tabs"
-        app:layout_constraintTop_toBottomOf="@+id/viewpagerForTabs"
-        app:layout_constraintVertical_bias="0.37" /> -->
+  <!--Поиск-->
+  <androidx.appcompat.widget.SearchView
+      android:id="@+id/searchView"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:ignore="MissingConstraints" />
 
     <!--Вкладки-->
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tabMode="fixed"
-        tools:ignore="MissingConstraints" />
+  <com.google.android.material.tabs.TabLayout
+      android:id="@+id/tabs"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/searchView"
+      app:tabMode="fixed"
+      tools:ignore="MissingConstraints" />
 
   <androidx.viewpager.widget.ViewPager
       android:id="@+id/viewpagerForTabs"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.0"
       app:layout_constraintStart_toStartOf="parent"

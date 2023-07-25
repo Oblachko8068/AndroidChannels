@@ -1,8 +1,9 @@
 package com.example.channels
 
-data class Channels (
+data class Channels(
     val name: String,
     val description: String,
     val iconResource: Int,
-    val icon_fav: Int
+    val icon_fav: Int,
+    var fav_selected: Boolean
 )

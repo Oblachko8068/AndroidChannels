@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.channels.FavUtils
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,12 +31,12 @@ class SecondFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
     }
 
     //////список
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // Здесь можно выполнять все операции, связанные с представлениями макета
 
         val recyclerView: RecyclerView? = view.findViewById(R.id.channelList)
@@ -46,11 +47,10 @@ class SecondFragment : Fragment() {
             // Обработка случая, когда recyclerView равен null
             Toast.makeText(requireContext(), "Error: RecyclerView not found", Toast.LENGTH_SHORT).show()
         }
+
     }
 
-
     private fun getCatList(): List<Channels> {
-        //return this.resources.getStringArray(R.array.cat_names).toList()
         val catNames = this.resources.getStringArray(R.array.channel_names)
         val catDescriptions = this.resources.getStringArray(R.array.channel_desc)
         val catIcons = this.resources.obtainTypedArray(R.array.channel_icons)
@@ -61,17 +61,17 @@ class SecondFragment : Fragment() {
             val description = catDescriptions[i]
             val iconResource = catIcons.getResourceId(i, R.drawable.ic_launcher_background)
             val icon_fav = R.drawable.baseline_star_24
-            val channel = Channels(name, description, iconResource, icon_fav)
-            channelList.add(channel)
+            val favSelected = i in FavUtils.favSelectedPositions // Проверяем, есть ли позиция в наборе избранных позиций
+            if(favSelected) {
+                val channel = Channels(name, description, iconResource, icon_fav, favSelected)
+                channelList.add(channel)
+            }
         }
 
         catIcons.recycle()
 
         return channelList
     }
-    //////////////////
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

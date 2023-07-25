@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
-import com.example.channels.R.id.channelList
+import com.example.channels.FavUtils
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -51,9 +50,7 @@ class FirstFragment : Fragment() {
         }
     }
 
-
     private fun getCatList(): List<Channels> {
-        //return this.resources.getStringArray(R.array.cat_names).toList()
         val catNames = this.resources.getStringArray(R.array.channel_names)
         val catDescriptions = this.resources.getStringArray(R.array.channel_desc)
         val catIcons = this.resources.obtainTypedArray(R.array.channel_icons)
@@ -64,7 +61,9 @@ class FirstFragment : Fragment() {
             val description = catDescriptions[i]
             val iconResource = catIcons.getResourceId(i, R.drawable.ic_launcher_background)
             val icon_fav = R.drawable.baseline_star_24
-            val channel = Channels(name, description, iconResource, icon_fav)
+            val favSelected = i in FavUtils.favSelectedPositions // Проверяем, есть ли позиция в наборе избранных позиций
+
+            val channel = Channels(name, description, iconResource, icon_fav, favSelected)
             channelList.add(channel)
         }
 
@@ -83,16 +82,6 @@ class FirstFragment : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FirstFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
         fun newInstance(param1: String, param2: String) =
             FirstFragment().apply {
                 arguments = Bundle().apply {

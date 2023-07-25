@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Channels"
         tools:targetApi="31">
+        <activity android:name=".ChannelPlayerActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
