@@ -41,28 +41,28 @@ class CustomRecyclerAdapter(private var channels: List<Channels>) : RecyclerView
         holder.smallTextView.text = channel.description
         holder.channelIcon.setImageResource(channel.iconResource)
         holder.icon_fav.setImageResource(channel.icon_fav)
+
         if (channel.fav_selected) {
             holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
         } else {
             holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
         }
+
         holder.icon_fav.setOnClickListener {
             val position = holder.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
-                // Обновляем состояние избранности для текущей позиции
                 channel.fav_selected = !channel.fav_selected
 
                 if (channel.fav_selected) {
-                    // Если канал стал избранным, добавляем его позицию в набор
-                    FavUtils.favSelectedPositions.add(position)
+                    FavUtils.addToFavorites(position) // Добавить позицию в избранные
                     holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
                 } else {
-                    // Если канал перестал быть избранным, удаляем его позицию из набора
-                    FavUtils.favSelectedPositions.remove(position)
+                    FavUtils.removeFromFavorites(position) // Удалить позицию из избранных
                     holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
                 }
             }
         }
+
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, ChannelPlayerActivity::class.java)

@@ -61,7 +61,7 @@ class SecondFragment : Fragment() {
             val description = catDescriptions[i]
             val iconResource = catIcons.getResourceId(i, R.drawable.ic_launcher_background)
             val icon_fav = R.drawable.baseline_star_24
-            val favSelected = i in FavUtils.favSelectedPositions // Проверяем, есть ли позиция в наборе избранных позиций
+            val favSelected = FavUtils.isFavorite(i) // Проверяем, есть ли позиция в наборе избранных позиций
             if(favSelected) {
                 val channel = Channels(name, description, iconResource, icon_fav, favSelected)
                 channelList.add(channel)

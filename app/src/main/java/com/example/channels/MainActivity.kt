@@ -13,6 +13,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        FavUtils.addToFavorites(0)
+        FavUtils.addToFavorites(2)
+        FavUtils.addToFavorites(4)
+
         //вкладки
         val viewpagerForTabs = findViewById<ViewPager>(R.id.viewpagerForTabs)
         val tabs = findViewById<TabLayout>(R.id.tabs)
