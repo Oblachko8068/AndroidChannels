@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Цвета бордеров -->
-    <color name="border_dark">#FF000000</color>
 
     <!-- Цвета фонов -->
     <color name="light_primary">#8a6507</color>
     <color name="dark_primary">#FF000000</color>
-    <color name="main_background">#faf7f0</color>
-    <color name="text_block_background">#F2DDC6</color>
+
+    <color name="main_background">#343438</color>
+    <color name="background_of_the_search_bar">#404247</color>
+    <color name="background_of_fragments">#232427</color>
+    <color name="background_of_stars">#73747B</color>
+    <color name="background_of_stars_active">#0077FF</color>
+    <color name="background_of_the_lower_tabs">#0077FF</color>
 
     <!-- Цвета текстов -->
     <color name="text_default">#FF000000</color>
     <color name="text_ligth">#FF000000</color>
     <color name="text_dark">#FFFFFF</color>
+
+    <color name="text_of_the_search_bar">#808185</color>
+    <color name="text_of_the_tabs_active">#FFFFFF</color>
+    <color name="text_of_the_tabs">#99999B</color>
+    <color name="text_of_TV_shows">#E9EAEF</color>
+
 </resources>
