@@ -4,7 +4,7 @@
     <!-- Цвета фонов -->
     <color name="light_primary">#8a6507</color>
     <color name="dark_primary">#FF000000</color>
-
+    <color name="channel_block_background">#343438</color>
     <color name="main_background">#343438</color>
     <color name="background_of_the_search_bar">#404247</color>
     <color name="background_of_fragments">#232427</color>
@@ -12,6 +12,8 @@
     <color name="background_of_stars_active">#0077FF</color>
     <color name="background_of_the_lower_tabs">#0077FF</color>
 
+    <color name="icon_enable">#0077FF</color>
+    <color name="icon_disable">#D1D5DF</color>
     <!-- Цвета текстов -->
     <color name="text_default">#FF000000</color>
     <color name="text_ligth">#FF000000</color>
