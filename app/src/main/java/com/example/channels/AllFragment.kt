@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,9 +38,23 @@ class AllFragment : Fragment() {
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
         val channelList = Channels.getCatList(requireContext())
         val adapter = CustomRecyclerAdapter(channelList)
         recyclerView.adapter = adapter
+
+        // Обновление списка при изменении данных во втором фрагменте (FavoritesFragment)
+        val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageSelected(position: Int) {
+                if (position == 0) {
+                    val newChannelList = Channels.getCatList(requireContext())
+                    adapter.setData(newChannelList)
+                }
+            }
+            override fun onPageScrollStateChanged(state: Int) {}
+        })
     }
 
     ///////////////////////////////////

@@ -46,6 +46,7 @@ class CustomRecyclerAdapter(private var channels: List<Channels>) : RecyclerView
                 addChannel(position)
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
             } else {
+                removeChannel(position)
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
             }
         }
@@ -56,6 +57,10 @@ class CustomRecyclerAdapter(private var channels: List<Channels>) : RecyclerView
     private fun addChannel(position: Int) {
         val channelToUpdate = channels[position]
         channelToUpdate.fav_selected = true
+    }
+    private fun removeChannel(position: Int) {
+        val channelToUpdate = channels[position]
+        channelToUpdate.fav_selected = false
     }
 
 
