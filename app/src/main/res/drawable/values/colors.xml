@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Цвета бордеров -->
+    <color name="border_dark">#FF000000</color>
+
+    <!-- Цвета фонов -->
+    <color name="main_background">#232427</color>
+    <color name="channel_block_background">#343438</color>
+    <color name="tab_block_background">#343438</color>
+    <color name="search_block_background">#343438</color>
+
+    <color name="icon_enable">#0077FF</color>
+    <color name="icon_disable">#D1D5DF</color>
+    <!-- Цвета текстов -->
+    <color name="text_default">#FF000000</color>
+    <color name="text_active">#FFFFFFFF</color>
+    <color name="text_inactive">#80FFFFFF</color>
+    <color name="text_channel">#FFFFFFFF</color>
+    <color name="text_channel_description">#E9EAEF</color>
+</resources>

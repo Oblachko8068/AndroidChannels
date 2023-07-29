@@ -1,6 +1,9 @@
 package com.example.channels
 
+import Channels
+import Channels.Companion.getSavedIntArrayOrFallback
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,20 +12,22 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
-class CustomRecyclerAdapter(private var channels: List<Channels>) : RecyclerView
-.Adapter<CustomRecyclerAdapter.MyViewHolder>() {
+class CustomRecyclerAdapter(private val context: Context, private var channels: List<Channels>) : RecyclerView.Adapter<CustomRecyclerAdapter.MyViewHolder>() {
+
     @SuppressLint("NotifyDataSetChanged")
     fun setData(newChannels: List<Channels>) {
         channels = newChannels
         notifyDataSetChanged()
     }
+
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val largeTextView: TextView = itemView.findViewById(R.id.channelName)
         val smallTextView: TextView = itemView.findViewById(R.id.channelDesc)
         val channelIcon: ImageView = itemView.findViewById(R.id.channelIcon)
-        val icon_fav: ImageView = itemView.findViewById(R.id.iconFav)
+        val icon_fav: ImageView = itemView.findViewById(R.id.icon_fav)
 
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.channel_block, parent, false)
@@ -43,26 +48,20 @@ class CustomRecyclerAdapter(private var channels: List<Channels>) : RecyclerView
         holder.icon_fav.setOnClickListener {
             channel.fav_selected = !channel.fav_selected
             if (channel.fav_selected) {
-                addChannel(position)
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
+                val intArray = getSavedIntArrayOrFallback(context)
+                intArray[position] = 1
+                Channels.saveIntArray(context, intArray)
             } else {
-                removeChannel(position)
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
+                val intArray = getSavedIntArrayOrFallback(context)
+                intArray[position] = 0
+                Channels.saveIntArray(context, intArray)
             }
         }
         holder.itemView.setOnClickListener {
         }
     }
-
-    private fun addChannel(position: Int) {
-        val channelToUpdate = channels[position]
-        channelToUpdate.fav_selected = true
-    }
-    private fun removeChannel(position: Int) {
-        val channelToUpdate = channels[position]
-        channelToUpdate.fav_selected = false
-    }
-
 
     override fun getItemCount() = channels.size
 

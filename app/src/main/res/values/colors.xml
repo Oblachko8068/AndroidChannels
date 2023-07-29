@@ -4,7 +4,7 @@
     <!-- Цвета фонов -->
     <color name="light_primary">#8a6507</color>
     <color name="dark_primary">#FF000000</color>
-    <color name="channel_block_background">#343438</color>
+
     <color name="main_background">#343438</color>
     <color name="background_of_the_search_bar">#404247</color>
     <color name="background_of_fragments">#232427</color>
@@ -14,6 +14,9 @@
 
     <color name="icon_enable">#0077FF</color>
     <color name="icon_disable">#D1D5DF</color>
+    <color name="channel_block_background">#343438</color>
+    <color name="tab_block_background">#343438</color>
+    <color name="search_block_background">#343438</color>
     <!-- Цвета текстов -->
     <color name="text_default">#FF000000</color>
     <color name="text_ligth">#FF000000</color>
@@ -24,4 +27,8 @@
     <color name="text_of_the_tabs">#99999B</color>
     <color name="text_of_TV_shows">#E9EAEF</color>
 
+    <color name="text_active">#FFFFFFFF</color>
+    <color name="text_inactive">#80FFFFFF</color>
+    <color name="text_channel">#FFFFFFFF</color>
+    <color name="text_channel_description">#E9EAEF</color>
 </resources>

@@ -10,12 +10,13 @@
     <!--Поиск-->
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView_tv_channels"
+        style="@style/CustomSearchViewTvChannels"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
-        android:background="@color/background_of_the_search_bar"
+        app:queryHint="@string/searchView_tv_channels_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -31,8 +31,7 @@ class AllFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
-
-    /////////////////////////////////////////////// список, вызов адаптерая
+    //// список
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -40,7 +39,7 @@ class AllFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val channelList = Channels.getCatList(requireContext())
-        val adapter = CustomRecyclerAdapter(channelList)
+        val adapter = CustomRecyclerAdapter(requireContext(), channelList)
         recyclerView.adapter = adapter
 
         // Обновление списка при изменении данных во втором фрагменте (FavoritesFragment)
@@ -56,8 +55,7 @@ class AllFragment : Fragment() {
             override fun onPageScrollStateChanged(state: Int) {}
         })
     }
-
-    ///////////////////////////////////
+    ////
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

@@ -1,12 +1,6 @@
 <resources>
     <string name="app_name">Channels</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <!--Поиск-->
-    <string name="searchView_tv_channels_hint">Напишите название телеканала</string>
-
-    <!--Список-->
     <string-array name="channel_names">
         <item>Первый канал</item>
         <item>НТВ</item>
@@ -47,15 +41,6 @@
         <item>false</item>
         <item>false</item>
     </string-array>
-    <integer-array name="default_int_array">
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-    </integer-array>
-    <!---->
+
+
 </resources>

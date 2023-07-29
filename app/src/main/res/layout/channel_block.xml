@@ -12,7 +12,8 @@
             android:id="@+id/channelIcon"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:background="@drawable/channel_logo_background"/>
         <View
             android:id="@+id/divider1"
             android:layout_width="16dp"
@@ -26,29 +27,29 @@
             <TextView
                 android:id="@+id/channelName"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start"
                 android:textSize="18sp"
                 android:fontFamily="roboto"
-                android:textColor="@color/text_of_TV_shows" />
+                android:textColor="@color/text_active" />
             <TextView
                 android:id="@+id/channelDesc"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start"
                 android:textSize="15sp"
                 android:fontFamily="roboto"
-                android:textColor="@color/text_of_TV_shows"/>
+                android:textColor="@color/text_active"/>
         </LinearLayout>
         <View
             android:id="@+id/divider2"
             android:layout_width="16dp"
             android:layout_height="60dp"
-            android:layout_toStartOf="@id/iconFav"/>
+            android:layout_toStartOf="@id/icon_fav"/>
         <ImageView
-            android:id="@+id/iconFav"
+            android:id="@+id/icon_fav"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_alignParentEnd="true"

@@ -1,5 +1,6 @@
 package com.example.channels
 
+import Channels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -31,39 +32,41 @@ class FavoritesFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
-////////////////////////
-override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
 
-    val recyclerView: RecyclerView = view.findViewById(R.id.recyclerViewFavorites)
-    recyclerView.layoutManager = LinearLayoutManager(requireContext())
+    ///Спиок
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    val channelList = Channels.getCatList(requireContext()).filter { it.fav_selected }
-    val adapter = CustomRecyclerAdapter(channelList.toMutableList())
-    recyclerView.adapter = adapter
+        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerViewFavorites)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-    // Обновление списка при изменении данных в первом фрагменте (AllFragment)
-    val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
-    viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-        override fun onPageSelected(position: Int) {
-            if (position == 1) {
-                val newChannelList = Channels.getCatList(requireContext()).filter { it.fav_selected }
-                adapter.setData(newChannelList)
+        val channelList = Channels.getCatList(requireContext()).filter { it.fav_selected }
+        val adapter = CustomRecyclerAdapter(requireContext(), channelList)
+        recyclerView.adapter = adapter
+
+        // Обновление списка при изменении данных в первом фрагменте (AllFragment)
+        val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageSelected(position: Int) {
+                if (position == 1) {
+                    val newChannelList = Channels.getCatList(requireContext()).filter { it.fav_selected }
+                    adapter.setData(newChannelList)
+                }
+
             }
-
-        }
-        override fun onPageScrollStateChanged(state: Int) {}
-    })
-}
-
-    /////////////////////////////////////////////////
+            override fun onPageScrollStateChanged(state: Int) {}
+        })
+    }
+    ///
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_favorites, container, false)
     }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
