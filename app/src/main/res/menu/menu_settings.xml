@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_setting5"
+        android:title="1080p" />
+    <item
+        android:id="@+id/action_setting4"
+        android:title="720p" />
+    <item
+        android:id="@+id/action_setting3"
+        android:checkable="false"
+        android:title="480p" />
+    <item
+        android:id="@+id/action_setting2"
+        android:checkable="false"
+        android:title="360p" />
+    <item
+        android:id="@+id/action_setting1"
+        android:title="AUTO" />
+</menu>

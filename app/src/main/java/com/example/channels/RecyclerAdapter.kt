@@ -4,6 +4,8 @@ import Channels
 import Channels.Companion.getSavedIntArrayOrFallback
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,6 +78,19 @@ class CustomRecyclerAdapter(private val context: Context, private var channels: 
             }
         }
         holder.itemView.setOnClickListener {
+            val context = holder.itemView.context
+            val intent = Intent(context, ChannelPlayer::class.java)
+
+            // Создаем Bundle и помещаем в него данные
+            val bundle = Bundle()
+            bundle.putString("channel_name", channel.name)
+            bundle.putString("channel_description", channel.description)
+            bundle.putInt("channel_icon_resource", channel.iconResource)
+
+            // Устанавливаем Bundle как аргумент Intent
+            intent.putExtras(bundle)
+
+            context.startActivity(intent)
         }
     }
 

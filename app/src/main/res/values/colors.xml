@@ -31,4 +31,6 @@
     <color name="text_inactive">#80FFFFFF</color>
     <color name="text_channel">#FFFFFFFF</color>
     <color name="text_channel_description">#E9EAEF</color>
+    <color name="text_active_channel_name">#33FFFFFF</color>
+    <color name="text_active_channel_description">#FFFFFFFF</color>
 </resources>
