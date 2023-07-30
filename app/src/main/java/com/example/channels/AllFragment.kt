@@ -23,6 +23,7 @@ private const val ARG_PARAM2 = "param2"
 class AllFragment : Fragment() {
     var searchQuery: String? = null
     private var originalChannelsList: List<Channels> = emptyList()
+    private lateinit var adapter: CustomRecyclerAdapter
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -43,7 +44,7 @@ class AllFragment : Fragment() {
 
         val channelList = Channels.getCatList(requireContext())
         originalChannelsList = channelList
-        val adapter = CustomRecyclerAdapter(requireContext(), channelList)
+        adapter = CustomRecyclerAdapter(requireContext(), channelList)
         recyclerView.adapter = adapter
 
         // Обновление списка при изменении данных во втором фрагменте (FavoritesFragment)
@@ -52,13 +53,23 @@ class AllFragment : Fragment() {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 if (position == 0) {
-                    filterChannels(searchQuery)
+                    val newChannelList = Channels.getCatList(requireContext())
+                    filterChannelBySearch(searchQuery, newChannelList)
                 }
             }
             override fun onPageScrollStateChanged(state: Int) {}
         })
     }
-
+    private fun filterChannelBySearch(searchQuery: String?, newChannelList: List<Channels>){
+        val filteredList = if (!searchQuery.isNullOrEmpty()) {
+            newChannelList.filter { channel ->
+                channel.name.contains(searchQuery, ignoreCase = true)
+            }
+        } else {
+            newChannelList
+        }
+        adapter.setData(filteredList)
+    }
     fun filterChannels(searchQuery: String?) {
         val filteredList = if (!searchQuery.isNullOrEmpty()) {
             originalChannelsList.filter { channel ->
