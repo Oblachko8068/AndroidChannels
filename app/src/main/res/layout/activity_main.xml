@@ -10,6 +10,7 @@
     <!--Поиск-->
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView_tv_channels"
+        android:background="@drawable/search_view_background"
         style="@style/CustomSearchViewTvChannels"
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -34,7 +35,11 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView_tv_channels"
-        app:tabMode="fixed"
+        app:tabIndicatorColor="@color/background_of_the_lower_tabs"
+        app:tabGravity="start"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor  ="@color/text_of_the_tabs_active"
+        app:tabTextColor ="@color/text_of_the_tabs"
         tools:ignore="MissingConstraints" />
 
     <androidx.viewpager.widget.ViewPager

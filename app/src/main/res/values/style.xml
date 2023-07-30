@@ -20,9 +20,8 @@
 
     <!-- Поиск -->
     <style name="CustomSearchViewTvChannels" parent="Widget.AppCompat.SearchView">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/text_of_the_search_bar</item>
-        <item name="android:background">@color/background_of_the_search_bar</item>
     </style>
 
 </resources>

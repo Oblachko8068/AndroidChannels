@@ -24,7 +24,7 @@
 
     <color name="text_of_the_search_bar">#808185</color>
     <color name="text_of_the_tabs_active">#FFFFFF</color>
-    <color name="text_of_the_tabs">#99999B</color>
+    <color name="text_of_the_tabs">#80FFFFFF</color>
     <color name="text_of_TV_shows">#E9EAEF</color>
 
     <color name="text_active">#FFFFFFFF</color>

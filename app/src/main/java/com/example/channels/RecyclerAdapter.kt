@@ -47,15 +47,31 @@ class CustomRecyclerAdapter(private val context: Context, private var channels: 
         }
         holder.icon_fav.setOnClickListener {
             channel.fav_selected = !channel.fav_selected
+            var scetcik = 0
+            val catNames = context.resources.getStringArray(R.array.channel_names)
             if (channel.fav_selected) {
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
                 val intArray = getSavedIntArrayOrFallback(context)
-                intArray[position] = 1
+
+                for (i in catNames.indices) {
+                    if(catNames[i]==channel.name){
+                        scetcik = i
+                    }
+                }
+
+                intArray[scetcik] = 1
                 Channels.saveIntArray(context, intArray)
             } else {
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
                 val intArray = getSavedIntArrayOrFallback(context)
-                intArray[position] = 0
+
+                for (i in catNames.indices) {
+                    if(catNames[i]==channel.name){
+                        scetcik = i
+                    }
+                }
+
+                intArray[scetcik] = 0
                 Channels.saveIntArray(context, intArray)
             }
         }

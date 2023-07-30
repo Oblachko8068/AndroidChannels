@@ -21,6 +21,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class FavoritesFragment : Fragment() {
+    private var originalChannelsList: List<Channels> = emptyList()
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -41,6 +42,7 @@ class FavoritesFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val channelList = Channels.getCatList(requireContext()).filter { it.fav_selected }
+        originalChannelsList = channelList
         val adapter = CustomRecyclerAdapter(requireContext(), channelList)
         recyclerView.adapter = adapter
 
@@ -57,6 +59,22 @@ class FavoritesFragment : Fragment() {
             }
             override fun onPageScrollStateChanged(state: Int) {}
         })
+    }
+
+    // ... (остальной код FavoritesFragment)
+
+    fun filterChannels(searchQuery: String?) {
+        val filteredList = if (!searchQuery.isNullOrEmpty()) {
+            originalChannelsList.filter { channel ->
+                channel.name.contains(searchQuery, ignoreCase = true)
+            }
+        } else {
+            originalChannelsList
+        }
+
+        val recyclerView = requireView().findViewById<RecyclerView>(R.id.recyclerViewFavorites)
+        val adapter = recyclerView.adapter as? CustomRecyclerAdapter
+        adapter?.setData(filteredList)
     }
     ///
     override fun onCreateView(

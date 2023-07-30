@@ -1,5 +1,6 @@
 package com.example.channels
 
+import Channels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class AllFragment : Fragment() {
+    private var originalChannelsList: List<Channels> = emptyList()
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -39,6 +41,7 @@ class AllFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val channelList = Channels.getCatList(requireContext())
+        originalChannelsList = channelList
         val adapter = CustomRecyclerAdapter(requireContext(), channelList)
         recyclerView.adapter = adapter
 
@@ -54,6 +57,20 @@ class AllFragment : Fragment() {
             }
             override fun onPageScrollStateChanged(state: Int) {}
         })
+    }
+
+    fun filterChannels(searchQuery: String?) {
+        val filteredList = if (!searchQuery.isNullOrEmpty()) {
+            originalChannelsList.filter { channel ->
+                channel.name.contains(searchQuery, ignoreCase = true)
+            }
+        } else {
+            originalChannelsList
+        }
+
+        val recyclerView = requireView().findViewById<RecyclerView>(R.id.recyclerView)
+        val adapter = recyclerView.adapter as? CustomRecyclerAdapter
+        adapter?.setData(filteredList)
     }
     ////
     override fun onCreateView(
