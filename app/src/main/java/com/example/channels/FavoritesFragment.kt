@@ -21,7 +21,9 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class FavoritesFragment : Fragment() {
+    var searchQuery: String? = null
     private var originalChannelsList: List<Channels> = emptyList()
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -33,7 +35,6 @@ class FavoritesFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
-
     ///Спиок
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,10 +53,8 @@ class FavoritesFragment : Fragment() {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 if (position == 1) {
-                    val newChannelList = Channels.getCatList(requireContext()).filter { it.fav_selected }
-                    adapter.setData(newChannelList)
+                    filterChannels(searchQuery)
                 }
-
             }
             override fun onPageScrollStateChanged(state: Int) {}
         })

@@ -6,7 +6,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 
-
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +22,8 @@ class MainActivity : AppCompatActivity() {
                 val allFragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 0) as? AllFragment
                 val favoritesFragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 1) as? FavoritesFragment
 
+                allFragment?.searchQuery = newText
+                favoritesFragment?.searchQuery = newText
                 allFragment?.filterChannels(newText)
                 favoritesFragment?.filterChannels(newText)
 

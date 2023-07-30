@@ -21,6 +21,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class AllFragment : Fragment() {
+    var searchQuery: String? = null
     private var originalChannelsList: List<Channels> = emptyList()
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -51,8 +52,7 @@ class AllFragment : Fragment() {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 if (position == 0) {
-                    val newChannelList = Channels.getCatList(requireContext())
-                    adapter.setData(newChannelList)
+                    filterChannels(searchQuery)
                 }
             }
             override fun onPageScrollStateChanged(state: Int) {}
