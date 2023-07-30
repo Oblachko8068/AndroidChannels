@@ -46,28 +46,37 @@ class CustomRecyclerAdapter(private val context: Context, private var channels: 
         }
         holder.icon_fav.setOnClickListener {
             channel.fav_selected = !channel.fav_selected
+            var scetcik = 0
+            val catNames = context.resources.getStringArray(R.array.channel_names)
             if (channel.fav_selected) {
-                addChannel(position)
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
                 val intArray = getSavedIntArrayOrFallback(context)
-                intArray[position] = 1
+
+                for (i in 0 until catNames.size) {
+                    if(catNames[i]==channel.name){
+                        scetcik = i
+                    }
+                }
+
+                intArray[scetcik] = 1
                 Channels.saveIntArray(context, intArray)
             } else {
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
                 val intArray = getSavedIntArrayOrFallback(context)
-                intArray[position] = 0
+
+                for (i in 0 until catNames.size) {
+                    if(catNames[i]==channel.name){
+                        scetcik = i
+                    }
+                }
+
+                intArray[scetcik] = 0
                 Channels.saveIntArray(context, intArray)
             }
         }
         holder.itemView.setOnClickListener {
         }
     }
-
-    private fun addChannel(position: Int) {
-        val channelToUpdate = channels[position]
-        channelToUpdate.fav_selected = true
-    }
-
 
     override fun getItemCount() = channels.size
 
