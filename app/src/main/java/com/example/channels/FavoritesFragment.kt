@@ -1,5 +1,6 @@
 package com.example.channels
 
+import Channels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,6 +21,9 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class FavoritesFragment : Fragment() {
+    var searchQuery: String? = null
+    private var originalChannelsList: List<Channels> = emptyList()
+    private lateinit var adapter: CustomRecyclerAdapter
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -31,7 +35,6 @@ class FavoritesFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
-
     ///Спиок
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,7 +43,8 @@ class FavoritesFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val channelList = Channels.getCatList(requireContext()).filter { it.fav_selected }
-        val adapter = CustomRecyclerAdapter(requireContext(), channelList)
+        originalChannelsList = channelList
+        adapter = CustomRecyclerAdapter(requireContext(), channelList)
         recyclerView.adapter = adapter
 
         // Обновление списка при изменении данных в первом фрагменте (AllFragment)
@@ -50,12 +54,37 @@ class FavoritesFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 if (position == 1) {
                     val newChannelList = Channels.getCatList(requireContext()).filter { it.fav_selected }
-                    adapter.setData(newChannelList)
+                    filterChannelBySearch(searchQuery, newChannelList)
                 }
 
             }
             override fun onPageScrollStateChanged(state: Int) {}
         })
+    }
+    private fun filterChannelBySearch(searchQuery: String?, newChannelList: List<Channels>){
+        val filteredList = if (!searchQuery.isNullOrEmpty()) {
+            newChannelList.filter { channel ->
+                channel.name.contains(searchQuery, ignoreCase = true)
+            }
+        } else {
+            newChannelList
+        }
+        adapter.setData(filteredList)
+    }
+    // ... (остальной код FavoritesFragment)
+
+    fun filterChannels(searchQuery: String?) {
+        val filteredList = if (!searchQuery.isNullOrEmpty()) {
+            originalChannelsList.filter { channel ->
+                channel.name.contains(searchQuery, ignoreCase = true)
+            }
+        } else {
+            originalChannelsList
+        }
+
+        val recyclerView = requireView().findViewById<RecyclerView>(R.id.recyclerViewFavorites)
+        val adapter = recyclerView.adapter as? CustomRecyclerAdapter
+        adapter?.setData(filteredList)
     }
     ///
     override fun onCreateView(

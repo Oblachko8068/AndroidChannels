@@ -4,6 +4,8 @@ import Channels
 import Channels.Companion.getSavedIntArrayOrFallback
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +29,7 @@ class CustomRecyclerAdapter(private val context: Context, private var channels: 
         val icon_fav: ImageView = itemView.findViewById(R.id.icon_fav)
 
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.channel_block, parent, false)
@@ -52,7 +55,7 @@ class CustomRecyclerAdapter(private val context: Context, private var channels: 
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
                 val intArray = getSavedIntArrayOrFallback(context)
 
-                for (i in 0 until catNames.size) {
+                for (i in catNames.indices) {
                     if(catNames[i]==channel.name){
                         scetcik = i
                     }
@@ -64,7 +67,7 @@ class CustomRecyclerAdapter(private val context: Context, private var channels: 
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
                 val intArray = getSavedIntArrayOrFallback(context)
 
-                for (i in 0 until catNames.size) {
+                for (i in catNames.indices) {
                     if(catNames[i]==channel.name){
                         scetcik = i
                     }
@@ -75,6 +78,19 @@ class CustomRecyclerAdapter(private val context: Context, private var channels: 
             }
         }
         holder.itemView.setOnClickListener {
+            val context = holder.itemView.context
+            val intent = Intent(context, ChannelPlayer::class.java)
+
+            // Создаем Bundle и помещаем в него данные
+            val bundle = Bundle()
+            bundle.putString("channel_name", channel.name)
+            bundle.putString("channel_description", channel.description)
+            bundle.putInt("channel_icon_resource", channel.iconResource)
+
+            // Устанавливаем Bundle как аргумент Intent
+            intent.putExtras(bundle)
+
+            context.startActivity(intent)
         }
     }
 

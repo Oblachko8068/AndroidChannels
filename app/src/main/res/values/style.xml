@@ -19,10 +19,19 @@
     </style>
 
     <!-- Поиск -->
-    <style name="CustomSearchViewTvChannels" parent="Widget.AppCompat.SearchView">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/text_of_the_search_bar</item>
-        <item name="android:background">@color/background_of_the_search_bar</item>
+    <style name="CustomSearchViewTvChannels">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColorHint">@color/text_active</item>
+    </style>
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_active</item>
+        <item name="android:editTextColor">@color/text_active</item>
+    </style>
+
+
+    <style name="CustomTabTextAppearance">
+        <item name="android:textSize">16sp</item>
     </style>
 
 </resources>

@@ -1,14 +1,10 @@
 package com.example.channels
 
 import android.os.Bundle
-import android.view.View
-import android.view.View.OnFocusChangeListener
-import android.widget.EditText
-import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
-
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +12,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //Поиск
+        val searchView = findViewById<SearchView>(R.id.searchView_tv_channels)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
 
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val allFragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 0) as? AllFragment
+                val favoritesFragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 1) as? FavoritesFragment
+
+                allFragment?.searchQuery = newText
+                favoritesFragment?.searchQuery = newText
+                allFragment?.filterChannels(newText)
+                favoritesFragment?.filterChannels(newText)
+
+                return true
+            }
+        })
 
         //Вкладки
         val viewpagerForTabs = findViewById<ViewPager>(R.id.viewpagerForTabs)
