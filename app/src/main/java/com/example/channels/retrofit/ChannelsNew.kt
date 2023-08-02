@@ -1,5 +1,8 @@
 package com.example.channels.retrofit
 
+import android.content.Context
+import com.google.gson.Gson
+
 data class ChannelsNew(
     val channels: List<Channel>
 )
@@ -18,4 +21,3 @@ data class EPG(
     val timestop: Long,
     val title: String
 )
-

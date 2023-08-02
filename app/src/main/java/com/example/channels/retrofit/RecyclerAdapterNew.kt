@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.channels.R
-import com.example.channels.list.Channels
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 
@@ -48,7 +47,7 @@ class RecyclerAdapterNew (private val context: Context, private val channelList:
         holder.txt_team.text = channelList[position].epg[0].title
         holder.icon_fav.setImageResource(R.drawable.baseline_star_24)
         holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
-        var intArray1 = getSavedNewIntArray(context)
+        val intArray1 = getSavedNewIntArray(context)
         if (channelList[position].id in intArray1){
             holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
         }
@@ -58,11 +57,12 @@ class RecyclerAdapterNew (private val context: Context, private val channelList:
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
                 for (i in intArray.indices){
                     if (intArray[i] == channelList[position].id){
-                        removeElementFromArray(intArray, i)
+                        intArray = removeElementFromArray(intArray, i)
+                        break
                     }
                 }
             } else {
-                addElementToArray(intArray, channelList[position].id)
+                intArray = addElementToArray(intArray, channelList[position].id)
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
             }
             saveNewIntArray(context, intArray)
