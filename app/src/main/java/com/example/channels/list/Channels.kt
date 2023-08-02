@@ -1,5 +1,6 @@
+package com.example.channels.list
+
 import android.content.Context
-import android.content.SharedPreferences
 import com.example.channels.R
 import com.google.gson.Gson
 

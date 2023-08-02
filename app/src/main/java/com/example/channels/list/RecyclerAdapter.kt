@@ -1,7 +1,6 @@
-package com.example.channels
+package com.example.channels.list
 
-import Channels
-import Channels.Companion.getSavedIntArrayOrFallback
+import com.example.channels.list.Channels.Companion.getSavedIntArrayOrFallback
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -13,6 +12,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.channels.ChannelPlayer
+import com.example.channels.R
 
 class CustomRecyclerAdapter(private val context: Context, private var channels: List<Channels>) : RecyclerView.Adapter<CustomRecyclerAdapter.MyViewHolder>() {
 
@@ -43,16 +44,22 @@ class CustomRecyclerAdapter(private val context: Context, private var channels: 
         holder.channelIcon.setImageResource(channel.iconResource)
         holder.icon_fav.setImageResource(channel.icon_fav)
         if (channel.fav_selected) {
-            holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
+            holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context,
+                R.color.icon_enable
+            ))
         } else {
-            holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
+            holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context,
+                R.color.icon_disable
+            ))
         }
         holder.icon_fav.setOnClickListener {
             channel.fav_selected = !channel.fav_selected
             var scetcik = 0
             val catNames = context.resources.getStringArray(R.array.channel_names)
             if (channel.fav_selected) {
-                holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
+                holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context,
+                    R.color.icon_enable
+                ))
                 val intArray = getSavedIntArrayOrFallback(context)
 
                 for (i in catNames.indices) {
@@ -64,7 +71,9 @@ class CustomRecyclerAdapter(private val context: Context, private var channels: 
                 intArray[scetcik] = 1
                 Channels.saveIntArray(context, intArray)
             } else {
-                holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
+                holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context,
+                    R.color.icon_disable
+                ))
                 val intArray = getSavedIntArrayOrFallback(context)
 
                 for (i in catNames.indices) {
