@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Channels</string>
+    <string name="app_name">com.example.channels.list.Channels</string>
 
     <string-array name="channel_names">
         <item>Первый канал</item>

@@ -1,4 +1,4 @@
-package com.example.channels
+package com.example.channels.fragments
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -11,6 +11,9 @@ class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
             0 -> {
                 AllFragment()
             }
+            2 -> {
+                ThirdFragment()
+            }
             else -> {
                 return FavoritesFragment()
             }
@@ -18,12 +21,13 @@ class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     }
 
     override fun getCount(): Int {
-        return 2
+        return 3
     }
 
     override fun getPageTitle(position: Int): CharSequence {
         return when (position) {
             0 -> "Все"
+            2 -> "Черновик"
             else -> {
                 return "Избранные"
             }

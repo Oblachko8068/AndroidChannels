@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.viewpager.widget.ViewPager
+import com.example.channels.fragments.AllFragment
+import com.example.channels.fragments.FavoritesFragment
+import com.example.channels.fragments.FragmentAdapter
 import com.google.android.material.tabs.TabLayout
 
 class MainActivity : AppCompatActivity() {
