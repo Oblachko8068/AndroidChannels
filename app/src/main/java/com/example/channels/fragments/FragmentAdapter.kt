@@ -8,12 +8,8 @@ import androidx.fragment.app.FragmentPagerAdapter
 class FragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> {
-                AllFragment()
-            }
-            else -> {
-                return FavoritesFragment()
-            }
+            0 -> { ThirdFragment() }
+            else -> { return FourthFragment() }
         }
     }
 
