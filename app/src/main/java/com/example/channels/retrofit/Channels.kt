@@ -1,9 +1,6 @@
 package com.example.channels.retrofit
 
-import android.content.Context
-import com.google.gson.Gson
-
-data class ChannelsNew(
+data class Channels(
     val channels: List<Channel>
 )
 

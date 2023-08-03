@@ -4,9 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.viewpager.widget.ViewPager
-import com.example.channels.fragments.FourthFragment
+import com.example.channels.fragments.FavoritesFragment
 import com.example.channels.fragments.FragmentAdapter
-import com.example.channels.fragments.ThirdFragment
+import com.example.channels.fragments.AllFragment
 import com.google.android.material.tabs.TabLayout
 
 
@@ -25,14 +25,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val thirdFragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 0) as? ThirdFragment
-                val fourthFragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 1) as? FourthFragment
+                val allFragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 0) as? AllFragment
+                val favoritesFragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 1) as? FavoritesFragment
 
-                thirdFragment?.searchQuery = newText
-                fourthFragment?.searchQuery = newText
+                allFragment?.searchQuery = newText
+                favoritesFragment?.searchQuery = newText
 
-                thirdFragment?.filterChannels(newText)
-                fourthFragment?.filterChannels(newText)
+                allFragment?.filterChannels(newText)
+                favoritesFragment?.filterChannels(newText)
 
                 return true
             }

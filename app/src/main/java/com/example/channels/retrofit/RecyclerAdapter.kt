@@ -14,12 +14,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.channels.ChannelPlayer
 import com.example.channels.R
-import com.example.channels.list.Channels
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 
-class RecyclerAdapterNew (private val context: Context, private var channelList: List<Channel>):
-    RecyclerView.Adapter<RecyclerAdapterNew.MyViewHolder>() {
+class RecyclerAdapter (private val context: Context, private var channelList: List<Channel>):
+    RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(newChannels: List<Channel>) {
