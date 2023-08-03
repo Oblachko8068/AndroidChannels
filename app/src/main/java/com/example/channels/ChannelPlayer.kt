@@ -1,15 +1,18 @@
 package com.example.channels
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.os.Handler
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.squareup.picasso.Picasso
 
 class ChannelPlayer : AppCompatActivity() {
     @SuppressLint("CutPasteId")
@@ -29,7 +32,9 @@ class ChannelPlayer : AppCompatActivity() {
             // Извлекаем данные из Bundle
             val channelName = extras.getString("channel_name")
             val channelDescription = extras.getString("channel_description")
-            val channelIconResource = extras.getInt("channel_icon_resource")
+            val channelIconResource = extras.getString("channel_icon_resource")
+            //val channelStream = extras.getString("channel_stream")
+            val channelStream = "https://ia804503.us.archive.org/15/items/kikTXNL6MvX6ZpRXM/kikTXNL6MvX6ZpRXM.mp4"
 
             //запись имени
             val chName = findViewById<TextView>(R.id.activeChannelName)
@@ -41,7 +46,23 @@ class ChannelPlayer : AppCompatActivity() {
 
             //запись иконки
             val chIcon = findViewById<ImageView>(R.id.activeChannelIcon)
-            chIcon.setImageResource(channelIconResource)
+            Picasso.get()
+                .load(channelIconResource)
+                .into(chIcon)
+
+            //запись видео
+            val videoView = findViewById<VideoView>(R.id.videoView)
+            val channelStreamUri = Uri.parse(channelStream)
+            videoView.setVideoURI(channelStreamUri)
+
+            videoView.setOnPreparedListener {
+                // Запуск воспроизведения после подготовки видео
+                it.start()
+            }
+
+            videoView.setOnCompletionListener {
+                // Вы можете добавить действия по завершению воспроизведения здесь
+            }
 
             //установка бэка
             val container = findViewById<ConstraintLayout>(R.id.container)

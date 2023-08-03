@@ -36,15 +36,7 @@ class RecyclerAdapter (private val context: Context, private var channelList: Li
         val txt_team: TextView = itemView.findViewById(R.id.channelDesc)
         val icon_fav: ImageView = itemView.findViewById(R.id.icon_fav)
 
-        fun bind(listItem: Channel) {
-            image.setOnClickListener {
-                Toast.makeText(it.context, "нажал на ", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            itemView.setOnClickListener {
-                Toast.makeText(it.context, "нажал на ", Toast.LENGTH_SHORT).show()
-            }
-        }
+
     }
 
 
@@ -54,7 +46,6 @@ class RecyclerAdapter (private val context: Context, private var channelList: Li
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val listItem = channelList[position]
-        holder.bind(listItem)
         Picasso.get().load(channelList[position].image).into(holder.image)
         holder.txt_name.text = channelList[position].name
         holder.txt_team.text = channelList[position].epg[0].title
@@ -88,7 +79,8 @@ class RecyclerAdapter (private val context: Context, private var channelList: Li
             val bundle = Bundle()
             bundle.putString("channel_name", listItem.name)
             bundle.putString("channel_description", listItem.epg[0].title)
-            //bundle.putString("channel_icon_resource", listItem.image)
+            bundle.putString("channel_icon_resource", listItem.image)
+            bundle.putString("channel_stream", listItem.stream)
 
             // Устанавливаем Bundle как аргумент Intent
             intent.putExtras(bundle)
