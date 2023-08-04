@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <VideoView
-        android:id="@+id/videoView"
+        android:id="@+id/playerVideoView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/player_background_top"
@@ -84,9 +84,19 @@
     <RelativeLayout
         android:id="@+id/layoutBottom"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="54dp"
         android:background="@drawable/player_background_bottom"
         app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/textViewTimeToTheEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_alignParentTop="true"
+            android:textColor="@color/text_active_channel_description"
+            android:textSize="16sp"
+            tools:ignore="MissingConstraints"/>
 
         <ImageButton
             android:id="@+id/settings"
@@ -98,6 +108,17 @@
             android:layout_marginBottom="8dp"
             android:background="@null"
             android:src="@drawable/icon_setting" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/text_of_the_tabs"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_alignParentBottom="true"
+            />
+
         <View
             android:id="@+id/progressBar"
             android:layout_width="match_parent"

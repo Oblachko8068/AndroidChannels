@@ -81,6 +81,8 @@ class RecyclerAdapter (private val context: Context, private var channelList: Li
             bundle.putString("channel_description", listItem.epg[0].title)
             bundle.putString("channel_icon_resource", listItem.image)
             bundle.putString("channel_stream", listItem.stream)
+            bundle.putLong("channel_timestart", listItem.epg[0].timestart)
+            bundle.putLong("channel_timestop", listItem.epg[0].timestop)
 
             // Устанавливаем Bundle как аргумент Intent
             intent.putExtras(bundle)
