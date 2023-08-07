@@ -1,6 +1,6 @@
 package com.example.channels.fragments
 
-import com.example.channels.list.Channels
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,8 +9,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
-import com.example.channels.list.CustomRecyclerAdapter
 import com.example.channels.R
+import com.example.channels.retrofit.Channel
+import com.example.channels.retrofit.ChannellsApi
+import com.example.channels.retrofit.Channels
+import com.example.channels.retrofit.RecyclerAdapter
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,8 +33,10 @@ private const val ARG_PARAM2 = "param2"
  */
 class AllFragment : Fragment() {
     var searchQuery: String? = null
-    private var originalChannelsList: List<Channels> = emptyList()
-    private lateinit var adapter: CustomRecyclerAdapter
+    lateinit var adapter: RecyclerAdapter
+    lateinit var ChannelsApi: ChannellsApi
+    lateinit var layoutManager: LinearLayoutManager
+    private var channelList: List<Channel>? = null
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -37,55 +48,81 @@ class AllFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
-    //// список
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.jsonserve.com/")
+            .addConverterFactory(GsonConverterFactory.create()).build()
+        ChannelsApi = retrofit.create(ChannellsApi::class.java)
 
-        val channelList = Channels.getCatList(requireContext())
-        originalChannelsList = channelList
-        adapter = CustomRecyclerAdapter(requireContext(), channelList)
-        recyclerView.adapter = adapter
+        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView3)
+        recyclerView.setHasFixedSize(true)
+        layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = layoutManager
 
-        // Обновление списка при изменении данных во втором фрагменте (FavoritesFragment)
+        getAllChannelsList()
+
         val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 if (position == 0) {
-                    val newChannelList = Channels.getCatList(requireContext())
-                    filterChannelBySearch(searchQuery, newChannelList)
+                    getAllChannelsList()
                 }
             }
             override fun onPageScrollStateChanged(state: Int) {}
         })
     }
-    private fun filterChannelBySearch(searchQuery: String?, newChannelList: List<Channels>){
-        val filteredList = if (!searchQuery.isNullOrEmpty()) {
-            newChannelList.filter { channel ->
-                channel.name.contains(searchQuery, ignoreCase = true)
+    private fun getAllChannelsList() {
+        ChannelsApi.getChannelList().enqueue(object : Callback<Channels> {
+            override fun onFailure(call: Call<Channels>, t: Throwable) {
+
             }
-        } else {
-            newChannelList
-        }
-        adapter.setData(filteredList)
+
+            override fun onResponse(call: Call<Channels>, response: Response<Channels>) {
+                channelList = response.body()?.channels ?: emptyList()
+                adapter = RecyclerAdapter(requireContext(), response.body()?.channels ?: emptyList())
+                val recyclerView: RecyclerView = requireView().findViewById(R.id.recyclerView3)
+                recyclerView.adapter = adapter
+                if(!searchQuery.isNullOrEmpty()) {
+                    filterChannels(searchQuery)
+                }
+            }
+        })
     }
+
     fun filterChannels(searchQuery: String?) {
-        val filteredList = if (!searchQuery.isNullOrEmpty()) {
-            originalChannelsList.filter { channel ->
+        val filteredList: List<Channel> = if (!searchQuery.isNullOrEmpty()) {
+            channelList?.filter { channel ->
                 channel.name.contains(searchQuery, ignoreCase = true)
-            }
+            } ?: emptyList()
         } else {
-            originalChannelsList
+            channelList ?: emptyList()
         }
 
-        val recyclerView = requireView().findViewById<RecyclerView>(R.id.recyclerView)
-        val adapter = recyclerView.adapter as? CustomRecyclerAdapter
+        val recyclerView = requireView().findViewById<RecyclerView>(R.id.recyclerView3)
+        val adapter = recyclerView.adapter as? RecyclerAdapter
         adapter?.setData(filteredList)
     }
-    ////
+
+
+    fun getSavedNewIntArray(context: Context): IntArray {
+        val sharedPref = context.getSharedPreferences("new_array_preferences", Context.MODE_PRIVATE)
+        val jsonString = sharedPref.getString("new_int_array_data", null)
+
+        return try {
+            if (jsonString != null) {
+                Gson().fromJson(jsonString, IntArray::class.java)
+            } else {
+                IntArray(0)
+            }
+        } catch (e: Exception) {
+            IntArray(0)  // Возвращаем пустой (нулевой) массив в случае ошибки
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -95,15 +132,6 @@ class AllFragment : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AllFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             AllFragment().apply {

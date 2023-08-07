@@ -4,15 +4,18 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.viewpager.widget.ViewPager
-import com.example.channels.fragments.AllFragment
 import com.example.channels.fragments.FavoritesFragment
 import com.example.channels.fragments.FragmentAdapter
+import com.example.channels.fragments.AllFragment
 import com.google.android.material.tabs.TabLayout
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //ретрофит
 
         //Поиск
         val searchView = findViewById<SearchView>(R.id.searchView_tv_channels)
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
                 allFragment?.searchQuery = newText
                 favoritesFragment?.searchQuery = newText
+
                 allFragment?.filterChannels(newText)
                 favoritesFragment?.filterChannels(newText)
 
@@ -43,5 +47,7 @@ class MainActivity : AppCompatActivity() {
         tabs.setupWithViewPager(viewpagerForTabs)
 
         //
+
     }
+
 }

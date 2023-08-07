@@ -1,6 +1,9 @@
 package com.example.channels.retrofit
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,39 +12,40 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.channels.ChannelPlayer
 import com.example.channels.R
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 
-class RecyclerAdapterNew (private val context: Context, private val channelList: List<Channel>):
-    RecyclerView.Adapter<RecyclerAdapterNew.MyViewHolder>() {
+class RecyclerAdapter (private val context: Context, private var channelList: List<Channel>):
+    RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(newChannels: List<Channel>) {
+        channelList = newChannels
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.channel_block, parent, false)
         return MyViewHolder(itemView)
     }
-    class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val image: ImageView = itemView.findViewById(R.id.channelIcon)
         val txt_name: TextView = itemView.findViewById(R.id.channelName)
         val txt_team: TextView = itemView.findViewById(R.id.channelDesc)
         val icon_fav: ImageView = itemView.findViewById(R.id.icon_fav)
 
-        fun bind(listItem: Channel) {
-            image.setOnClickListener {
-                Toast.makeText(it.context, "нажал на ", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            itemView.setOnClickListener {
-                Toast.makeText(it.context, "нажал на ", Toast.LENGTH_SHORT).show()
-            }
-        }
+
     }
+
+
+
 
     override fun getItemCount() = channelList.size
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val listItem = channelList[position]
-        holder.bind(listItem)
         Picasso.get().load(channelList[position].image).into(holder.image)
         holder.txt_name.text = channelList[position].name
         holder.txt_team.text = channelList[position].epg[0].title
@@ -66,6 +70,24 @@ class RecyclerAdapterNew (private val context: Context, private val channelList:
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
             }
             saveNewIntArray(context, intArray)
+        }
+        holder.itemView.setOnClickListener {
+            val context = holder.itemView.context
+            val intent = Intent(context, ChannelPlayer::class.java)
+
+            // Создаем Bundle и помещаем в него данные
+            val bundle = Bundle()
+            bundle.putString("channel_name", listItem.name)
+            bundle.putString("channel_description", listItem.epg[0].title)
+            bundle.putString("channel_icon_resource", listItem.image)
+            bundle.putString("channel_stream", listItem.stream)
+            bundle.putLong("channel_timestart", listItem.epg[0].timestart)
+            bundle.putLong("channel_timestop", listItem.epg[0].timestop)
+
+            // Устанавливаем Bundle как аргумент Intent
+            intent.putExtras(bundle)
+
+            context.startActivity(intent)
         }
     }
     fun addElementToArray(array: IntArray, element: Int): IntArray {

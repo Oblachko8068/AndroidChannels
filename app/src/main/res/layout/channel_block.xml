@@ -32,7 +32,8 @@
                 android:gravity="start"
                 android:textSize="18sp"
                 android:fontFamily="roboto"
-                android:textColor="@color/text_active" />
+                android:textColor="@color/text_active"
+                android:singleLine="true"/>
             <TextView
                 android:id="@+id/channelDesc"
                 android:layout_width="match_parent"
@@ -41,7 +42,8 @@
                 android:gravity="start"
                 android:textSize="15sp"
                 android:fontFamily="roboto"
-                android:textColor="@color/text_active"/>
+                android:textColor="@color/text_active"
+                android:maxLines="2"/>
         </LinearLayout>
         <View
             android:id="@+id/divider2"
