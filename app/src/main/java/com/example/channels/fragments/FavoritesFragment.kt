@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,9 +38,7 @@ class FavoritesFragment : Fragment() {
     //////////////////////////////////////////////////////
     var searchQuery: String? = null
     lateinit var adapter: RecyclerAdapter
-    lateinit var ChannelsApi: ChannellsApi
     lateinit var layoutManager: LinearLayoutManager
-    private var channelList: List<Channel>? = null
     ///////////////////////////////////////////////////////
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -49,32 +48,32 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val channelViewModel = ViewModelProvider(requireActivity()).get(ChannelViewModel::class.java)
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.jsonserve.com/")
-            .addConverterFactory(GsonConverterFactory.create()).build()
-        ChannelsApi = retrofit.create(ChannellsApi::class.java)
+        channelViewModel.fetchChannels()
+        var channelList = channelViewModel.getChannelListLiveData()
+        channelList.observe(requireActivity(), Observer { channelList ->
+            // Обработка изменений в списке каналов
+            // channelList - список каналов, который был обновлен
+            getAllChannelsList(channelList)
+        })
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView4)
         recyclerView.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        getAllChannelsList()
-
         val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 if (position == 1) {
-                    getAllChannelsList()
+                    getAllChannelsList(channelList.value!!)
                 }
             }
             override fun onPageScrollStateChanged(state: Int) {}
         })
 
     }
-    private fun getAllChannelsList() {
+    private fun getAllChannelsList(channelList: List<Channel>) {
         /*ChannelsApi.getChannelList().enqueue(object : Callback<Channels> {
             override fun onFailure(call: Call<Channels>, t: Throwable) {
 
@@ -93,6 +92,13 @@ class FavoritesFragment : Fragment() {
                 }
             }
         })*/
+        if (channelList != null) {
+            val intArray = getSavedNewIntArray(requireContext())
+            val favoriteChannels = channelList.filter { it.id in intArray }
+            adapter = RecyclerAdapter(requireContext(), favoriteChannels!!)
+            val recyclerView: RecyclerView = requireView().findViewById(R.id.recyclerView4)
+            recyclerView.adapter = adapter
+        }
     }
 
     /*fun filterChannels(searchQuery: String?) {

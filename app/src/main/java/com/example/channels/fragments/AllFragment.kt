@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +14,6 @@ import androidx.viewpager.widget.ViewPager
 import com.example.channels.ChannelViewModel
 import com.example.channels.R
 import com.example.channels.retrofit.Channel
-import com.example.channels.retrofit.ChannellsApi
 import com.example.channels.retrofit.RecyclerAdapter
 import com.google.gson.Gson
 
@@ -32,9 +30,7 @@ private const val ARG_PARAM2 = "param2"
 class AllFragment : Fragment() {
     var searchQuery: String? = null
     lateinit var adapter: RecyclerAdapter
-    lateinit var ChannelsApi: ChannellsApi
     lateinit var layoutManager: LinearLayoutManager
-    private var channelList1: LiveData<List<Channel>>? = null
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -59,19 +55,11 @@ class AllFragment : Fragment() {
             // channelList - список каналов, который был обновлен
             getAllChannelsList(channelList)
         })
-        //channelList1 = channelList
-        /*val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.jsonserve.com/")
-            .addConverterFactory(GsonConverterFactory.create()).build()
-        ChannelsApi = retrofit.create(ChannellsApi::class.java)*/
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView3)
         recyclerView.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
-
-
-        //getAllChannelsList(channelList.value!!)
 
         val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
