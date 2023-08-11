@@ -14,17 +14,8 @@ class ChannelViewModel : ViewModel() {
     private val channelRepository = ChannelRepository()
     private val channelListLiveData: LiveData<List<Channel>> = channelRepository.getChannelListLiveData()
 
-    fun getChannels() {
-        channelRepository.getChannels(object : Callback<Channels> {
-            override fun onFailure(call: Call<Channels>, t: Throwable) {
-                // Обработка ошибки, если не удалось получить данные
-            }
-
-            override fun onResponse(call: Call<Channels>, response: Response<Channels>) {
-                val channelList = response.body()?.channels ?: emptyList()
-                channelRepository.updateChannelList(channelList)
-            }
-        })
+    fun fetchChannels() {
+        channelRepository.fetchChannels()
     }
 
     fun getChannelListLiveData(): LiveData<List<Channel>> {

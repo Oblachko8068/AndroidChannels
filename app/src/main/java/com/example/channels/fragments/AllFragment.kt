@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +34,7 @@ class AllFragment : Fragment() {
     lateinit var adapter: RecyclerAdapter
     lateinit var ChannelsApi: ChannellsApi
     lateinit var layoutManager: LinearLayoutManager
-    private var channelList: LiveData<List<Channel>>? = null
+    private var channelList1: LiveData<List<Channel>>? = null
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -51,8 +52,14 @@ class AllFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val channelViewModel = ViewModelProvider(requireActivity()).get(ChannelViewModel::class.java)
-        channelList = channelViewModel.getChannelListLiveData()
-
+        channelViewModel.fetchChannels()
+        var channelList = channelViewModel.getChannelListLiveData()
+        channelList.observe(requireActivity(), Observer { channelList ->
+            // Обработка изменений в списке каналов
+            // channelList - список каналов, который был обновлен
+            getAllChannelsList(channelList)
+        })
+        //channelList1 = channelList
         /*val retrofit = Retrofit.Builder()
             .baseUrl("https://api.jsonserve.com/")
             .addConverterFactory(GsonConverterFactory.create()).build()
@@ -63,20 +70,21 @@ class AllFragment : Fragment() {
         layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        getAllChannelsList()
+
+        //getAllChannelsList(channelList.value!!)
 
         val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 if (position == 0) {
-                    getAllChannelsList()
+                    getAllChannelsList(channelList.value!!)
                 }
             }
             override fun onPageScrollStateChanged(state: Int) {}
         })
     }
-    private fun getAllChannelsList() {
+    private fun getAllChannelsList(channelList: List<Channel>) {
         /*ChannelsApi.getChannelList().enqueue(object : Callback<Channels> {
             override fun onFailure(call: Call<Channels>, t: Throwable) {
 
