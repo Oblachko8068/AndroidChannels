@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
                 allFragment?.searchQuery = newText
                 favoritesFragment?.searchQuery = newText
 
-                //allFragment?.filterChannels(newText)
-                //favoritesFragment?.filterChannels(newText)
+                allFragment?.filterChannels(newText)
+                favoritesFragment?.filterChannels(newText)
 
                 return true
             }

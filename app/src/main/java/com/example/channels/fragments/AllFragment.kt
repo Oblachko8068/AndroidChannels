@@ -31,6 +31,7 @@ class AllFragment : Fragment() {
     var searchQuery: String? = null
     lateinit var adapter: RecyclerAdapter
     lateinit var layoutManager: LinearLayoutManager
+    lateinit var channelList2: List<Channel>
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -54,6 +55,7 @@ class AllFragment : Fragment() {
             // Обработка изменений в списке каналов
             // channelList - список каналов, который был обновлен
             getAllChannelsList(channelList)
+            channelList2 = channelList
         })
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView3)
@@ -67,6 +69,9 @@ class AllFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 if (position == 0) {
                     getAllChannelsList(channelList.value!!)
+                    if(!searchQuery.isNullOrEmpty()) {
+                        filterChannels(searchQuery)
+                    }
                 }
             }
             override fun onPageScrollStateChanged(state: Int) {}
@@ -92,22 +97,25 @@ class AllFragment : Fragment() {
             adapter = RecyclerAdapter(requireContext(), channelList!!)
             val recyclerView: RecyclerView = requireView().findViewById(R.id.recyclerView3)
             recyclerView.adapter = adapter
+            if(!searchQuery.isNullOrEmpty()) {
+                filterChannels(searchQuery)
+            }
         }
     }
 
-    /*fun filterChannels(searchQuery: String?) {
+    fun filterChannels(searchQuery: String?) {
         val filteredList: List<Channel> = if (!searchQuery.isNullOrEmpty()) {
-            channelList?.filter { channel ->
+            channelList2?.filter { channel ->
                 channel.name.contains(searchQuery, ignoreCase = true)
             } ?: emptyList()
         } else {
-            channelList ?: emptyList()
+            channelList2 ?: emptyList()
         }
 
         val recyclerView = requireView().findViewById<RecyclerView>(R.id.recyclerView3)
         val adapter = recyclerView.adapter as? RecyclerAdapter
         adapter?.setData(filteredList)
-    }*/
+    }
 
 
     fun getSavedNewIntArray(context: Context): IntArray {
