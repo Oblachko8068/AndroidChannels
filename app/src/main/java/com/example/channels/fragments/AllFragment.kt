@@ -6,20 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.example.channels.ChannelViewModel
 import com.example.channels.R
 import com.example.channels.retrofit.Channel
 import com.example.channels.retrofit.ChannellsApi
-import com.example.channels.retrofit.Channels
 import com.example.channels.retrofit.RecyclerAdapter
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,7 +33,8 @@ class AllFragment : Fragment() {
     lateinit var adapter: RecyclerAdapter
     lateinit var ChannelsApi: ChannellsApi
     lateinit var layoutManager: LinearLayoutManager
-    private var channelList: List<Channel>? = null
+    private var channelList: LiveData<List<Channel>>? = null
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -52,10 +50,13 @@ class AllFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val retrofit = Retrofit.Builder()
+        val channelViewModel = ViewModelProvider(requireActivity()).get(ChannelViewModel::class.java)
+        channelList = channelViewModel.getChannelListLiveData()
+
+        /*val retrofit = Retrofit.Builder()
             .baseUrl("https://api.jsonserve.com/")
             .addConverterFactory(GsonConverterFactory.create()).build()
-        ChannelsApi = retrofit.create(ChannellsApi::class.java)
+        ChannelsApi = retrofit.create(ChannellsApi::class.java)*/
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView3)
         recyclerView.setHasFixedSize(true)
@@ -76,7 +77,7 @@ class AllFragment : Fragment() {
         })
     }
     private fun getAllChannelsList() {
-        ChannelsApi.getChannelList().enqueue(object : Callback<Channels> {
+        /*ChannelsApi.getChannelList().enqueue(object : Callback<Channels> {
             override fun onFailure(call: Call<Channels>, t: Throwable) {
 
             }
@@ -90,10 +91,15 @@ class AllFragment : Fragment() {
                     filterChannels(searchQuery)
                 }
             }
-        })
+        })*/
+        if (channelList != null) {
+            adapter = RecyclerAdapter(requireContext(), channelList!!)
+            val recyclerView: RecyclerView = requireView().findViewById(R.id.recyclerView3)
+            recyclerView.adapter = adapter
+        }
     }
 
-    fun filterChannels(searchQuery: String?) {
+    /*fun filterChannels(searchQuery: String?) {
         val filteredList: List<Channel> = if (!searchQuery.isNullOrEmpty()) {
             channelList?.filter { channel ->
                 channel.name.contains(searchQuery, ignoreCase = true)
@@ -105,7 +111,7 @@ class AllFragment : Fragment() {
         val recyclerView = requireView().findViewById<RecyclerView>(R.id.recyclerView3)
         val adapter = recyclerView.adapter as? RecyclerAdapter
         adapter?.setData(filteredList)
-    }
+    }*/
 
 
     fun getSavedNewIntArray(context: Context): IntArray {

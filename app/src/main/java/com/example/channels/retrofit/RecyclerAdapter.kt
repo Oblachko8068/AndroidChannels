@@ -9,19 +9,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.channels.ChannelPlayer
 import com.example.channels.R
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 
-class RecyclerAdapter (private val context: Context, private var channelList: List<Channel>):
+class RecyclerAdapter(private val context: Context, private var channelList: LiveData<List<Channel>>):
     RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(newChannels: List<Channel>) {
+    fun setData(newChannels: LiveData<List<Channel>>) {
         channelList = newChannels
         notifyDataSetChanged()
     }
@@ -42,53 +42,61 @@ class RecyclerAdapter (private val context: Context, private var channelList: Li
 
 
 
-    override fun getItemCount() = channelList.size
+    override fun getItemCount() = channelList.value?.size ?: 0
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val listItem = channelList[position]
-        Picasso.get().load(channelList[position].image).into(holder.image)
-        holder.txt_name.text = channelList[position].name
-        holder.txt_team.text = channelList[position].epg[0].title
-        holder.icon_fav.setImageResource(R.drawable.baseline_star_24)
-        holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
-        val intArray1 = getSavedNewIntArray(context)
-        if (channelList[position].id in intArray1){
-            holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
-        }
-        holder.icon_fav.setOnClickListener{
-            var intArray = getSavedNewIntArray(context)
-            if (channelList[position].id in intArray){
-                holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
-                for (i in intArray.indices){
-                    if (intArray[i] == channelList[position].id){
-                        intArray = removeElementFromArray(intArray, i)
-                        break
-                    }
-                }
-            } else {
-                intArray = addElementToArray(intArray, channelList[position].id)
+        val channelListData = channelList.value
+        if (channelListData != null && position < channelListData.size) {
+            val listItem = channelListData[position]
+
+            // Остальной код onBindViewHolder...
+            //val listItem = channelList[position]
+            Picasso.get().load(channelListData[position].image).into(holder.image)
+            holder.txt_name.text = channelListData[position].name
+            holder.txt_team.text = channelListData[position].epg[0].title
+            holder.icon_fav.setImageResource(R.drawable.baseline_star_24)
+            holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
+            val intArray1 = getSavedNewIntArray(context)
+            if (channelListData[position].id in intArray1){
                 holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
             }
-            saveNewIntArray(context, intArray)
+            holder.icon_fav.setOnClickListener{
+                var intArray = getSavedNewIntArray(context)
+                if (channelListData[position].id in intArray){
+                    holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
+                    for (i in intArray.indices){
+                        if (intArray[i] == channelListData[position].id){
+                            intArray = removeElementFromArray(intArray, i)
+                            break
+                        }
+                    }
+                } else {
+                    intArray = addElementToArray(intArray, channelListData[position].id)
+                    holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
+                }
+                saveNewIntArray(context, intArray)
+            }
+            holder.itemView.setOnClickListener {
+                val context = holder.itemView.context
+                val intent = Intent(context, ChannelPlayer::class.java)
+
+                // Создаем Bundle и помещаем в него данные
+                val bundle = Bundle()
+                bundle.putString("channel_name", listItem.name)
+                bundle.putString("channel_description", listItem.epg[0].title)
+                bundle.putString("channel_icon_resource", listItem.image)
+                bundle.putString("channel_stream", listItem.stream)
+                bundle.putLong("channel_timestart", listItem.epg[0].timestart)
+                bundle.putLong("channel_timestop", listItem.epg[0].timestop)
+
+                // Устанавливаем Bundle как аргумент Intent
+                intent.putExtras(bundle)
+
+                context.startActivity(intent)
+            }
         }
-        holder.itemView.setOnClickListener {
-            val context = holder.itemView.context
-            val intent = Intent(context, ChannelPlayer::class.java)
 
-            // Создаем Bundle и помещаем в него данные
-            val bundle = Bundle()
-            bundle.putString("channel_name", listItem.name)
-            bundle.putString("channel_description", listItem.epg[0].title)
-            bundle.putString("channel_icon_resource", listItem.image)
-            bundle.putString("channel_stream", listItem.stream)
-            bundle.putLong("channel_timestart", listItem.epg[0].timestart)
-            bundle.putLong("channel_timestop", listItem.epg[0].timestop)
 
-            // Устанавливаем Bundle как аргумент Intent
-            intent.putExtras(bundle)
-
-            context.startActivity(intent)
-        }
     }
     fun addElementToArray(array: IntArray, element: Int): IntArray {
         val newArray = IntArray(array.size + 1)

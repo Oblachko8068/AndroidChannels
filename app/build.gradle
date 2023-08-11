@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'com.example.channels'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.channels"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -38,6 +38,8 @@ dependencies {
 
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
 
     
     implementation 'androidx.core:core-ktx:1.10.1'

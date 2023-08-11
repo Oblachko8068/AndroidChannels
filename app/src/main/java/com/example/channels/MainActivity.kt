@@ -3,6 +3,7 @@ package com.example.channels
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.example.channels.fragments.FavoritesFragment
 import com.example.channels.fragments.FragmentAdapter
@@ -11,11 +12,14 @@ import com.google.android.material.tabs.TabLayout
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var channelViewModel: ChannelViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //ретрофит
+        //ViewModel
+        channelViewModel = ViewModelProvider(this).get(ChannelViewModel::class.java)
 
         //Поиск
         val searchView = findViewById<SearchView>(R.id.searchView_tv_channels)
@@ -31,8 +35,8 @@ class MainActivity : AppCompatActivity() {
                 allFragment?.searchQuery = newText
                 favoritesFragment?.searchQuery = newText
 
-                allFragment?.filterChannels(newText)
-                favoritesFragment?.filterChannels(newText)
+                //allFragment?.filterChannels(newText)
+                //favoritesFragment?.filterChannels(newText)
 
                 return true
             }

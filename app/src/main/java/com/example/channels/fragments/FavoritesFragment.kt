@@ -6,9 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.example.channels.ChannelViewModel
 import com.example.channels.R
 import com.example.channels.retrofit.Channel
 import com.example.channels.retrofit.ChannellsApi
@@ -46,6 +48,8 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val channelViewModel = ViewModelProvider(requireActivity()).get(ChannelViewModel::class.java)
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.jsonserve.com/")
             .addConverterFactory(GsonConverterFactory.create()).build()
@@ -71,7 +75,7 @@ class FavoritesFragment : Fragment() {
 
     }
     private fun getAllChannelsList() {
-        ChannelsApi.getChannelList().enqueue(object : Callback<Channels> {
+        /*ChannelsApi.getChannelList().enqueue(object : Callback<Channels> {
             override fun onFailure(call: Call<Channels>, t: Throwable) {
 
             }
@@ -88,10 +92,10 @@ class FavoritesFragment : Fragment() {
                     filterChannels(searchQuery)
                 }
             }
-        })
+        })*/
     }
 
-    fun filterChannels(searchQuery: String?) {
+    /*fun filterChannels(searchQuery: String?) {
         val filteredList: List<Channel> = if (!searchQuery.isNullOrEmpty()) {
             channelList?.filter { channel ->
                 channel.name.contains(searchQuery, ignoreCase = true)
@@ -104,7 +108,7 @@ class FavoritesFragment : Fragment() {
         val recyclerView = requireView().findViewById<RecyclerView>(R.id.recyclerView4)
         val adapter = recyclerView.adapter as? RecyclerAdapter
         adapter?.setData(favoriteChannels)
-    }
+    }*/
 
     fun getSavedNewIntArray(context: Context): IntArray {
         val sharedPref = context.getSharedPreferences("new_array_preferences", Context.MODE_PRIVATE)
