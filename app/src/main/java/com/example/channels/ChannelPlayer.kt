@@ -8,8 +8,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import com.example.channels.databinding.ChannelPlayerBinding
-import com.example.channels.retrofit.ChannelDB
-import com.example.channels.retrofit.EpgDB
+import com.example.channels.retrofit.ChannelDb
+import com.example.channels.retrofit.EpgDb
 import com.squareup.picasso.Picasso
 
 class ChannelPlayer : AppCompatActivity() {
@@ -33,8 +33,8 @@ class ChannelPlayer : AppCompatActivity() {
             showOtherViews()
         }
         val bundle = intent.extras
-        val channelDB = bundle?.getSerializable("channel_data") as? ChannelDB
-        val epgDB = bundle?.getSerializable("epg_data") as? EpgDB
+        val channelDB = bundle?.getSerializable("channel_data") as? ChannelDb
+        val epgDB = bundle?.getSerializable("epg_data") as? EpgDb
         if (channelDB != null) {
             // Извлекаем данные из Bundle
             val channelName = channelDB.name

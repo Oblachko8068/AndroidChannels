@@ -16,10 +16,9 @@ import com.example.channels.ChannelPlayer
 import com.example.channels.ChannelViewModel
 import com.example.channels.R
 import com.example.channels.databinding.FragmentFavoritesBinding
-import com.example.channels.retrofit.ChannelJSON
+import com.example.channels.retrofit.ChannelDb
+import com.example.channels.retrofit.EpgDb
 import com.example.channels.retrofit.RecyclerAdapter
-import com.example.channels.retrofit.toChannelDB
-import com.example.channels.retrofit.toEpgDB
 import com.google.gson.Gson
 
 private const val ARG_PARAM1 = "param1"
@@ -33,36 +32,37 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
     var searchQuery: String? = null
     lateinit var adapter: RecyclerAdapter
     lateinit var layoutManager: LinearLayoutManager
-    lateinit var channelJSONList2: List<ChannelJSON>
+    lateinit var channelDb: List<ChannelDb>
+    lateinit var epgDb: List<EpgDb>
 
     private var param1: String? = null
     private var param2: String? = null
 
-    override fun onChannelItemClicked(channel: ChannelJSON) {
-        val channelDB = channel.toChannelDB()
-        val epgDbList = channel.toEpgDB()
-        val epgDb = epgDbList.find { it.channelID == channelDB.id }
+    override fun onChannelItemClicked(channel: ChannelDb) {
+        val epgDbList = epgDb
+        val epgDb = epgDbList.find { it.channelID == channel.id }
         val bundle = Bundle()
 
-        bundle.putSerializable("channel_data", channelDB)
+        bundle.putSerializable("channel_data", channel)
         bundle.putSerializable("epg_data", epgDb)
 
         val intent = Intent(requireContext(), ChannelPlayer::class.java)
         intent.putExtras(bundle)
         requireContext().startActivity(intent)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val channelViewModel =
-            ViewModelProvider(requireActivity())[ChannelViewModel::class.java]
-        channelViewModel.fetchChannels()
+        val channelViewModel = ViewModelProvider(requireActivity())[ChannelViewModel::class.java]
         val channelList = channelViewModel.getChannelListLiveData()
+        val epgList = channelViewModel.getEpgListLiveData()
+
+        //channelViewModel.fetchChannels()
+        epgDb = epgList.value ?: emptyList() // Инициализация epgDb
         channelList.observe(requireActivity(), Observer { channelList ->
-            // Обработка изменений в списке каналов
-            // channelList - список каналов, который был обновлен
-            getAllChannelsList(channelList)
-            channelJSONList2 = channelList
+            channelDb = channelList
+            getAllChannelsList(channelList, epgDb) // Теперь можно использовать epgDb
         })
 
         binding.recyclerView4.setHasFixedSize(true)
@@ -80,7 +80,7 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
 
             override fun onPageSelected(position: Int) {
                 if (position == 1) {
-                    getAllChannelsList(channelList.value!!)
+                    getAllChannelsList(channelList.value!!, epgDb)
                     if (!searchQuery.isNullOrEmpty()) {
                         filterChannels(searchQuery)
                     }
@@ -92,11 +92,11 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
 
     }
 
-    private fun getAllChannelsList(channelJSONList: List<ChannelJSON>) {
+    private fun getAllChannelsList(channelDbList: List<ChannelDb>, epgDb: List<EpgDb>) {
         val intArray = getSavedNewIntArray(requireContext())
-        val favoriteChannels = channelJSONList.filter { it.id in intArray }
-        adapter = RecyclerAdapter(requireContext(), favoriteChannels, this)
-        val recyclerView: RecyclerView = requireView().findViewById(R.id.recyclerView4)
+        val favoriteChannels = channelDbList.filter { it.id in intArray }
+        adapter = RecyclerAdapter(requireContext(), favoriteChannels, epgDb, this)
+        val recyclerView: RecyclerView = binding.recyclerView4
         recyclerView.adapter = adapter
         if (!searchQuery.isNullOrEmpty()) {
             filterChannels(searchQuery)
@@ -104,16 +104,16 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
     }
 
     fun filterChannels(searchQuery: String?) {
-        val filteredList: List<ChannelJSON> = if (!searchQuery.isNullOrEmpty()) {
-            channelJSONList2.filter { channel ->
+        val filteredList: List<ChannelDb> = if (!searchQuery.isNullOrEmpty()) {
+            channelDb.filter { channel ->
                 channel.name.contains(searchQuery, ignoreCase = true)
             }
         } else {
-            channelJSONList2
+            channelDb
         }
         val intArray = getSavedNewIntArray(requireContext())
         val favoriteChannels = filteredList.filter { it.id in intArray }
-        val recyclerView = requireView().findViewById<RecyclerView>(R.id.recyclerView4)
+        val recyclerView = binding.recyclerView4
         val adapter = recyclerView.adapter as? RecyclerAdapter
         adapter?.setData(favoriteChannels)
     }

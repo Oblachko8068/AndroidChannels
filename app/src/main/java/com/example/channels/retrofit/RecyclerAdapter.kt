@@ -2,13 +2,10 @@ package com.example.channels.retrofit
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.channels.ChannelPlayer
 import com.example.channels.R
 import com.example.channels.databinding.ChannelBlockBinding
 import com.google.gson.Gson
@@ -16,18 +13,19 @@ import com.squareup.picasso.Picasso
 
 class RecyclerAdapter(
     private val context: Context,
-    private var channelJSONList: List<ChannelJSON>,
+    private var channelDb: List<ChannelDb>,
+    private var epgDb: List<EpgDb>,
     private val itemClickListener: OnChannelItemClickListener
 ) :
     RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
 
     interface OnChannelItemClickListener {
-        fun onChannelItemClicked(channel: ChannelJSON)
+        fun onChannelItemClicked(channel: ChannelDb)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(newChannelJSONS: List<ChannelJSON>) {
-        channelJSONList = newChannelJSONS
+    fun setData(newChannelDb: List<ChannelDb>) {
+        channelDb = newChannelDb
         notifyDataSetChanged()
     }
 
@@ -39,34 +37,34 @@ class RecyclerAdapter(
 
     class MyViewHolder(private val binding: ChannelBlockBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ChannelJSON, context: Context) {
-            Picasso.get().load(item.image).into(binding.channelIcon)
-            binding.channelName.text = item.name
-            binding.channelDesc.text = item.epg[0].title
+        fun bind(channelItem: ChannelDb,epgItem: EpgDb, context: Context) {
+            Picasso.get().load(channelItem.image).into(binding.channelIcon)
+            binding.channelName.text = channelItem.name
+            binding.channelDesc.text = epgItem.title
             binding.iconFav.setImageResource(R.drawable.baseline_star_24)
             binding.iconFav.setColorFilter(
                 ContextCompat.getColor(context, R.color.icon_disable)
             )
             val intArray1 = getSavedNewIntArray(context)
-            if (item.id in intArray1) {
+            if (channelItem.id in intArray1) {
                 binding.iconFav.setColorFilter(
                     ContextCompat.getColor(context, R.color.icon_enable)
                 )
             }
             binding.iconFav.setOnClickListener {
                 var intArray = getSavedNewIntArray(context)
-                if (item.id in intArray) {
+                if (channelItem.id in intArray) {
                     binding.iconFav.setColorFilter(
                         ContextCompat.getColor(context, R.color.icon_disable)
                     )
                     for (i in intArray.indices) {
-                        if (intArray[i] == item.id) {
+                        if (intArray[i] == channelItem.id) {
                             intArray = removeElementFromArray(intArray, i)
                             break
                         }
                     }
                 } else {
-                    intArray = addElementToArray(intArray, item.id)
+                    intArray = addElementToArray(intArray, channelItem.id)
                     binding.iconFav.setColorFilter(
                         ContextCompat.getColor(context, R.color.icon_enable)
                     )
@@ -113,11 +111,14 @@ class RecyclerAdapter(
         }
     }
 
-    override fun getItemCount() = channelJSONList.size
+    override fun getItemCount() = channelDb.size
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val channel = channelJSONList[position]
-        holder.bind(channel, context)
+        val channel = channelDb[position]
+        val epg = epgDb.find { it.channelID == channel.id }
+        if (epg != null) {
+            holder.bind(channel, epg, context)
+        }
 
         holder.itemView.setOnClickListener {
             itemClickListener.onChannelItemClicked(channel)

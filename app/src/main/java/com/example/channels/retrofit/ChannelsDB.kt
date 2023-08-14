@@ -2,14 +2,14 @@ package com.example.channels.retrofit
 
 import java.io.Serializable
 
-data class ChannelDB(
+data class ChannelDb(
     val id: Int,
     val name: String,
     val image: String,
     val stream: String
 ) : Serializable
 
-data class EpgDB(
+data class EpgDb(
     val channelID: Int,
     val id: Long,
     val timestart: Long,
@@ -17,15 +17,15 @@ data class EpgDB(
     val title: String
 ) : Serializable
 
-fun ChannelJSON.toChannelDB() = ChannelDB(
+fun ChannelJson.toChannelDb() = ChannelDb(
     id = this.id,
     name = this.name,
     image = this.image,
     stream = this.stream,
 )
 
-fun ChannelJSON.toEpgDB(): List<EpgDB> = this.epg.map {
-    EpgDB(
+fun ChannelJson.toEpgDb(): List<EpgDb> = this.epg.map {
+    EpgDb(
         this.id,
         id = it.id,
         timestart = it.timestart,

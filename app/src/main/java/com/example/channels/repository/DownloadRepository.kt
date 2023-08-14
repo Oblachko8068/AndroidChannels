@@ -3,11 +3,13 @@ package com.example.channels.repository
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.channels.retrofit.ChannelDB
-import com.example.channels.retrofit.ChannelJSON
+import com.example.channels.retrofit.ChannelDb
+import com.example.channels.retrofit.ChannelJson
 import com.example.channels.retrofit.ChannelsApi
-import com.example.channels.retrofit.ChannelsJSON
-import com.example.channels.retrofit.toChannelDB
+import com.example.channels.retrofit.ChannelsJson
+import com.example.channels.retrofit.EpgDb
+import com.example.channels.retrofit.toChannelDb
+import com.example.channels.retrofit.toEpgDb
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -17,12 +19,15 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class DownloadRepository(
-    private val context: Context,
-    private val channelRepository: ChannelRepository
+    context: Context,
 ) {
 
     private var ChannellsApi: ChannelsApi
-    private var channelJSONListLiveData = MutableLiveData<List<ChannelJSON>>()
+    private var channelJsonListLiveData = MutableLiveData<List<ChannelJson>>()
+    private var channelDbLiveData = MutableLiveData<List<ChannelDb>>()
+    private var epgDbLiveData = MutableLiveData<List<EpgDb>>()
+    private var channelRepository: ChannelRepository = ChannelRepository(context)
+    private var epgRepository: EpgRepository = EpgRepository(context)
 
     init {
         // Создание логгера для перехвата и отображения сетевых запросов и ответов
@@ -45,44 +50,37 @@ class DownloadRepository(
     }
 
     fun fetchChannels() {
-        ChannellsApi.getChannelList().enqueue(object : Callback<ChannelsJSON> {
-            override fun onFailure(call: Call<ChannelsJSON>, t: Throwable) {
+        ChannellsApi.getChannelList().enqueue(object : Callback<ChannelsJson> {
+            override fun onFailure(call: Call<ChannelsJson>, t: Throwable) {
 
             }
 
-            override fun onResponse(call: Call<ChannelsJSON>, response: Response<ChannelsJSON>) {
+            override fun onResponse(call: Call<ChannelsJson>, response: Response<ChannelsJson>) {
                 val channelList = response.body()?.channels ?: emptyList()
-                val channelDBList = channelList.map { it.toChannelDB() }
-                //val epgDBList: ArrayList<EpgDB> = arrayListOf()
-                //channelList.forEach{ epgDBList.addAll(it.toEpgDB()) }
-                //updateChannelList(channelList)
-                channelRepository.updateChannelList(channelList, channelJSONListLiveData)
+                val channelDbList = channelList.map { it.toChannelDb() }
+                val epgDBList: ArrayList<EpgDb> = arrayListOf()
+                channelList.forEach{ epgDBList.addAll(it.toEpgDb()) }
+                channelRepository.updateChannelList(channelDbList, channelDbLiveData)
+                epgRepository.updateEpgList(epgDBList, epgDbLiveData)
             }
         })
     }
 
     // Запрос к серверу для получения списка каналов
-    fun getChannels(callback: Callback<ChannelsJSON>) {
+    fun getChannels(callback: Callback<ChannelsJson>) {
         ChannellsApi.getChannelList().enqueue(callback)
     }
 
     // Возвращает LiveData, которая будет содержать список каналов
-    fun getChannelListLiveData(): LiveData<List<ChannelJSON>> {
-        return channelJSONListLiveData
+    fun getChannelListLiveData(): LiveData<List<ChannelJson>> {
+        return channelJsonListLiveData
     }
 
     // Обновляет LiveData с новым списком каналов
-    fun updateChannelList(channelJSONList: List<ChannelJSON>) {
-        channelJSONListLiveData.value = channelJSONList
+    fun updateChannelList(channelJsonList: List<ChannelJson>) {
+        channelJsonListLiveData.value = channelJsonList
     }
 
-    fun saveToSharedPref(channelDb: List<ChannelDB>) {
-        val sharedPref = context.getSharedPreferences(
-            "SharedPref",
-            Context.MODE_PRIVATE
-        )
-        //sharedPref.edit().
 
-    }
 }
 
