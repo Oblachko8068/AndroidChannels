@@ -1,6 +1,7 @@
 package com.example.channels.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,17 +12,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.example.channels.ChannelPlayer
 import com.example.channels.ChannelViewModel
 import com.example.channels.R
 import com.example.channels.databinding.FragmentFavoritesBinding
 import com.example.channels.retrofit.ChannelJSON
 import com.example.channels.retrofit.RecyclerAdapter
+import com.example.channels.retrofit.toChannelDB
 import com.google.gson.Gson
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-class FavoritesFragment : Fragment() {
+class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
@@ -34,6 +37,20 @@ class FavoritesFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    override fun onChannelItemClicked(channel: ChannelJSON) {
+        val intent = Intent(requireContext(), ChannelPlayer::class.java)
+        val channelDB = channel.toChannelDB()
+        val bundle = Bundle()
+        bundle.putSerializable("", channelDB)
+        bundle.putString("channel_name", channel.name)
+        bundle.putString("channel_description", channel.epg[0].title)
+        bundle.putString("channel_icon_resource", channel.image)
+        bundle.putString("channel_stream", channel.stream)
+        bundle.putLong("channel_timestart", channel.epg[0].timestart)
+        bundle.putLong("channel_timestop", channel.epg[0].timestop)
+        intent.putExtras(bundle)
+        requireContext().startActivity(intent)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -78,7 +95,7 @@ class FavoritesFragment : Fragment() {
     private fun getAllChannelsList(channelJSONList: List<ChannelJSON>) {
         val intArray = getSavedNewIntArray(requireContext())
         val favoriteChannels = channelJSONList.filter { it.id in intArray }
-        adapter = RecyclerAdapter(requireContext(), favoriteChannels)
+        adapter = RecyclerAdapter(requireContext(), favoriteChannels, this)
         val recyclerView: RecyclerView = requireView().findViewById(R.id.recyclerView4)
         recyclerView.adapter = adapter
         if (!searchQuery.isNullOrEmpty()) {

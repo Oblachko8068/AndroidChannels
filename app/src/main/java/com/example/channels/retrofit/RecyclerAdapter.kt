@@ -16,9 +16,14 @@ import com.squareup.picasso.Picasso
 
 class RecyclerAdapter(
     private val context: Context,
-    private var channelJSONList: List<ChannelJSON>
+    private var channelJSONList: List<ChannelJSON>,
+    private val itemClickListener: OnChannelItemClickListener
 ) :
     RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
+
+    interface OnChannelItemClickListener {
+        fun onChannelItemClicked(channel: ChannelJSON)
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(newChannelJSONS: List<ChannelJSON>) {
@@ -68,20 +73,6 @@ class RecyclerAdapter(
                 }
                 saveNewIntArray(context, intArray)
             }
-            binding.root.setOnClickListener {
-                val intent = Intent(context, ChannelPlayer::class.java)
-                val channelDB = item.toChannelDB()
-                val bundle = Bundle()
-                bundle.putSerializable("", channelDB)
-                bundle.putString("channel_name", item.name)
-                bundle.putString("channel_description", item.epg[0].title)
-                bundle.putString("channel_icon_resource", item.image)
-                bundle.putString("channel_stream", item.stream)
-                bundle.putLong("channel_timestart", item.epg[0].timestart)
-                bundle.putLong("channel_timestop", item.epg[0].timestop)
-                intent.putExtras(bundle)
-                context.startActivity(intent)
-            }
         }
 
         private fun addElementToArray(array: IntArray, element: Int): IntArray {
@@ -125,6 +116,11 @@ class RecyclerAdapter(
     override fun getItemCount() = channelJSONList.size
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bind(channelJSONList[position], context)
+        val channel = channelJSONList[position]
+        holder.bind(channel, context)
+
+        holder.itemView.setOnClickListener {
+            itemClickListener.onChannelItemClicked(channel)
+        }
     }
 }
