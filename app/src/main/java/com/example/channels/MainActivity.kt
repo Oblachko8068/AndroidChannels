@@ -5,10 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
+import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.fragments.AllFragment
 import com.example.channels.fragments.FavoritesFragment
 import com.example.channels.fragments.FragmentAdapter
-import com.example.channels.repository.ChannelRepository
+import com.example.channels.repository.DownloadRepository
 import com.google.android.material.tabs.TabLayout
 
 
@@ -17,17 +18,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var channelViewModel: ChannelViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
 
         //ViewModel
         channelViewModel = ViewModelProvider(
             this,
-            ChannelViewModelFactory(ChannelRepository(this.applicationContext))
+            ChannelViewModelFactory(DownloadRepository(this.applicationContext))
         )[ChannelViewModel::class.java]
 
         //Поиск
-        val searchView = findViewById<SearchView>(R.id.searchView_tv_channels)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.searchViewTvChannels.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -49,16 +51,8 @@ class MainActivity : AppCompatActivity() {
         })
 
         //Вкладки
-        val viewpagerForTabs = findViewById<ViewPager>(R.id.viewpagerForTabs)
-        val tabs = findViewById<TabLayout>(R.id.tabs)
         val fragmentAdapter = FragmentAdapter(supportFragmentManager)
-
-        viewpagerForTabs.adapter = fragmentAdapter
-        tabs.setupWithViewPager(viewpagerForTabs)
-
-        //
-
+        binding.viewpagerForTabs.adapter = fragmentAdapter
+        binding.tabs.setupWithViewPager(binding.viewpagerForTabs)
     }
-
-
 }

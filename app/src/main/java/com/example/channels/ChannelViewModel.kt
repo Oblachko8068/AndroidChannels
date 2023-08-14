@@ -2,19 +2,19 @@ package com.example.channels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.example.channels.repository.ChannelRepository
+import com.example.channels.repository.DownloadRepository
 import com.example.channels.retrofit.ChannelJSON
 
 class ChannelViewModel(
-    private val channelRepository: ChannelRepository
+    private val downloadRepository: DownloadRepository
 ) : ViewModel() {
 
 
     private val channelJSONListLiveData: LiveData<List<ChannelJSON>> =
-        channelRepository.getChannelListLiveData()
+        downloadRepository.getChannelListLiveData()
 
     fun fetchChannels() {
-        channelRepository.fetchChannels()
+        downloadRepository.fetchChannels()
     }
 
     fun getChannelListLiveData(): LiveData<List<ChannelJSON>> {

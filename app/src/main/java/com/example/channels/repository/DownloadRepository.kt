@@ -7,9 +7,7 @@ import com.example.channels.retrofit.ChannelDB
 import com.example.channels.retrofit.ChannelJSON
 import com.example.channels.retrofit.ChannelsApi
 import com.example.channels.retrofit.ChannelsJSON
-import com.example.channels.retrofit.EpgDB
 import com.example.channels.retrofit.toChannelDB
-import com.example.channels.retrofit.toEpgDB
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -18,7 +16,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ChannelRepository(
+class DownloadRepository(
     private val context: Context
 ) {
 

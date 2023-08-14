@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.example.channels.ChannelViewModel
 import com.example.channels.R
+import com.example.channels.databinding.FragmentFavoritesBinding
 import com.example.channels.retrofit.ChannelJSON
 import com.example.channels.retrofit.RecyclerAdapter
 import com.google.gson.Gson
@@ -22,12 +23,14 @@ private const val ARG_PARAM2 = "param2"
 
 class FavoritesFragment : Fragment() {
 
+    private var _binding: FragmentFavoritesBinding? = null
+    private val binding get() = _binding!!
+
     var searchQuery: String? = null
     lateinit var adapter: RecyclerAdapter
     lateinit var layoutManager: LinearLayoutManager
     lateinit var channelJSONList2: List<ChannelJSON>
 
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
@@ -35,7 +38,7 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val channelViewModel =
-            ViewModelProvider(requireActivity()).get(ChannelViewModel::class.java)
+            ViewModelProvider(requireActivity())[ChannelViewModel::class.java]
         channelViewModel.fetchChannels()
         val channelList = channelViewModel.getChannelListLiveData()
         channelList.observe(requireActivity(), Observer { channelList ->
@@ -45,10 +48,9 @@ class FavoritesFragment : Fragment() {
             channelJSONList2 = channelList
         })
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView4)
-        recyclerView.setHasFixedSize(true)
+        binding.recyclerView4.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.layoutManager = layoutManager
+        binding.recyclerView4.layoutManager = layoutManager
 
         val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -125,7 +127,8 @@ class FavoritesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_favorites, container, false)
+    ): View {
+        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        return binding.root
     }
 }

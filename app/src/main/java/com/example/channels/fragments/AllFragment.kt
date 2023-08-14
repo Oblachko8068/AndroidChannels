@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.example.channels.ChannelViewModel
 import com.example.channels.R
+import com.example.channels.databinding.FragmentAllBinding
 import com.example.channels.retrofit.ChannelJSON
 import com.example.channels.retrofit.RecyclerAdapter
 
@@ -19,6 +20,10 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 class AllFragment : Fragment() {
+
+    private var _binding: FragmentAllBinding? = null
+    private val binding get() = _binding!!
+
     var searchQuery: String? = null
     lateinit var adapter: RecyclerAdapter
     lateinit var layoutManager: LinearLayoutManager
@@ -48,10 +53,9 @@ class AllFragment : Fragment() {
             channelJSONList2 = channelList
         })
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView3)
-        recyclerView.setHasFixedSize(true)
+        binding.recyclerView3.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.layoutManager = layoutManager
+        binding.recyclerView3.layoutManager = layoutManager
 
         val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -101,7 +105,8 @@ class AllFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_all, container, false)
+    ): View {
+        _binding = FragmentAllBinding.inflate(inflater, container, false)
+        return binding.root
     }
 }
