@@ -3,8 +3,8 @@ package com.example.channels.retrofit
 import retrofit2.Call
 import retrofit2.http.*
 
-interface ChannellsApi {
+interface ChannelsApi {
     @GET("rKkyTS")
-    fun getChannelList(): Call<Channels>
+    fun getChannelList(): Call<ChannelsJSON>
 
 }

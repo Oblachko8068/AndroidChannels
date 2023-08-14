@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.channels.ChannelPlayer
@@ -17,20 +16,25 @@ import com.example.channels.R
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 
-class RecyclerAdapter (private val context: Context, private var channelList: List<Channel>):
+class RecyclerAdapter(
+    private val context: Context,
+    private var channelJSONList: List<ChannelJSON>
+) :
     RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(newChannels: List<Channel>) {
-        channelList = newChannels
+    fun setData(newChannelJSONS: List<ChannelJSON>) {
+        channelJSONList = newChannelJSONS
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.channel_block, parent, false)
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(R.layout.channel_block, parent, false)
         return MyViewHolder(itemView)
     }
-    class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+
+    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val image: ImageView = itemView.findViewById(R.id.channelIcon)
         val txt_name: TextView = itemView.findViewById(R.id.channelName)
         val txt_team: TextView = itemView.findViewById(R.id.channelDesc)
@@ -39,35 +43,52 @@ class RecyclerAdapter (private val context: Context, private var channelList: Li
 
     }
 
-
-
-
-    override fun getItemCount() = channelList.size
+    override fun getItemCount() = channelJSONList.size
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val listItem = channelList[position]
-        Picasso.get().load(channelList[position].image).into(holder.image)
-        holder.txt_name.text = channelList[position].name
-        holder.txt_team.text = channelList[position].epg[0].title
+        val listItem = channelJSONList[position]
+        Picasso.get().load(channelJSONList[position].image).into(holder.image)
+        holder.txt_name.text = channelJSONList[position].name
+        holder.txt_team.text = channelJSONList[position].epg[0].title
         holder.icon_fav.setImageResource(R.drawable.baseline_star_24)
-        holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
+        holder.icon_fav.setColorFilter(
+            ContextCompat.getColor(
+                holder.itemView.context,
+                R.color.icon_disable
+            )
+        )
         val intArray1 = getSavedNewIntArray(context)
-        if (channelList[position].id in intArray1){
-            holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
+        if (channelJSONList[position].id in intArray1) {
+            holder.icon_fav.setColorFilter(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.icon_enable
+                )
+            )
         }
-        holder.icon_fav.setOnClickListener{
+        holder.icon_fav.setOnClickListener {
             var intArray = getSavedNewIntArray(context)
-            if (channelList[position].id in intArray){
-                holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_disable))
-                for (i in intArray.indices){
-                    if (intArray[i] == channelList[position].id){
+            if (channelJSONList[position].id in intArray) {
+                holder.icon_fav.setColorFilter(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.icon_disable
+                    )
+                )
+                for (i in intArray.indices) {
+                    if (intArray[i] == channelJSONList[position].id) {
                         intArray = removeElementFromArray(intArray, i)
                         break
                     }
                 }
             } else {
-                intArray = addElementToArray(intArray, channelList[position].id)
-                holder.icon_fav.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.icon_enable))
+                intArray = addElementToArray(intArray, channelJSONList[position].id)
+                holder.icon_fav.setColorFilter(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.icon_enable
+                    )
+                )
             }
             saveNewIntArray(context, intArray)
         }
@@ -76,7 +97,9 @@ class RecyclerAdapter (private val context: Context, private var channelList: Li
             val intent = Intent(context, ChannelPlayer::class.java)
 
             // Создаем Bundle и помещаем в него данные
+            val channelDB = listItem.toChannelDB()
             val bundle = Bundle()
+            bundle.putSerializable("", channelDB)
             bundle.putString("channel_name", listItem.name)
             bundle.putString("channel_description", listItem.epg[0].title)
             bundle.putString("channel_icon_resource", listItem.image)
@@ -90,15 +113,18 @@ class RecyclerAdapter (private val context: Context, private var channelList: Li
             context.startActivity(intent)
         }
     }
+
     fun addElementToArray(array: IntArray, element: Int): IntArray {
         val newArray = IntArray(array.size + 1)
         array.copyInto(newArray)
         newArray[array.size] = element
         return newArray
     }
+
     fun removeElementFromArray(array: IntArray, indexToRemove: Int): IntArray {
         return array.filterIndexed { index, _ -> index != indexToRemove }.toIntArray()
     }
+
     fun getSavedNewIntArray(context: Context): IntArray {
         val sharedPref = context.getSharedPreferences("new_array_preferences", Context.MODE_PRIVATE)
         val jsonString = sharedPref.getString("new_int_array_data", null)

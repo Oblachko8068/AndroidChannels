@@ -3,8 +3,8 @@ package com.example.channels
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import android.os.Handler
+import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,7 +16,8 @@ import com.squareup.picasso.Picasso
 
 class ChannelPlayer : AppCompatActivity() {
 
-    private var channelStream = "https://ia804503.us.archive.org/15/items/kikTXNL6MvX6ZpRXM/kikTXNL6MvX6ZpRXM.mp4"
+    private var channelStream =
+        "https://ia804503.us.archive.org/15/items/kikTXNL6MvX6ZpRXM/kikTXNL6MvX6ZpRXM.mp4"
     private var currentVideoPosition = 0
     private val handler = Handler()
 
@@ -120,7 +121,8 @@ class ChannelPlayer : AppCompatActivity() {
         }
 
     }
-/////////////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////////////
     private fun hideOtherViews() {
         val layoutTop = findViewById<View>(R.id.layoutTop)
         val layoutBottom = findViewById<View>(R.id.layoutBottom)
@@ -180,7 +182,10 @@ class ChannelPlayer : AppCompatActivity() {
         chTimeTTE.text = "Осталось $timeTTE минут"
 
         // Запускаем обновление каждую минуту (или секунду, если нужно)
-        handler.postDelayed({ updateRemainingTime(channelTimestop) }, 10 * 1000) // 60 * 1000 = 1 минута
+        handler.postDelayed(
+            { updateRemainingTime(channelTimestop) },
+            10 * 1000
+        ) // 60 * 1000 = 1 минута
     }
 
     // Функция для обновления прогресса полоски
@@ -188,7 +193,8 @@ class ChannelPlayer : AppCompatActivity() {
         val progressBar = findViewById<View>(R.id.progressBar)
         val interval = 1000L // Интервал обновления прогресса в миллисекундах (10 секунд)
         val currentTime = System.currentTimeMillis() / 1000 // Текущее время в секундах
-        val elapsedTime = currentTime - channelTimestart1 // Время, которое пользователь уже смотрит передачу
+        val elapsedTime =
+            currentTime - channelTimestart1 // Время, которое пользователь уже смотрит передачу
 
         // Вычисляем прогресс в процентах
         val progress = (elapsedTime.toFloat() / totalTime.toFloat()) * 100

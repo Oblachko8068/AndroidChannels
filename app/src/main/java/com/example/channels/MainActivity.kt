@@ -3,19 +3,27 @@ package com.example.channels
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
+import com.example.channels.fragments.AllFragment
 import com.example.channels.fragments.FavoritesFragment
 import com.example.channels.fragments.FragmentAdapter
-import com.example.channels.fragments.AllFragment
+import com.example.channels.repository.ChannelRepository
 import com.google.android.material.tabs.TabLayout
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var channelViewModel: ChannelViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //ретрофит
+        //ViewModel
+        channelViewModel = ViewModelProvider(
+            this,
+            ChannelViewModelFactory(ChannelRepository(this.applicationContext))
+        )[ChannelViewModel::class.java]
 
         //Поиск
         val searchView = findViewById<SearchView>(R.id.searchView_tv_channels)
@@ -25,8 +33,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val allFragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 0) as? AllFragment
-                val favoritesFragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 1) as? FavoritesFragment
+                val allFragment =
+                    supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 0) as? AllFragment
+                val favoritesFragment =
+                    supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 1) as? FavoritesFragment
 
                 allFragment?.searchQuery = newText
                 favoritesFragment?.searchQuery = newText
@@ -49,5 +59,6 @@ class MainActivity : AppCompatActivity() {
         //
 
     }
+
 
 }
