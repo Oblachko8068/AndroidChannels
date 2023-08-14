@@ -15,7 +15,7 @@ data class EpgDB(
     val timestart: Long,
     val timestop: Long,
     val title: String
-)
+) : Serializable
 
 fun ChannelJSON.toChannelDB() = ChannelDB(
     id = this.id,

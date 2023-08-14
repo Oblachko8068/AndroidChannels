@@ -5,11 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import android.widget.TextView
-import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import com.example.channels.databinding.ChannelPlayerBinding
+import com.example.channels.retrofit.ChannelDB
+import com.example.channels.retrofit.EpgDB
 import com.squareup.picasso.Picasso
 
 class ChannelPlayer : AppCompatActivity() {
@@ -32,19 +32,20 @@ class ChannelPlayer : AppCompatActivity() {
         binding.container.setOnClickListener {
             showOtherViews()
         }
-        val extras = intent.extras
-
-        if (extras != null) {
+        val bundle = intent.extras
+        val channelDB = bundle?.getSerializable("channel_data") as? ChannelDB
+        val epgDB = bundle?.getSerializable("epg_data") as? EpgDB
+        if (channelDB != null) {
             // Извлекаем данные из Bundle
-            val channelName = extras.getString("channel_name")
-            val channelDescription = extras.getString("channel_description")
-            val channelIconResource = extras.getString("channel_icon_resource")
+            val channelName = channelDB.name
+            val channelDescription = epgDB?.title
+            val channelIconResource = channelDB.image
             //val channelStream = extras.getString("channel_stream")
-            val channelTimestart = extras.getLong("channel_timestart")
-            val channelTimestop = extras.getLong("channel_timestop")
+            val channelTimestart = epgDB?.timestart
+            val channelTimestop = epgDB?.timestop
 
             //запись имени
-            binding.activeChannelName.text = "$channelName"
+            binding.activeChannelName.text = channelName
 
             //запись описания
             binding.activeChannelDesc.text = "$channelDescription"
@@ -69,7 +70,9 @@ class ChannelPlayer : AppCompatActivity() {
 
             // время до окончания
 
-            updateRemainingTime(channelTimestop)
+            if (channelTimestop != null) {
+                updateRemainingTime(channelTimestop)
+            }
 
             //устанавливаем полоску
             //val totalTime = channelTimestop - channelTimestart // Общая продолжительность передачи в секундах
@@ -178,7 +181,8 @@ class ChannelPlayer : AppCompatActivity() {
         val progress = (elapsedTime.toFloat() / totalTime.toFloat()) * 100
 
         // Устанавливаем ширину полоски в процентах
-        binding.progressBar.layoutParams.width = (progress * resources.displayMetrics.density).toInt()
+        binding.progressBar.layoutParams.width =
+            (progress * resources.displayMetrics.density).toInt()
         binding.progressBar.requestLayout()
 
         // Повторяем обновление прогресса через заданный интервал

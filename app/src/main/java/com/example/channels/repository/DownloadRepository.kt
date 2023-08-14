@@ -17,7 +17,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class DownloadRepository(
-    private val context: Context
+    private val context: Context,
+    private val channelRepository: ChannelRepository
 ) {
 
     private var ChannellsApi: ChannelsApi
@@ -54,7 +55,8 @@ class DownloadRepository(
                 val channelDBList = channelList.map { it.toChannelDB() }
                 //val epgDBList: ArrayList<EpgDB> = arrayListOf()
                 //channelList.forEach{ epgDBList.addAll(it.toEpgDB()) }
-                updateChannelList(channelList)
+                //updateChannelList(channelList)
+                channelRepository.updateChannelList(channelList, channelJSONListLiveData)
             }
         })
     }

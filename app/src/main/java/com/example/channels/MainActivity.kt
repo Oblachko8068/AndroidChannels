@@ -3,13 +3,16 @@ package com.example.channels
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.fragments.AllFragment
 import com.example.channels.fragments.FavoritesFragment
 import com.example.channels.fragments.FragmentAdapter
+import com.example.channels.repository.ChannelRepository
 import com.example.channels.repository.DownloadRepository
+import com.example.channels.retrofit.ChannelJSON
 import com.google.android.material.tabs.TabLayout
 
 
@@ -21,11 +24,10 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         //ViewModel
         channelViewModel = ViewModelProvider(
             this,
-            ChannelViewModelFactory(DownloadRepository(this.applicationContext))
+            ChannelViewModelFactory(DownloadRepository(this.applicationContext, ChannelRepository()))
         )[ChannelViewModel::class.java]
 
         //Поиск

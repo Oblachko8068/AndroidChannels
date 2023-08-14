@@ -19,6 +19,7 @@ import com.example.channels.databinding.FragmentFavoritesBinding
 import com.example.channels.retrofit.ChannelJSON
 import com.example.channels.retrofit.RecyclerAdapter
 import com.example.channels.retrofit.toChannelDB
+import com.example.channels.retrofit.toEpgDB
 import com.google.gson.Gson
 
 private const val ARG_PARAM1 = "param1"
@@ -38,16 +39,15 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
     private var param2: String? = null
 
     override fun onChannelItemClicked(channel: ChannelJSON) {
-        val intent = Intent(requireContext(), ChannelPlayer::class.java)
         val channelDB = channel.toChannelDB()
+        val epgDbList = channel.toEpgDB()
+        val epgDb = epgDbList.find { it.channelID == channelDB.id }
         val bundle = Bundle()
-        bundle.putSerializable("", channelDB)
-        bundle.putString("channel_name", channel.name)
-        bundle.putString("channel_description", channel.epg[0].title)
-        bundle.putString("channel_icon_resource", channel.image)
-        bundle.putString("channel_stream", channel.stream)
-        bundle.putLong("channel_timestart", channel.epg[0].timestart)
-        bundle.putLong("channel_timestop", channel.epg[0].timestop)
+
+        bundle.putSerializable("channel_data", channelDB)
+        bundle.putSerializable("epg_data", epgDb)
+
+        val intent = Intent(requireContext(), ChannelPlayer::class.java)
         intent.putExtras(bundle)
         requireContext().startActivity(intent)
     }
