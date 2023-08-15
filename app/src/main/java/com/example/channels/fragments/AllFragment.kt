@@ -1,39 +1,38 @@
 package com.example.channels.fragments
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.example.channels.ChannelPlayer
 import com.example.channels.ChannelViewModel
 import com.example.channels.R
-import com.example.channels.retrofit.Channel
+import com.example.channels.databinding.FragmentAllBinding
+import com.example.channels.retrofit.ChannelDb
+import com.example.channels.retrofit.EpgDb
 import com.example.channels.retrofit.RecyclerAdapter
-import com.google.gson.Gson
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [AllFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class AllFragment : Fragment() {
+class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
+
+    private var _binding: FragmentAllBinding? = null
+    private val binding get() = _binding!!
+
     var searchQuery: String? = null
     lateinit var adapter: RecyclerAdapter
     lateinit var layoutManager: LinearLayoutManager
-    lateinit var channelList2: List<Channel>
+    lateinit var channelDb: List<ChannelDb>
+    lateinit var epgDb: List<EpgDb>
 
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
@@ -48,107 +47,84 @@ class AllFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val channelViewModel = ViewModelProvider(requireActivity()).get(ChannelViewModel::class.java)
-        channelViewModel.fetchChannels()
-        var channelList = channelViewModel.getChannelListLiveData()
+        val channelViewModel = ViewModelProvider(requireActivity())[ChannelViewModel::class.java]
+        val channelList = channelViewModel.getChannelListLiveData()
+        val epgList = channelViewModel.getEpgListLiveData()
+
+
+        epgDb = epgList.value ?: emptyList() // Инициализация epgDb
         channelList.observe(requireActivity(), Observer { channelList ->
-            // Обработка изменений в списке каналов
-            // channelList - список каналов, который был обновлен
-            getAllChannelsList(channelList)
-            channelList2 = channelList
+            channelDb = channelList
+            getAllChannelsList(channelList, epgDb) // Теперь можно использовать epgDb
         })
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView3)
-        recyclerView.setHasFixedSize(true)
+        binding.recyclerView3.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.layoutManager = layoutManager
+        binding.recyclerView3.layoutManager = layoutManager
 
         val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
+
             override fun onPageSelected(position: Int) {
                 if (position == 0) {
-                    getAllChannelsList(channelList.value!!)
-                    if(!searchQuery.isNullOrEmpty()) {
+                    getAllChannelsList(channelList.value!!, epgDb)
+                    if (!searchQuery.isNullOrEmpty()) {
                         filterChannels(searchQuery)
                     }
                 }
             }
+
             override fun onPageScrollStateChanged(state: Int) {}
         })
     }
-    private fun getAllChannelsList(channelList: List<Channel>) {
-        /*ChannelsApi.getChannelList().enqueue(object : Callback<Channels> {
-            override fun onFailure(call: Call<Channels>, t: Throwable) {
 
-            }
-
-            override fun onResponse(call: Call<Channels>, response: Response<Channels>) {
-                channelList = response.body()?.channels ?: emptyList()
-                adapter = RecyclerAdapter(requireContext(), response.body()?.channels ?: emptyList())
-                val recyclerView: RecyclerView = requireView().findViewById(R.id.recyclerView3)
-                recyclerView.adapter = adapter
-                if(!searchQuery.isNullOrEmpty()) {
-                    filterChannels(searchQuery)
-                }
-            }
-        })*/
-        if (channelList != null) {
-            adapter = RecyclerAdapter(requireContext(), channelList!!)
-            val recyclerView: RecyclerView = requireView().findViewById(R.id.recyclerView3)
-            recyclerView.adapter = adapter
-            if(!searchQuery.isNullOrEmpty()) {
-                filterChannels(searchQuery)
-            }
+    private fun getAllChannelsList(channelDbList: List<ChannelDb>, epgDb: List<EpgDb>) {
+        adapter = RecyclerAdapter(requireContext(), channelDbList, epgDb, this)
+        val recyclerView: RecyclerView = binding.recyclerView3
+        recyclerView.adapter = adapter
+        if (!searchQuery.isNullOrEmpty()) {
+            filterChannels(searchQuery)
         }
     }
 
     fun filterChannels(searchQuery: String?) {
-        val filteredList: List<Channel> = if (!searchQuery.isNullOrEmpty()) {
-            channelList2?.filter { channel ->
+        val filteredList: List<ChannelDb> = if (!searchQuery.isNullOrEmpty()) {
+            channelDb.filter { channel ->
                 channel.name.contains(searchQuery, ignoreCase = true)
-            } ?: emptyList()
+            }
         } else {
-            channelList2 ?: emptyList()
+            channelDb
         }
 
-        val recyclerView = requireView().findViewById<RecyclerView>(R.id.recyclerView3)
+        val recyclerView = binding.recyclerView3
         val adapter = recyclerView.adapter as? RecyclerAdapter
         adapter?.setData(filteredList)
-    }
-
-
-    fun getSavedNewIntArray(context: Context): IntArray {
-        val sharedPref = context.getSharedPreferences("new_array_preferences", Context.MODE_PRIVATE)
-        val jsonString = sharedPref.getString("new_int_array_data", null)
-
-        return try {
-            if (jsonString != null) {
-                Gson().fromJson(jsonString, IntArray::class.java)
-            } else {
-                IntArray(0)
-            }
-        } catch (e: Exception) {
-            IntArray(0)  // Возвращаем пустой (нулевой) массив в случае ошибки
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_all, container, false)
+    ): View {
+        _binding = FragmentAllBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AllFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onChannelItemClicked(channel: ChannelDb) {
+        val epgDbList = epgDb
+        val selectedEpgDb  = epgDbList.find { it.channelID == channel.id }
+        val bundle = Bundle()
+
+        bundle.putSerializable("channel_data", channel)
+        bundle.putSerializable("epg_data", selectedEpgDb )
+
+        val intent = Intent(requireContext(), ChannelPlayer::class.java)
+        intent.putExtras(bundle)
+        requireContext().startActivity(intent)
     }
 }
