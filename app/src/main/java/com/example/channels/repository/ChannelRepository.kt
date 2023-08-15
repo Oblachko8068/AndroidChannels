@@ -6,14 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import com.example.channels.retrofit.ChannelDb
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-
 class ChannelRepository(context: Context) {
 
     private val sharedPreferences = context.getSharedPreferences("SharedPrefsChannel", Context.MODE_PRIVATE)
+    val updateChannelLiveData = MutableLiveData<Unit>()
 
     fun updateChannelList(channelDbList: List<ChannelDb>, channelDbListLiveData: MutableLiveData<List<ChannelDb>>) {
         channelDbListLiveData.value = channelDbList
         saveChannelListToSharedPref(channelDbList)
+        notifyChannelsUpdated()
     }
 
     fun getChannelListLiveData(): LiveData<List<ChannelDb>> {
@@ -29,9 +30,20 @@ class ChannelRepository(context: Context) {
         return liveData
     }
 
-    private fun saveChannelListToSharedPref(channelJsonList: List<ChannelDb>) {
-        val json = Gson().toJson(channelJsonList)
+    private fun saveChannelListToSharedPref(channelDbList: List<ChannelDb>) {
+        val json = Gson().toJson(channelDbList)
         sharedPreferences.edit().putString("channel_list", json).apply()
     }
+    ////////////////////
+    private fun notifyChannelsUpdated() {
+        updateChannelLiveData.postValue(Unit)
+    }
+
+    fun getUpdateChannelLiveData(): LiveData<Unit> {
+        return updateChannelLiveData
+    }
+
 }
+
+
 

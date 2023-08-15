@@ -14,8 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.example.channels.ChannelPlayer
 import com.example.channels.ChannelViewModel
+import com.example.channels.ChannelViewModelFactory
 import com.example.channels.R
 import com.example.channels.databinding.FragmentFavoritesBinding
+import com.example.channels.repository.ChannelRepository
+import com.example.channels.repository.DownloadRepository
+import com.example.channels.repository.EpgRepository
 import com.example.channels.retrofit.ChannelDb
 import com.example.channels.retrofit.EpgDb
 import com.example.channels.retrofit.RecyclerAdapter
@@ -38,32 +42,34 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
     private var param1: String? = null
     private var param2: String? = null
 
-    override fun onChannelItemClicked(channel: ChannelDb) {
-        val epgDbList = epgDb
-        val epgDb = epgDbList.find { it.channelID == channel.id }
-        val bundle = Bundle()
 
-        bundle.putSerializable("channel_data", channel)
-        bundle.putSerializable("epg_data", epgDb)
-
-        val intent = Intent(requireContext(), ChannelPlayer::class.java)
-        intent.putExtras(bundle)
-        requireContext().startActivity(intent)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val channelViewModel = ViewModelProvider(requireActivity())[ChannelViewModel::class.java]
+        val channelViewModel = ViewModelProvider(
+            requireActivity(),
+            ChannelViewModelFactory(
+                DownloadRepository(requireContext()),
+                ChannelRepository(requireContext()),
+                EpgRepository(requireContext())
+            )
+        )[ChannelViewModel::class.java]
         val channelList = channelViewModel.getChannelListLiveData()
         val epgList = channelViewModel.getEpgListLiveData()
 
-        //channelViewModel.fetchChannels()
-        epgDb = epgList.value ?: emptyList() // Инициализация epgDb
-        channelList.observe(requireActivity(), Observer { channelList ->
+        epgDb = epgList.value ?: emptyList()
+        channelDb = channelList.value ?: emptyList()
+        channelList.observe(viewLifecycleOwner, Observer { channelList ->
             channelDb = channelList
-            getAllChannelsList(channelList, epgDb) // Теперь можно использовать epgDb
+            updateChannelsAndEpg()
         })
+
+        epgList.observe(viewLifecycleOwner, Observer { epgList ->
+            epgDb = epgList
+            updateChannelsAndEpg()
+        })
+
 
         binding.recyclerView4.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(requireContext())
@@ -80,7 +86,8 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
 
             override fun onPageSelected(position: Int) {
                 if (position == 1) {
-                    getAllChannelsList(channelList.value!!, epgDb)
+                    updateChannelsAndEpg()
+                    //getAllChannelsList(channelList.value!!, epgDb)
                     if (!searchQuery.isNullOrEmpty()) {
                         filterChannels(searchQuery)
                     }
@@ -90,6 +97,12 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
             override fun onPageScrollStateChanged(state: Int) {}
         })
 
+    }
+
+    private fun updateChannelsAndEpg() {
+        if (::channelDb.isInitialized && ::epgDb.isInitialized) {
+            getAllChannelsList(channelDb, epgDb)
+        }
     }
 
     private fun getAllChannelsList(channelDbList: List<ChannelDb>, epgDb: List<EpgDb>) {
@@ -147,5 +160,17 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
     ): View {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
+    }
+    override fun onChannelItemClicked(channel: ChannelDb) {
+        val epgDbList = epgDb
+        val epgDb = epgDbList.find { it.channelID == channel.id }
+        val bundle = Bundle()
+
+        bundle.putSerializable("channel_data", channel)
+        bundle.putSerializable("epg_data", epgDb)
+
+        val intent = Intent(requireContext(), ChannelPlayer::class.java)
+        intent.putExtras(bundle)
+        requireContext().startActivity(intent)
     }
 }
