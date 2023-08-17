@@ -1,4 +1,4 @@
-package com.example.channels.retrofit
+package com.example.channels.model.retrofit
 
 data class ChannelsJson(
     val channels: List<ChannelJson>

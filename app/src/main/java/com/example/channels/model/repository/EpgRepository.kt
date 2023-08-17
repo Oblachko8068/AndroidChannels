@@ -1,18 +1,21 @@
-package com.example.channels.repository
+package com.example.channels.model.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.channels.retrofit.EpgDb
+import com.example.channels.model.retrofit.EpgDb
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class EpgRepository(context: Context)  {
-    private val sharedPreferences = context.getSharedPreferences("SharedPrefsEpg", Context.MODE_PRIVATE)
 
-    fun updateEpgList(epgDbList: List<EpgDb>, channelDbListLiveData: MutableLiveData<List<EpgDb>>) {
-        channelDbListLiveData.value = epgDbList
+    private val sharedPreferences = context.getSharedPreferences("SharedPrefsEpg", Context.MODE_PRIVATE)
+    var updateEpgLiveData = MutableLiveData<Unit>()
+
+    fun updateEpgList(epgDbList: List<EpgDb>, epgDbListLiveData: MutableLiveData<List<EpgDb>>) {
+        epgDbListLiveData.value = epgDbList
         saveEpgListToSharedPref(epgDbList)
+        notifyEpgUpdated()
     }
 
     fun getEpgListLiveData(): LiveData<List<EpgDb>> {
@@ -28,8 +31,16 @@ class EpgRepository(context: Context)  {
         return liveData
     }
 
-    private fun saveEpgListToSharedPref(channelJsonList: List<EpgDb>) {
-        val json = Gson().toJson(channelJsonList)
+    private fun saveEpgListToSharedPref(epgDbList: List<EpgDb>) {
+        val json = Gson().toJson(epgDbList)
         sharedPreferences.edit().putString("epg_list", json).apply()
+    }
+    /////////////
+    fun notifyEpgUpdated() {
+        updateEpgLiveData.postValue(Unit)
+    }
+
+    fun getUpdateEpgLiveData(): LiveData<Unit> {
+        return updateEpgLiveData
     }
 }

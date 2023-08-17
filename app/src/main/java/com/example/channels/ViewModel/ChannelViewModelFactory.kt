@@ -1,10 +1,10 @@
-package com.example.channels
+package com.example.channels.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.channels.repository.ChannelRepository
-import com.example.channels.repository.DownloadRepository
-import com.example.channels.repository.EpgRepository
+import com.example.channels.model.repository.ChannelRepository
+import com.example.channels.model.repository.DownloadRepository
+import com.example.channels.model.repository.EpgRepository
 
 class ChannelViewModelFactory(
     private val downloadRepository: DownloadRepository,
