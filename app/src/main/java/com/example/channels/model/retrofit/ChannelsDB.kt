@@ -1,4 +1,4 @@
-package com.example.channels.retrofit
+package com.example.channels.model.retrofit
 
 import java.io.Serializable
 

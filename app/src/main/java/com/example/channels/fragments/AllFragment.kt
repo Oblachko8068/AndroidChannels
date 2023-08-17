@@ -12,16 +12,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.example.channels.ChannelPlayer
-import com.example.channels.ChannelViewModel
-import com.example.channels.ChannelViewModelFactory
+import com.example.channels.ViewModel.ChannelViewModel
+import com.example.channels.ViewModel.ChannelViewModelFactory
 import com.example.channels.R
 import com.example.channels.databinding.FragmentAllBinding
-import com.example.channels.repository.ChannelRepository
-import com.example.channels.repository.DownloadRepository
-import com.example.channels.repository.EpgRepository
-import com.example.channels.retrofit.ChannelDb
-import com.example.channels.retrofit.EpgDb
-import com.example.channels.retrofit.RecyclerAdapter
+import com.example.channels.model.repository.ChannelRepository
+import com.example.channels.model.repository.DownloadRepository
+import com.example.channels.model.repository.EpgRepository
+import com.example.channels.model.retrofit.ChannelDb
+import com.example.channels.model.retrofit.EpgDb
+import com.example.channels.RecyclerAdapter
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"

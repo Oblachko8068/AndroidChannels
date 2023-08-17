@@ -4,13 +4,15 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
+import com.example.channels.ViewModel.ChannelViewModel
+import com.example.channels.ViewModel.ChannelViewModelFactory
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.fragments.AllFragment
 import com.example.channels.fragments.FavoritesFragment
 import com.example.channels.fragments.FragmentAdapter
-import com.example.channels.repository.ChannelRepository
-import com.example.channels.repository.DownloadRepository
-import com.example.channels.repository.EpgRepository
+import com.example.channels.model.repository.ChannelRepository
+import com.example.channels.model.repository.DownloadRepository
+import com.example.channels.model.repository.EpgRepository
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,9 +26,11 @@ class MainActivity : AppCompatActivity() {
         //ViewModel
         channelViewModel = ViewModelProvider(
             this,
-            ChannelViewModelFactory(DownloadRepository(this.applicationContext),
+            ChannelViewModelFactory(
+                DownloadRepository(this.applicationContext),
                 ChannelRepository(this.applicationContext),
-                EpgRepository(this.applicationContext))
+                EpgRepository(this.applicationContext)
+            )
         )[ChannelViewModel::class.java]
         channelViewModel.fetchChannels()
         //Поиск

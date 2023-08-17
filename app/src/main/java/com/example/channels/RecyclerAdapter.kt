@@ -1,4 +1,4 @@
-package com.example.channels.retrofit
+package com.example.channels
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,8 +6,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.channels.R
 import com.example.channels.databinding.ChannelBlockBinding
+import com.example.channels.model.retrofit.ChannelDb
+import com.example.channels.model.retrofit.EpgDb
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 
@@ -37,7 +38,7 @@ class RecyclerAdapter(
 
     class MyViewHolder(private val binding: ChannelBlockBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(channelItem: ChannelDb,epgItem: EpgDb, context: Context) {
+        fun bind(channelItem: ChannelDb, epgItem: EpgDb, context: Context) {
             Picasso.get().load(channelItem.image).into(binding.channelIcon)
             binding.channelName.text = channelItem.name
             binding.channelDesc.text = epgItem.title

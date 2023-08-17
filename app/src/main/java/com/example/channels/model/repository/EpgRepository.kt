@@ -1,9 +1,9 @@
-package com.example.channels.repository
+package com.example.channels.model.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.channels.retrofit.EpgDb
+import com.example.channels.model.retrofit.EpgDb
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

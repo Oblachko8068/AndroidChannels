@@ -1,11 +1,12 @@
-package com.example.channels.repository
+package com.example.channels.model.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.channels.retrofit.ChannelDb
+import com.example.channels.model.retrofit.ChannelDb
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+
 class ChannelRepository(context: Context) {
 
     private val sharedPreferences = context.getSharedPreferences("SharedPrefsChannel", Context.MODE_PRIVATE)

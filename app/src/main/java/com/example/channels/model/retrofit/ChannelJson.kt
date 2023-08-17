@@ -1,18 +1,18 @@
-package com.example.channels.retrofit
+package com.example.channels.model.retrofit
 
-data class Channels(
-    val channels: List<Channel>
+data class ChannelsJson(
+    val channels: List<ChannelJson>
 )
 
-data class Channel(
+data class ChannelJson(
     val id: Int,
     val name: String,
     val image: String,
-    val epg: List<EPG>,
+    val epg: List<EpgJson>,
     val stream: String
 )
 
-data class EPG(
+data class EpgJson(
     val id: Long,
     val timestart: Long,
     val timestop: Long,

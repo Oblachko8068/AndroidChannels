@@ -1,13 +1,14 @@
-package com.example.channels
+package com.example.channels.ViewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.example.channels.repository.ChannelRepository
-import com.example.channels.repository.DownloadRepository
-import com.example.channels.repository.EpgRepository
-import com.example.channels.retrofit.ChannelDb
-import com.example.channels.retrofit.EpgDb
+import com.example.channels.model.repository.ChannelRepository
+import com.example.channels.model.repository.DownloadRepository
+import com.example.channels.model.repository.EpgRepository
+import com.example.channels.model.retrofit.ChannelDb
+import com.example.channels.model.retrofit.EpgDb
+
 
 class ChannelViewModel(
     private val downloadRepository: DownloadRepository,

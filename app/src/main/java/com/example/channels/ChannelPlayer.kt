@@ -8,8 +8,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import com.example.channels.databinding.ChannelPlayerBinding
-import com.example.channels.retrofit.ChannelDb
-import com.example.channels.retrofit.EpgDb
+import com.example.channels.model.retrofit.ChannelDb
+import com.example.channels.model.retrofit.EpgDb
 import com.squareup.picasso.Picasso
 
 class ChannelPlayer : AppCompatActivity() {

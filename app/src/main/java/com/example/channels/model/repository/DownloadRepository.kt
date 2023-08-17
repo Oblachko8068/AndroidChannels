@@ -1,13 +1,13 @@
-package com.example.channels.repository
+package com.example.channels.model.repository
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
-import com.example.channels.retrofit.ChannelDb
-import com.example.channels.retrofit.ChannelsApi
-import com.example.channels.retrofit.ChannelsJson
-import com.example.channels.retrofit.EpgDb
-import com.example.channels.retrofit.toChannelDb
-import com.example.channels.retrofit.toEpgDb
+import com.example.channels.model.retrofit.ChannelDb
+import com.example.channels.model.retrofit.ChannelsApi
+import com.example.channels.model.retrofit.ChannelsJson
+import com.example.channels.model.retrofit.EpgDb
+import com.example.channels.model.retrofit.toChannelDb
+import com.example.channels.model.retrofit.toEpgDb
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
