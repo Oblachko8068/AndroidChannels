@@ -163,14 +163,21 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
     }
     override fun onChannelItemClicked(channel: ChannelDb) {
         val epgDbList = epgDb
-        val epgDb = epgDbList.find { it.channelID == channel.id }
+        val selectedEpgDb  = epgDbList.find { it.channelID == channel.id }
         val bundle = Bundle()
 
         bundle.putSerializable("channel_data", channel)
-        bundle.putSerializable("epg_data", epgDb)
+        bundle.putSerializable("epg_data", selectedEpgDb )
 
-        val intent = Intent(requireContext(), ChannelPlayer::class.java)
-        intent.putExtras(bundle)
-        requireContext().startActivity(intent)
+        val fragment = VideoPlayerFragment()
+        fragment.arguments = bundle
+        //fragment.show(requireActivity().supportFragmentManager, "videoPlayerDialog")
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(android.R.id.content, fragment)
+            .addToBackStack(null)
+            .commit()
+        //val intent = Intent(requireContext(), ChannelPlayer::class.java)
+        //intent.putExtras(bundle)
+        //requireContext().startActivity(intent)
     }
 }
