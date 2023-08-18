@@ -1,10 +1,12 @@
 package com.example.channels.fragments
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -136,7 +138,6 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
         _binding = FragmentAllBinding.inflate(inflater, container, false)
         return binding.root
     }
-
     override fun onChannelItemClicked(channel: ChannelDb) {
         val epgDbList = epgDb
         val selectedEpgDb  = epgDbList.find { it.channelID == channel.id }
@@ -145,8 +146,15 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
         bundle.putSerializable("channel_data", channel)
         bundle.putSerializable("epg_data", selectedEpgDb )
 
-        val intent = Intent(requireContext(), ChannelPlayer::class.java)
-        intent.putExtras(bundle)
-        requireContext().startActivity(intent)
+        val fragment = VideoPlayerFragment()
+        fragment.arguments = bundle
+        //fragment.show(requireActivity().supportFragmentManager, "videoPlayerDialog")
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(android.R.id.content, fragment)
+            .addToBackStack(null)
+            .commit()
+        //val intent = Intent(requireContext(), ChannelPlayer::class.java)
+        //intent.putExtras(bundle)
+        //requireContext().startActivity(intent)
     }
 }

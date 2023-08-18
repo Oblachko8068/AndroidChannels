@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="@color/main_background">
-
     <!--Поиск-->
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView_tv_channels"
