@@ -47,14 +47,7 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val channelViewModel = ViewModelProvider(
-            requireActivity(),
-            ChannelViewModelFactory(
-                DownloadRepository(requireContext()),
-                ChannelRepository(requireContext()),
-                EpgRepository(requireContext())
-            )
-        )[ChannelViewModel::class.java]
+        val channelViewModel = ViewModelProvider(requireActivity())[ChannelViewModel::class.java]
         val channelList = channelViewModel.getChannelListLiveData()
         val epgList = channelViewModel.getEpgListLiveData()
 

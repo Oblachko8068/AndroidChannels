@@ -8,6 +8,8 @@ import com.example.channels.model.retrofit.ChannelsJson
 import com.example.channels.model.retrofit.EpgDb
 import com.example.channels.model.retrofit.toChannelDb
 import com.example.channels.model.retrofit.toEpgDb
+import com.example.channels.model.room.ChannelDao
+import com.example.channels.model.room.EpgDao
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -18,13 +20,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class DownloadRepository(
     context: Context,
+    channelDao: ChannelDao,
+    epgDao: EpgDao
 ) {
 
     private var ChannellsApi: ChannelsApi
     private var channelDbLiveData = MutableLiveData<List<ChannelDb>>()
     private var epgDbLiveData = MutableLiveData<List<EpgDb>>()
-    private var channelRepository: ChannelRepository = ChannelRepository(context)
-    private var epgRepository: EpgRepository = EpgRepository(context)
+    private var channelRepository: ChannelRepository = ChannelRepository(context, channelDao)
+    private var epgRepository: EpgRepository = EpgRepository(context, epgDao)
 
     init {
         // Создание логгера для перехвата и отображения сетевых запросов и ответов

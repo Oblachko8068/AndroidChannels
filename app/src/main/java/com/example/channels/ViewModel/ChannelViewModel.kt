@@ -1,7 +1,7 @@
 package com.example.channels.ViewModel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+//import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.example.channels.model.repository.ChannelRepository
 import com.example.channels.model.repository.DownloadRepository
@@ -29,7 +29,7 @@ class ChannelViewModel(
         epgRepository.getEpgListLiveData()
     }*/
     init {
-        channelRepository.updateChannelLiveData.observeForever {
+        /*channelRepository.updateChannelLiveData.observeForever {
             channelDbLiveData = Transformations.switchMap(updateChannelLiveData) {
                 channelRepository.getChannelListLiveData()
             }
@@ -62,7 +62,7 @@ class ChannelViewModel(
             epgDbLiveData = Transformations.switchMap(updateEpgLiveData) {
                 epgRepository.getEpgListLiveData()
             }
-        }
+        }*/
     }
 
     fun fetchChannels() {
