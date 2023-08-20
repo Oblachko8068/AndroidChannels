@@ -3,7 +3,6 @@ package com.example.channels.fragments
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
-import android.text.BoringLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -100,17 +99,17 @@ class VideoPlayerFragment : Fragment() {
             //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
         binding.container.setOnClickListener {
-            if (binding.playerVideoView.isPlaying){
-            coroutineScope.launch {
-                if (visibilityView){
-                    hideOtherViews()
-                    visibilityView = false
-                } else {
-                    showOtherViews()
-                    delay(3000)
-                    hideOtherViews()
+            if (binding.playerVideoView.isPlaying) {
+                coroutineScope.launch {
+                    if (visibilityView) {
+                        hideOtherViews()
+                        visibilityView = false
+                    } else {
+                        showOtherViews()
+                        delay(3000)
+                        hideOtherViews()
+                    }
                 }
-            }
             }
         }
         // Сохраняем текущую позицию видео при его завершении
@@ -129,18 +128,23 @@ class VideoPlayerFragment : Fragment() {
                     R.id.action_setting1 -> {
                         true
                     }
+
                     R.id.action_setting2 -> {
                         true
                     }
+
                     R.id.action_setting3 -> {
                         true
                     }
+
                     R.id.action_setting4 -> {
                         true
                     }
+
                     R.id.action_setting5 -> {
                         true
                     }
+
                     else -> false
                 }
             }

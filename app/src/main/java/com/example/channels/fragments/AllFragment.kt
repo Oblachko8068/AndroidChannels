@@ -10,12 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
-import com.example.channels.ViewModel.ChannelViewModel
 import com.example.channels.R
+import com.example.channels.RecyclerAdapter
+import com.example.channels.ViewModel.ChannelViewModel
 import com.example.channels.databinding.FragmentAllBinding
 import com.example.channels.model.retrofit.ChannelDb
 import com.example.channels.model.retrofit.EpgDb
-import com.example.channels.RecyclerAdapter
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -87,6 +87,7 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
             override fun onPageScrollStateChanged(state: Int) {}
         })
     }
+
     private fun updateChannelsAndEpg() {
         if (::channelDb.isInitialized && ::epgDb.isInitialized) {
             getAllChannelsList(channelDb, epgDb)
@@ -126,11 +127,11 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
     override fun onChannelItemClicked(channel: ChannelDb) {
         val epgDbList = epgDb
-        val selectedEpgDb  = epgDbList.find { it.channelID == channel.id }
+        val selectedEpgDb = epgDbList.find { it.channelID == channel.id }
         val bundle = Bundle()
 
         bundle.putSerializable("channel_data", channel)
-        bundle.putSerializable("epg_data", selectedEpgDb )
+        bundle.putSerializable("epg_data", selectedEpgDb)
 
         val fragment = VideoPlayerFragment()
         fragment.arguments = bundle
