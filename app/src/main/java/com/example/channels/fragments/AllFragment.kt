@@ -1,26 +1,18 @@
 package com.example.channels.fragments
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
-import com.example.channels.ChannelPlayer
 import com.example.channels.ViewModel.ChannelViewModel
-import com.example.channels.ViewModel.ChannelViewModelFactory
 import com.example.channels.R
 import com.example.channels.databinding.FragmentAllBinding
-import com.example.channels.model.repository.ChannelRepository
-import com.example.channels.model.repository.DownloadRepository
-import com.example.channels.model.repository.EpgRepository
 import com.example.channels.model.retrofit.ChannelDb
 import com.example.channels.model.retrofit.EpgDb
 import com.example.channels.RecyclerAdapter
@@ -53,14 +45,7 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val channelViewModel = ViewModelProvider(
-            requireActivity(),
-            ChannelViewModelFactory(
-                DownloadRepository(requireContext()),
-                ChannelRepository(requireContext()),
-                EpgRepository(requireContext())
-            )
-        )[ChannelViewModel::class.java]
+        val channelViewModel = ViewModelProvider(requireActivity())[ChannelViewModel::class.java]
         val channelList = channelViewModel.getChannelListLiveData()
         val epgList = channelViewModel.getEpgListLiveData()
 
@@ -138,6 +123,7 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
         _binding = FragmentAllBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onChannelItemClicked(channel: ChannelDb) {
         val epgDbList = epgDb
         val selectedEpgDb  = epgDbList.find { it.channelID == channel.id }

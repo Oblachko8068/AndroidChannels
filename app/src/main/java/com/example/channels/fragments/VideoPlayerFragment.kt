@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 
 /*TODO 1. исправить кнопку настройки( меню показывается снизу)
        2. добавить обработку proggressbar
+       3. показ на весь экран
  */
 
 class VideoPlayerFragment : Fragment() {
@@ -49,6 +50,7 @@ class VideoPlayerFragment : Fragment() {
         super.onDestroyView()
         coroutineScope.cancel() // Cancel all coroutines when the view is destroyed
         visibilityView = true
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         _binding = null
     }
 
