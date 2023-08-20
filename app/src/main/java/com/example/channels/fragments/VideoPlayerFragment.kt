@@ -96,7 +96,6 @@ class VideoPlayerFragment : Fragment() {
             val fragment =
                 requireActivity().supportFragmentManager.findFragmentById(android.R.id.content)!!
             requireActivity().supportFragmentManager.beginTransaction().remove(fragment).commit()
-            //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
         binding.container.setOnClickListener {
             if (binding.playerVideoView.isPlaying) {
