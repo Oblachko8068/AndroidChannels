@@ -3,6 +3,7 @@ package com.example.channels.model.repository
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import com.example.channels.model.retrofit.ChannelDb
 import com.example.channels.model.retrofit.EpgDb
 import com.example.channels.model.room.EpgDao
@@ -72,7 +73,7 @@ class EpgRepository(
         }
     }
 
-    fun getEpgListLiveData(): LiveData<List<EpgDb>> {
+    /*fun getEpgListLiveData(): LiveData<List<EpgDb>> {
         val liveData = MutableLiveData<List<EpgDb>>()
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -87,6 +88,10 @@ class EpgRepository(
         }
 
         return liveData
+    }*/
+
+    fun getEpgListLiveData(): LiveData<List<EpgDb>> {
+        return epgDao.getEpgListAllTestVersion().map { EpgDbEntity -> EpgDbEntity.map { EpgDbEntity -> EpgDbEntity.toEpgDb() } }
     }
 
 }

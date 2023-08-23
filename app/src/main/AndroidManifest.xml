@@ -15,11 +15,6 @@
         android:theme="@style/Theme.Channels"
         tools:targetApi="31">
         <activity
-            android:name=".ChannelPlayer"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullScreenTheme">
-        </activity>
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="fullSensor">

@@ -16,8 +16,8 @@ class ChannelViewModel(
     private val epgRepository: EpgRepository,
 ) : ViewModel() {
 
-    private val updateChannelLiveData = channelRepository.getUpdateChannelLiveData()
-    private val updateEpgLiveData = epgRepository.getUpdateEpgLiveData()
+    //private val updateChannelLiveData = channelRepository.getUpdateChannelLiveData()
+    //private val updateEpgLiveData = epgRepository.getUpdateEpgLiveData()
 
     private var channelDbLiveData: LiveData<List<ChannelDb>> = channelRepository.getChannelListLiveData()
     private var epgDbLiveData: LiveData<List<EpgDb>> = epgRepository.getEpgListLiveData()

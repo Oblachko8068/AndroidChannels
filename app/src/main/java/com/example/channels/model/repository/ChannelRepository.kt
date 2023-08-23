@@ -3,6 +3,7 @@ package com.example.channels.model.repository
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import com.example.channels.model.retrofit.ChannelDb
 import com.example.channels.model.room.ChannelDao
 import com.example.channels.model.room.ChannelDbEntity
@@ -74,7 +75,7 @@ class ChannelRepository(
         }
     }
 
-    fun getChannelListLiveData(): LiveData<List<ChannelDb>> {
+    /*fun getChannelListLiveData(): LiveData<List<ChannelDb>> {
         val liveData = MutableLiveData<List<ChannelDb>>()
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -88,7 +89,12 @@ class ChannelRepository(
         }
 
         return liveData
+    }*/
+
+    fun getChannelListLiveData(): LiveData<List<ChannelDb>> {
+        return channelDao.getChannelListAllTestVersion()
     }
+
 
 }
 
