@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.channels.model.repository.ChannelRepository
 import com.example.channels.model.repository.DownloadRepository
+import com.example.channels.model.repository.DownloadRepositoryRetrofit
 import com.example.channels.model.repository.EpgRepository
 
 class ChannelViewModelFactory(
@@ -19,3 +20,7 @@ class ChannelViewModelFactory(
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+
+ui use DownloadRepository
+domain home DownloadRepository
+data get instance DownloadRepository

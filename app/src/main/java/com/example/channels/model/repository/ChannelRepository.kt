@@ -23,14 +23,10 @@ class ChannelRepository(
     private val sharedPreferences = context.getSharedPreferences("SharedPrefsChannel", Context.MODE_PRIVATE)
     val updateChannelLiveData = MutableLiveData<Unit>()
 
-    fun updateChannelList(channelDbList: List<ChannelDb>, channelDbListLiveData: MutableLiveData<List<ChannelDb>>) {
-        channelDbListLiveData.value = channelDbList
-        //saveChannelListToSharedPref(channelDbList)
-
+    fun updateChannelList(channelDbList: List<ChannelDb>) {
         for (channel in channelDbList) {
             createChannel(channel)
         }
-        notifyChannelsUpdated()
     }
 
     /*fun getChannelListLiveData(): LiveData<List<ChannelDb>> {
@@ -65,13 +61,13 @@ class ChannelRepository(
     }
 
     fun getChannelList(): List<ChannelDb?> { //получает каналы полностью
-        return channelDao.getChannelListAll().map { ChannelDbEntity -> ChannelDbEntity?.toChannelDb()}
+        return channelDao.getChannelListAll().map { channelDbEntity -> channelDbEntity?.fromChannel()()}
     }
 
-    fun createChannel(channelDb: ChannelDb) {
+    fun createChannel(list: List<ChannelDb>) {
         CoroutineScope(Dispatchers.IO).launch {
             val entity = ChannelDbEntity.fromChannelDb(channelDb)
-            channelDao.createChannel(entity)
+            channelDao.createChannel(list.map { it.fr0  })
         }
     }
 

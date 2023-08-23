@@ -1,5 +1,6 @@
 package com.example.channels.model.room
 
+import android.icu.util.ULocale
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.Dao
@@ -18,9 +19,11 @@ interface ChannelDao {
     @Query("SELECT * FROM channels")
     fun getChannelListAll(): List<ChannelDbEntity?>
 
+    fun getChannelListCategory(y): List<ChannelDbEntity?>
+
     @Query("SELECT * FROM channels")
     fun getChannelListAllTestVersion(): LiveData<List<ChannelDb>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun createChannel(channelDbEntity: ChannelDbEntity)
+    fun createChannel(list: List<ChannelDbEntity>)
 }

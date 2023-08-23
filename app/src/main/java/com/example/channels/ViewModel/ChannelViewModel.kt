@@ -4,14 +4,14 @@ import androidx.lifecycle.LiveData
 //import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.example.channels.model.repository.ChannelRepository
-import com.example.channels.model.repository.DownloadRepository
+import com.example.channels.model.repository.DownloadRepositoryRetrofit
 import com.example.channels.model.repository.EpgRepository
 import com.example.channels.model.retrofit.ChannelDb
 import com.example.channels.model.retrofit.EpgDb
 
 
 class ChannelViewModel(
-    private val downloadRepository: DownloadRepository,
+    private val DownloadRepositoryRetrofit: DownloadRepositoryRetrofit,
     private val channelRepository: ChannelRepository,
     private val epgRepository: EpgRepository,
 ) : ViewModel() {
@@ -66,7 +66,7 @@ class ChannelViewModel(
     }
 
     fun fetchChannels() {
-        downloadRepository.fetchChannels()
+        DownloadRepositoryRetrofit.fetchChannels()
     }
 
     fun getChannelListLiveData(): LiveData<List<ChannelDb>> {

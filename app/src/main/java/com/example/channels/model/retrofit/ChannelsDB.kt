@@ -17,7 +17,7 @@ data class EpgDb(
     val title: String
 ) : Serializable
 
-fun ChannelJson.toChannelDb() = ChannelDb(
+fun ChannelJson.toChannelDbEntity() = ChannelDb(
     id = this.id,
     name = this.name,
     image = this.image,

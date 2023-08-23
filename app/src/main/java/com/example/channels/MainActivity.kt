@@ -1,5 +1,6 @@
 package com.example.channels
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -12,7 +13,7 @@ import com.example.channels.fragments.AllFragment
 import com.example.channels.fragments.FavoritesFragment
 import com.example.channels.fragments.FragmentAdapter
 import com.example.channels.model.repository.ChannelRepository
-import com.example.channels.model.repository.DownloadRepository
+import com.example.channels.model.repository.DownloadRepositoryRetrofit
 import com.example.channels.model.repository.EpgRepository
 import com.example.channels.model.room.AppDatabase
 import com.example.channels.model.room.ChannelDao
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Di.init(applicationContext)
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -43,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         channelViewModel = ViewModelProvider(
             this,
             ChannelViewModelFactory(
-                DownloadRepository(this.applicationContext, channelDao, epgDao),
+                Di.downloadRepository,
                 ChannelRepository(this.applicationContext, channelDao),
                 EpgRepository(this.applicationContext, epgDao)
             )

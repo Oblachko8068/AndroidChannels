@@ -12,21 +12,12 @@ data class ChannelDbEntity(
     val name: String,
     val image: String,
     val stream: String
-) {
+)
 
-    fun toChannelDb(): ChannelDb = ChannelDb(
-        id = id,
-        name = name,
-        image = image,
-        stream = stream
-    )
-
-    companion object{
-        fun fromChannelDb(channelDb: ChannelDb): ChannelDbEntity = ChannelDbEntity(
-            id = channelDb.id,
-            name = channelDb.name,
-            image = channelDb.image,
-            stream = channelDb.stream
-        )
-    }
-}
+fun ChannelDb.fromChannelDb(): ChannelDbEntity = ChannelDbEntity(
+    id = this.id,
+    name = this.name,
+    image = this.image,
+    stream = this.stream,
+    category = this.category,
+)
