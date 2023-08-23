@@ -17,8 +17,6 @@ import com.example.channels.databinding.FragmentAllBinding
 import com.example.channels.model.retrofit.ChannelDb
 import com.example.channels.model.retrofit.EpgDb
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
@@ -30,17 +28,6 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
     lateinit var layoutManager: LinearLayoutManager
     lateinit var channelDb: List<ChannelDb>
     lateinit var epgDb: List<EpgDb>
-
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -135,13 +122,9 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
         val fragment = VideoPlayerFragment()
         fragment.arguments = bundle
-        //fragment.show(requireActivity().supportFragmentManager, "videoPlayerDialog")
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(android.R.id.content, fragment)
             .addToBackStack(null)
             .commit()
-        //val intent = Intent(requireContext(), ChannelPlayer::class.java)
-        //intent.putExtras(bundle)
-        //requireContext().startActivity(intent)
     }
 }

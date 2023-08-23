@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentVideoPlayerBinding
 import com.example.channels.model.retrofit.ChannelDb
 import com.example.channels.model.retrofit.EpgDb
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -47,7 +47,7 @@ class VideoPlayerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        coroutineScope.cancel() // Cancel all coroutines when the view is destroyed
+        coroutineScope.cancel()
         visibilityView = true
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         _binding = null
@@ -71,16 +71,15 @@ class VideoPlayerFragment : Fragment() {
             binding.activeChannelDesc.text = "$channelDescription"
 
             //запись иконки
-            Picasso.get()
-                .load(channelIconResource)
-                .into(binding.activeChannelIcon)
+            context?.let {
+                Glide.with(it)
+                    .load(channelIconResource)
+                    .into(binding.activeChannelIcon)
+            }
 
             //запись видео
-            //val channelStreamUri = Uri.parse(channelStream)
             binding.playerVideoView.setVideoURI(Uri.parse(channelStream))
-
             binding.playerVideoView.setOnPreparedListener {
-                // Запуск воспроизведения после подготовки видео
                 it.start()
             }
 
@@ -115,13 +114,9 @@ class VideoPlayerFragment : Fragment() {
         binding.playerVideoView.setOnCompletionListener {
             currentVideoPosition = 0
         }
-        // Назначьте обработчик нажатия на кнопку "настройки"
         binding.settings.setOnClickListener {
-            // Создайте объект класса PopupMenu, указав контекст и вью для привязки
             val popupMenu = PopupMenu(requireContext(), binding.settings)
-            // Загрузите ресурс с всплывающим меню
             popupMenu.menuInflater.inflate(R.menu.menu_settings, popupMenu.menu)
-            // Установите обработчик нажатия на элементы меню
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_setting1 -> {

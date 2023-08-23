@@ -11,9 +11,7 @@ import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.fragments.AllFragment
 import com.example.channels.fragments.FavoritesFragment
 import com.example.channels.fragments.FragmentAdapter
-import com.example.channels.model.repository.ChannelRepository
-import com.example.channels.model.repository.DownloadRepository
-import com.example.channels.model.repository.EpgRepository
+import com.example.channels.model.repository.EpgRepositoryRetrofit
 import com.example.channels.model.room.AppDatabase
 import com.example.channels.model.room.ChannelDao
 import com.example.channels.model.room.EpgDao
@@ -32,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Di.init(applicationContext)
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -43,9 +42,9 @@ class MainActivity : AppCompatActivity() {
         channelViewModel = ViewModelProvider(
             this,
             ChannelViewModelFactory(
-                DownloadRepository(this.applicationContext, channelDao, epgDao),
-                ChannelRepository(this.applicationContext, channelDao),
-                EpgRepository(this.applicationContext, epgDao)
+                Di.downloadRepository,
+                Di.channelRepository,
+                Di.epgRepository,
             )
         )[ChannelViewModel::class.java]
         channelViewModel.fetchChannels()

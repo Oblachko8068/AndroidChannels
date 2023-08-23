@@ -19,8 +19,6 @@ import com.example.channels.model.retrofit.ChannelDb
 import com.example.channels.model.retrofit.EpgDb
 import com.google.gson.Gson
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
@@ -32,10 +30,6 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
     lateinit var layoutManager: LinearLayoutManager
     lateinit var channelDb: List<ChannelDb>
     lateinit var epgDb: List<EpgDb>
-
-    private var param1: String? = null
-    private var param2: String? = null
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -73,7 +67,6 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
             override fun onPageSelected(position: Int) {
                 if (position == 1) {
                     updateChannelsAndEpg()
-                    //getAllChannelsList(channelList.value!!, epgDb)
                     if (!searchQuery.isNullOrEmpty()) {
                         filterChannels(searchQuery)
                     }
@@ -132,13 +125,6 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -158,13 +144,9 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
 
         val fragment = VideoPlayerFragment()
         fragment.arguments = bundle
-        //fragment.show(requireActivity().supportFragmentManager, "videoPlayerDialog")
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(android.R.id.content, fragment)
             .addToBackStack(null)
             .commit()
-        //val intent = Intent(requireContext(), ChannelPlayer::class.java)
-        //intent.putExtras(bundle)
-        //requireContext().startActivity(intent)
     }
 }

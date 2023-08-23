@@ -1,20 +1,18 @@
 package com.example.channels.model.room
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
+import com.example.channels.model.retrofit.EpgDb
 
 @Dao
 interface EpgDao {
 
-   /* @Query("SELECT channel_id, id, title FROM epgs")
-    suspend fun findViewingTheEpgTitleTuple(): ViewingTheEpgTitleTuple?*/
-
     @Query("SELECT * FROM epgs")
-    fun getEpgListAll(): List<EpgDbEntity?>
+    fun getEpgListAll(): LiveData<List<EpgDb>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun createEpg(epgDbEntity: EpgDbEntity)
+    fun createEpg(epgDbEntity: List<EpgDbEntity>)
 }

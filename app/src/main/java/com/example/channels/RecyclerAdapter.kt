@@ -6,11 +6,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.channels.databinding.ChannelBlockBinding
 import com.example.channels.model.retrofit.ChannelDb
 import com.example.channels.model.retrofit.EpgDb
 import com.google.gson.Gson
-import com.squareup.picasso.Picasso
+
 
 class RecyclerAdapter(
     private val context: Context,
@@ -39,7 +40,9 @@ class RecyclerAdapter(
     class MyViewHolder(private val binding: ChannelBlockBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(channelItem: ChannelDb, epgItem: EpgDb, context: Context) {
-            Picasso.get().load(channelItem.image).into(binding.channelIcon)
+            Glide.with(context)
+                .load(channelItem.image)
+                .into(binding.channelIcon)
             binding.channelName.text = channelItem.name
             binding.channelDesc.text = epgItem.title
             binding.iconFav.setImageResource(R.drawable.baseline_star_24)

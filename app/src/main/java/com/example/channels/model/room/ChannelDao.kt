@@ -1,20 +1,18 @@
 package com.example.channels.model.room
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
+import com.example.channels.model.retrofit.ChannelDb
 
 @Dao
 interface ChannelDao {
 
-    @Query("SELECT id, name, image FROM channels")
-    suspend fun findViewingTheChannelListTuple(): ViewingTheChannelListTuple?
-
     @Query("SELECT * FROM channels")
-    fun getChannelListAll(): List<ChannelDbEntity?>
+    fun getChannelListAll(): LiveData<List<ChannelDb>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun createChannel(channelDbEntity: ChannelDbEntity)
+    fun createChannel(channelDbEntity: List<ChannelDbEntity>)
 }
