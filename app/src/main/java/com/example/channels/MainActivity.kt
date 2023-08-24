@@ -11,9 +11,7 @@ import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.fragments.AllFragment
 import com.example.channels.fragments.FavoritesFragment
 import com.example.channels.fragments.FragmentAdapter
-import com.example.channels.model.repository.ChannelRepository
-import com.example.channels.model.repository.DownloadRepository
-import com.example.channels.model.repository.EpgRepository
+import com.example.channels.model.repository.EpgRepositoryRetrofit
 import com.example.channels.model.room.AppDatabase
 import com.example.channels.model.room.ChannelDao
 import com.example.channels.model.room.EpgDao
@@ -22,8 +20,6 @@ import com.example.channels.model.room.EpgDao
 class MainActivity : AppCompatActivity() {
 
     private lateinit var channelViewModel: ChannelViewModel
-    private lateinit var channelDao: ChannelDao
-    private lateinit var epgDao: EpgDao
 
     //room создание экземпляра класса AppDatabase базы данных
     private val database: AppDatabase by lazy<AppDatabase> {
@@ -32,20 +28,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Di.init(applicationContext)
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //room Инициализация channelDao и epgDao
-        channelDao = database.getChannelDao() //  метод получения Dao
-        epgDao = database.getEpgDao() //  метод получения Dao
 
         //ViewModel
         channelViewModel = ViewModelProvider(
             this,
             ChannelViewModelFactory(
-                DownloadRepository(this.applicationContext, channelDao, epgDao),
-                ChannelRepository(this.applicationContext, channelDao),
-                EpgRepository(this.applicationContext, epgDao)
+                Di.downloadRepository,
+                Di.channelRepository,
+                Di.epgRepository,
             )
         )[ChannelViewModel::class.java]
         channelViewModel.fetchChannels()

@@ -14,11 +14,9 @@ import com.example.channels.R
 import com.example.channels.RecyclerAdapter
 import com.example.channels.ViewModel.ChannelViewModel
 import com.example.channels.databinding.FragmentAllBinding
-import com.example.channels.model.retrofit.ChannelDb
-import com.example.channels.model.retrofit.EpgDb
+import com.example.channels.model.retrofit.Channel
+import com.example.channels.model.retrofit.Epg
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
@@ -28,18 +26,15 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
     var searchQuery: String? = null
     lateinit var adapter: RecyclerAdapter
     lateinit var layoutManager: LinearLayoutManager
-    lateinit var channelDb: List<ChannelDb>
-    lateinit var epgDb: List<EpgDb>
+    lateinit var channel: List<Channel>
+    lateinit var epg: List<Epg>
 
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAllBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,15 +44,16 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
         val channelList = channelViewModel.getChannelListLiveData()
         val epgList = channelViewModel.getEpgListLiveData()
 
-        epgDb = epgList.value ?: emptyList()
-        channelDb = channelList.value ?: emptyList()
+        epg = epgList.value ?: emptyList()
+        channel = channelList.value ?: emptyList()
+
         channelList.observe(viewLifecycleOwner, Observer { channelList ->
-            channelDb = channelList
+            channel = channelList
             updateChannelsAndEpg()
         })
 
         epgList.observe(viewLifecycleOwner, Observer { epgList ->
-            epgDb = epgList
+            epg = epgList
             updateChannelsAndEpg()
         })
 
@@ -77,7 +73,7 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
             override fun onPageSelected(position: Int) {
                 if (position == 0) {
                     updateChannelsAndEpg()
-                    //getAllChannelsList(channelList.value!!, epgDb)
+                    //getAllChannelsList(channelList.value!!, epg)
                     if (!searchQuery.isNullOrEmpty()) {
                         filterChannels(searchQuery)
                     }
@@ -89,13 +85,13 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
     }
 
     private fun updateChannelsAndEpg() {
-        if (::channelDb.isInitialized && ::epgDb.isInitialized) {
-            getAllChannelsList(channelDb, epgDb)
+        if (::channel.isInitialized && ::epg.isInitialized) {
+            getAllChannelsList(channel, epg)
         }
     }
 
-    private fun getAllChannelsList(channelDbList: List<ChannelDb>, epgDb: List<EpgDb>) {
-        adapter = RecyclerAdapter(requireContext(), channelDbList, epgDb, this)
+    private fun getAllChannelsList(channelList: List<Channel>, epg: List<Epg>) {
+        adapter = RecyclerAdapter(requireContext(), channelList, epg, this)
         val recyclerView: RecyclerView = binding.recyclerView3
         recyclerView.adapter = adapter
         if (!searchQuery.isNullOrEmpty()) {
@@ -104,12 +100,12 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
     }
 
     fun filterChannels(searchQuery: String?) {
-        val filteredList: List<ChannelDb> = if (!searchQuery.isNullOrEmpty()) {
-            channelDb.filter { channel ->
+        val filteredList: List<Channel> = if (!searchQuery.isNullOrEmpty()) {
+            channel.filter { channel ->
                 channel.name.contains(searchQuery, ignoreCase = true)
             }
         } else {
-            channelDb
+            channel
         }
 
         val recyclerView = binding.recyclerView3
@@ -117,17 +113,10 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
         adapter?.setData(filteredList)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentAllBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
-    override fun onChannelItemClicked(channel: ChannelDb) {
-        val epgDbList = epgDb
-        val selectedEpgDb = epgDbList.find { it.channelID == channel.id }
+    override fun onChannelItemClicked(channel: Channel) {
+        val epgList = epg
+        val selectedEpgDb = epgList.find { it.channelID == channel.id }
         val bundle = Bundle()
 
         bundle.putSerializable("channel_data", channel)
@@ -135,13 +124,9 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
         val fragment = VideoPlayerFragment()
         fragment.arguments = bundle
-        //fragment.show(requireActivity().supportFragmentManager, "videoPlayerDialog")
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(android.R.id.content, fragment)
             .addToBackStack(null)
             .commit()
-        //val intent = Intent(requireContext(), ChannelPlayer::class.java)
-        //intent.putExtras(bundle)
-        //requireContext().startActivity(intent)
     }
 }

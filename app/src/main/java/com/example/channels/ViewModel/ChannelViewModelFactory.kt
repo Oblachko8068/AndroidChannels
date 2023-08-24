@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.channels.model.repository.ChannelRepository
 import com.example.channels.model.repository.DownloadRepository
-import com.example.channels.model.repository.EpgRepository
+import com.example.channels.model.repository.EpgRepositoryRetrofit
 
 class ChannelViewModelFactory(
     private val downloadRepository: DownloadRepository,
     private val channelRepository: ChannelRepository,
-    private val epgRepository: EpgRepository
+    private val epgRepository: EpgRepositoryRetrofit
 ) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

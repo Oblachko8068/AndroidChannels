@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentVideoPlayerBinding
-import com.example.channels.model.retrofit.ChannelDb
-import com.example.channels.model.retrofit.EpgDb
-import com.squareup.picasso.Picasso
+import com.example.channels.model.retrofit.Channel
+import com.example.channels.model.retrofit.Epg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -47,40 +47,39 @@ class VideoPlayerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        coroutineScope.cancel() // Cancel all coroutines when the view is destroyed
+        coroutineScope.cancel()
         visibilityView = true
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        _binding = null
+       // _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val channelDb = arguments?.getSerializable("channel_data") as? ChannelDb
-        val epgDb = arguments?.getSerializable("epg_data") as? EpgDb
-        if (channelDb != null) {
-            val channelName = channelDb.name
-            val channelDescription = epgDb?.title
-            val channelIconResource = channelDb.image
+        val channel = arguments?.getSerializable("channel_data") as? Channel
+        val epg = arguments?.getSerializable("epg_data") as? Epg
+        if (channel != null) {
+            val channelName = channel.name
+            val channelDescription = epg?.title
+            val channelIconResource = channel.image
             //val channelStream = extras.getString("channel_stream")
-            val channelTimestart = epgDb?.timestart
-            val channelTimestop = epgDb?.timestop
+            val channelTimestart = epg?.timestart
+            val channelTimestop = epg?.timestop
             binding.activeChannelName.text = channelName
 
             //запись описания
             binding.activeChannelDesc.text = "$channelDescription"
 
             //запись иконки
-            Picasso.get()
-                .load(channelIconResource)
-                .into(binding.activeChannelIcon)
+            context?.let {
+                Glide.with(it)
+                    .load(channelIconResource)
+                    .into(binding.activeChannelIcon)
+            }
 
             //запись видео
-            //val channelStreamUri = Uri.parse(channelStream)
             binding.playerVideoView.setVideoURI(Uri.parse(channelStream))
-
             binding.playerVideoView.setOnPreparedListener {
-                // Запуск воспроизведения после подготовки видео
                 it.start()
             }
 
@@ -115,13 +114,9 @@ class VideoPlayerFragment : Fragment() {
         binding.playerVideoView.setOnCompletionListener {
             currentVideoPosition = 0
         }
-        // Назначьте обработчик нажатия на кнопку "настройки"
         binding.settings.setOnClickListener {
-            // Создайте объект класса PopupMenu, указав контекст и вью для привязки
             val popupMenu = PopupMenu(requireContext(), binding.settings)
-            // Загрузите ресурс с всплывающим меню
             popupMenu.menuInflater.inflate(R.menu.menu_settings, popupMenu.menu)
-            // Установите обработчик нажатия на элементы меню
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_setting1 -> {

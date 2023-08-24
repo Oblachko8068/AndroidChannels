@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "714c539246367e46f218923b7971f588",
+    "identityHash": "1142e4fcc21d9012edb0b611a98e4993",
     "entities": [
       {
         "tableName": "channels",
@@ -44,11 +44,11 @@
       },
       {
         "tableName": "epgs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channel_id` INTEGER NOT NULL, `id` INTEGER NOT NULL, `time_start` INTEGER NOT NULL, `time_stop` INTEGER NOT NULL, `title` TEXT NOT NULL, PRIMARY KEY(`channel_id`, `id`), FOREIGN KEY(`channel_id`) REFERENCES `channels`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelID` INTEGER NOT NULL, `id` INTEGER NOT NULL, `timestart` INTEGER NOT NULL, `timestop` INTEGER NOT NULL, `title` TEXT NOT NULL, PRIMARY KEY(`channelID`, `id`), FOREIGN KEY(`channelID`) REFERENCES `channels`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "channelID",
-            "columnName": "channel_id",
+            "columnName": "channelID",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -60,13 +60,13 @@
           },
           {
             "fieldPath": "timestart",
-            "columnName": "time_start",
+            "columnName": "timestart",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "timestop",
-            "columnName": "time_stop",
+            "columnName": "timestop",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -80,7 +80,7 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "channel_id",
+            "channelID",
             "id"
           ]
         },
@@ -101,7 +101,7 @@
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
-              "channel_id"
+              "channelID"
             ],
             "referencedColumns": [
               "id"
@@ -113,7 +113,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '714c539246367e46f218923b7971f588')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1142e4fcc21d9012edb0b611a98e4993')"
     ]
   }
 }
