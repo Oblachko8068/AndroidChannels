@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                 Di.epgRepository,
             )
         )[ChannelViewModel::class.java]
-        channelViewModel.fetchChannels()
+        //channelViewModel.fetchChannels()
         //Поиск
         binding.searchViewTvChannels.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
