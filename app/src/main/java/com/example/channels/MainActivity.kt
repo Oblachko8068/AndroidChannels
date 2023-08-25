@@ -21,12 +21,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var channelViewModel: ChannelViewModel
 
-    //room создание экземпляра класса AppDatabase базы данных
-    private val database: AppDatabase by lazy<AppDatabase> {
-        Room.databaseBuilder(this.applicationContext, AppDatabase::class.java, "database.db")
-            .build()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         Di.init(applicationContext)
         super.onCreate(savedInstanceState)

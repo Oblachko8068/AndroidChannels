@@ -3,6 +3,7 @@ package com.example.channels.fragments
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,6 +57,15 @@ class VideoPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        activity?.window?.decorView?.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                        View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                )
+
         val channel = arguments?.getSerializable("channel_data") as? Channel
         val epg = arguments?.getSerializable("epg_data") as? Epg
         if (channel != null) {
@@ -83,12 +93,18 @@ class VideoPlayerFragment : Fragment() {
                 it.start()
             }
 
+
+
             //устанавливаем полоску
             //val totalTime = channelTimestop - channelTimestart // Общая продолжительность передачи в секундах
-            val totalTime = (channelTimestop?.minus(channelTimestart!!))?.div(60)
+            //val totalTime = (channelTimestop?.minus(channelTimestart!!))?.div(60)
+            val totalTime = 60
             val channelTimestart1 = System.currentTimeMillis() / 1000
+
+            updateProgressBar(totalTime, channelTimestart1)
+
+            //время до конца
             binding.textViewTimeToTheEnd.text = totalTime.toString()
-            //updateProgressBar(totalTime, channelTimestart1)
         }
         //кнопка назад
         binding.backToMain.setOnClickListener {
@@ -114,35 +130,40 @@ class VideoPlayerFragment : Fragment() {
         binding.playerVideoView.setOnCompletionListener {
             currentVideoPosition = 0
         }
+
         binding.settings.setOnClickListener {
             val popupMenu = PopupMenu(requireContext(), binding.settings)
             popupMenu.menuInflater.inflate(R.menu.menu_settings, popupMenu.menu)
             popupMenu.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.action_setting1 -> {
-                        true
-                    }
+                currentVideoPosition = binding.playerVideoView.currentPosition
 
-                    R.id.action_setting2 -> {
-                        true
-                    }
-
-                    R.id.action_setting3 -> {
-                        true
-                    }
-
-                    R.id.action_setting4 -> {
-                        true
-                    }
-
-                    R.id.action_setting5 -> {
-                        true
-                    }
-
-                    else -> false
+                channelStream = when (item.itemId) {
+                    R.id.action_setting1 -> channelStream
+                    R.id.action_setting2 -> channelStream
+                    R.id.action_setting3 -> channelStream
+                    // Добавьте обработку других пунктов меню для других качеств видео
+                    else -> channelStream
                 }
-            }
+                updateVideoView()
+                true
+                }
             popupMenu.show()
+        }
+    }
+
+    private fun updateVideoView() {
+        val videoView = binding.playerVideoView
+        val channelStreamUri = Uri.parse(channelStream)
+        videoView.setVideoURI(channelStreamUri)
+
+        videoView.setOnPreparedListener { mediaPlayer ->
+            // Восстанавливаем позицию видео перед запуском
+            mediaPlayer.seekTo(currentVideoPosition)
+            mediaPlayer.start()
+        }
+
+        videoView.setOnCompletionListener {
+
         }
     }
 
@@ -175,6 +196,26 @@ class VideoPlayerFragment : Fragment() {
         activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         activity?.window?.decorView?.systemUiVisibility = 0
         coroutineScope.cancel()
+    }
+
+    private fun updateProgressBar(totalTime: Int, channelTimestart1: Long) {
+        val interval = 1000L // Интервал обновления прогресса в миллисекундах (1 секунда)
+
+        coroutineScope.launch(Dispatchers.Main) {
+            while (true) {
+                val currentTime = System.currentTimeMillis() / 1000 // Текущее время в секундах
+                val elapsedTime = currentTime - channelTimestart1 // Время, которое пользователь уже смотрит передачу
+
+                // Вычисляем прогресс в процентах
+                val progress = (elapsedTime.toFloat() / totalTime.toFloat()) * 100
+
+                // Устанавливаем ширину полоски в процентах
+                binding.progressBar.layoutParams.width = (progress * resources.displayMetrics.density).toInt()
+                binding.progressBar.requestLayout()
+
+                delay(interval)
+            }
+        }
     }
 }
 
