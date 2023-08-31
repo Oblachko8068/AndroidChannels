@@ -3,7 +3,6 @@ package com.example.channels.fragments
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,21 +19,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.Serializable
 
-/*TODO 1. исправить кнопку настройки( меню показывается снизу)
-       2. добавить обработку proggressbar
-       3. показ на весь экран
- */
+/*TODO 1. исправить кнопку настройки( меню показывается снизу)*/
 
 class VideoPlayerFragment : Fragment() {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var channelStream =
-        "https://ia804503.us.archive.org/15/items/kikTXNL6MvX6ZpRXM/kikTXNL6MvX6ZpRXM.mp4"
+        "https://cdn-cache01.voka.tv/live/5117.m3u8"
     private var currentVideoPosition = 0
     private var _binding: FragmentVideoPlayerBinding? = null
     private val binding get() = _binding!!
     private var visibilityView: Boolean = true
+
+    private lateinit var channel: Channel
+    private lateinit var epg: Epg
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        /*channel = arguments?.getSerializable<Channel>(channel_data)*/
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,20 +56,10 @@ class VideoPlayerFragment : Fragment() {
         coroutineScope.cancel()
         visibilityView = true
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-       // _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        activity?.window?.decorView?.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                        View.SYSTEM_UI_FLAG_FULLSCREEN or
-                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                )
 
         val channel = arguments?.getSerializable("channel_data") as? Channel
         val epg = arguments?.getSerializable("epg_data") as? Epg
@@ -108,20 +103,20 @@ class VideoPlayerFragment : Fragment() {
         }
         //кнопка назад
         binding.backToMain.setOnClickListener {
-            val fragment =
-                requireActivity().supportFragmentManager.findFragmentById(android.R.id.content)!!
-            requireActivity().supportFragmentManager.beginTransaction().remove(fragment).commit()
+            navigator().goBack()
         }
         binding.container.setOnClickListener {
             if (binding.playerVideoView.isPlaying) {
                 coroutineScope.launch {
                     if (visibilityView) {
+                        hideSystemUI()
                         hideOtherViews()
                         visibilityView = false
                     } else {
                         showOtherViews()
                         delay(3000)
                         hideOtherViews()
+                        hideSystemUI()
                     }
                 }
             }
@@ -188,12 +183,12 @@ class VideoPlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        //activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     override fun onPause() {
         super.onPause()
-        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        //activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         activity?.window?.decorView?.systemUiVisibility = 0
         coroutineScope.cancel()
     }
@@ -217,5 +212,44 @@ class VideoPlayerFragment : Fragment() {
             }
         }
     }
+
+    private fun hideSystemUI() {
+        val decorView: View = requireActivity().window.decorView
+        val uiOptions = decorView.systemUiVisibility
+        var newUiOptions = uiOptions
+        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_LOW_PROFILE
+        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_FULLSCREEN
+        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_IMMERSIVE
+        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        decorView.systemUiVisibility = newUiOptions
+    }
+
+    private fun showSystemUI() {
+        val decorView: View = requireActivity().window.decorView
+        val uiOptions = decorView.systemUiVisibility
+        var newUiOptions = uiOptions
+        newUiOptions = newUiOptions and View.SYSTEM_UI_FLAG_LOW_PROFILE.inv()
+        newUiOptions = newUiOptions and View.SYSTEM_UI_FLAG_FULLSCREEN.inv()
+        newUiOptions = newUiOptions and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION.inv()
+        newUiOptions = newUiOptions and View.SYSTEM_UI_FLAG_IMMERSIVE.inv()
+        newUiOptions = newUiOptions and View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY.inv()
+        decorView.systemUiVisibility = newUiOptions
+    }
+
+     companion object {
+         @JvmStatic private val channel_data = "channel_data"
+         @JvmStatic private val epg_data = "epg_data"
+        @JvmStatic
+        fun newInstance(channel: Channel, selectedEpgDb: Epg?): VideoPlayerFragment {
+            val args = Bundle()
+            args.putSerializable(channel_data, channel)
+            args.putSerializable(epg_data, selectedEpgDb)
+            val fragment = VideoPlayerFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
 }
 

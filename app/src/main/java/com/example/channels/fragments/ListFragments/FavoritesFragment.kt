@@ -1,4 +1,4 @@
-package com.example.channels.fragments
+package com.example.channels.fragments.ListFragments
 
 import android.content.Context
 import android.os.Bundle
@@ -15,6 +15,8 @@ import com.example.channels.R
 import com.example.channels.RecyclerAdapter
 import com.example.channels.ViewModel.ChannelViewModel
 import com.example.channels.databinding.FragmentFavoritesBinding
+import com.example.channels.fragments.VideoPlayerFragment
+import com.example.channels.fragments.navigator
 import com.example.channels.model.retrofit.Channel
 import com.example.channels.model.retrofit.Epg
 import com.google.gson.Gson
@@ -137,16 +139,7 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
     override fun onChannelItemClicked(channel: Channel) {
         val epgDbList = epg
         val selectedEpgDb = epgDbList.find { it.channelID == channel.id }
-        val bundle = Bundle()
 
-        bundle.putSerializable("channel_data", channel)
-        bundle.putSerializable("epg_data", selectedEpgDb)
-
-        val fragment = VideoPlayerFragment()
-        fragment.arguments = bundle
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(android.R.id.content, fragment)
-            .addToBackStack(null)
-            .commit()
+        navigator().showVideoPlayerFragment(channel, selectedEpgDb)
     }
 }

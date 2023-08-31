@@ -20,9 +20,6 @@ class ChannelViewModel(
     private var epgLiveData: LiveData<List<Epg>> = epgRepository.getEpgListLiveData()
 
     init{
-        fetchChannels()
-    }
-    fun fetchChannels() {
         downloadRepository.fetchChannels()
     }
 
