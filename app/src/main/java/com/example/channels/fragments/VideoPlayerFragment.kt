@@ -61,7 +61,7 @@ class VideoPlayerFragment : Fragment() {
 
         val channel = arguments?.getSerializable("channel_data") as? Channel
         val epg = arguments?.getSerializable("epg_data") as? Epg
-        if (channel != null) {
+        if (channel != null ) {
             val channelName = channel.name
             val channelDescription = epg?.title
             val channelIconResource = channel.image

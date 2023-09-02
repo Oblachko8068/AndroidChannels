@@ -11,10 +11,7 @@ import com.example.channels.model.retrofit.Epg
 interface EpgDao {
 
     @Query("SELECT * FROM epgs")
-    fun getEpgListAll(): LiveData<List<Epg>>
-
-    @Query("SELECT * FROM epgs")
-    fun getEpgListAllTest(): LiveData<List<EpgDbEntity>>
+    fun getEpgListAll(): LiveData<List<EpgDbEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun createEpg(epgDbEntity: List<EpgDbEntity>)

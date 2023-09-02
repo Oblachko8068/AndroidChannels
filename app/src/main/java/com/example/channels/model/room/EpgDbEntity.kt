@@ -3,12 +3,13 @@ package com.example.channels.model.room
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
 import com.example.channels.model.retrofit.ChannelJson
 import com.example.channels.model.retrofit.Epg
 
 @Entity(
     tableName = "epgs",
-    primaryKeys = [
+    /*primaryKeys = [
         "channelID",
         "id"
     ],
@@ -23,11 +24,11 @@ import com.example.channels.model.retrofit.Epg
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ]*/
 )
 data class EpgDbEntity(
     val channelID: Int,
-    val id: Long,
+    @PrimaryKey val id: Long,
     val timestart: Long,
     val timestop: Long,
     val title: String

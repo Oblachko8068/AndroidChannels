@@ -1,6 +1,5 @@
 package com.example.channels.model.repository
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.example.channels.model.retrofit.Epg
@@ -23,8 +22,7 @@ class EpgRepositoryRetrofit(
         }
     }
     override fun getEpgListLiveData(): LiveData<List<Epg>> {
-        return epgDao.getEpgListAllTest().map { it.map{ it.toEpgDb()} }
-        //return epgDao.getEpgListAll()
+        return epgDao.getEpgListAll().map { it.map{ it.toEpgDb()} }
     }
 
 }

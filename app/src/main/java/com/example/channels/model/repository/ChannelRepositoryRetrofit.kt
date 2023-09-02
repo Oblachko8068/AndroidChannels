@@ -1,6 +1,5 @@
 package com.example.channels.model.repository
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.example.channels.model.retrofit.Channel
