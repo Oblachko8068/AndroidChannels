@@ -6,15 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.example.channels.Di
 import com.example.channels.R
 import com.example.channels.RecyclerAdapter
-import com.example.channels.ViewModel.ChannelViewModel
 import com.example.channels.databinding.FragmentAllBinding
-import com.example.channels.fragments.VideoPlayerFragment
 import com.example.channels.fragments.navigator
 import com.example.channels.model.retrofit.Channel
 import com.example.channels.model.retrofit.Epg
@@ -41,7 +38,7 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val channelViewModel = ViewModelProvider(requireActivity())[ChannelViewModel::class.java]
+        val channelViewModel = Di.channelViewModel
         val channelList = channelViewModel.getChannelListLiveData()
         val epgList = channelViewModel.getEpgListLiveData()
 

@@ -2,11 +2,12 @@ package com.example.channels
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+
 import androidx.room.Room
-import com.example.channels.ViewModel.ChannelViewModel
-import com.example.channels.ViewModel.ChannelViewModelFactory
 import com.example.channels.model.repository.*
 import com.example.channels.model.room.AppDatabase
+import com.example.channels.ViewModel.ChannelViewModel
+import com.example.channels.ViewModel.ChannelViewModelFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,6 +18,7 @@ class Di {
         lateinit var downloadRepository: DownloadRepository
         lateinit var channelRepository: ChannelRepository
         lateinit var epgRepository: EpgRepositoryRetrofit
+        lateinit var channelViewModel: ChannelViewModel
 
         fun init(context: Context) {
             val appDatabase = Room.databaseBuilder(context, AppDatabase::class.java, "database.db").build()
@@ -43,15 +45,15 @@ class Di {
             epgRepository = EpgRepositoryRetrofit(epgDao)
             downloadRepository = DownloadRepositoryRetrofit(channelRepository, epgRepository, retrofit)
 
-            //ViewModel
-            /*var channelViewModel = ViewModelProvider(
-                context,
+            // Инициализируем channelViewModel
+            channelViewModel = ViewModelProvider(
+                context as MainActivity,
                 ChannelViewModelFactory(
                     downloadRepository,
                     channelRepository,
-                    epgRepository,
+                    epgRepository
                 )
-            )[ChannelViewModel::class.java]*/
+            ).get(ChannelViewModel::class.java)
 
         }
     }

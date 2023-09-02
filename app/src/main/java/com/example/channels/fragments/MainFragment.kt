@@ -6,11 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.ViewModelProvider
-import com.example.channels.Di
 import com.example.channels.R
-import com.example.channels.ViewModel.ChannelViewModel
-import com.example.channels.ViewModel.ChannelViewModelFactory
 import com.example.channels.databinding.FragmentMainBinding
 import com.example.channels.fragments.ListFragments.AllFragment
 import com.example.channels.fragments.ListFragments.FavoritesFragment
