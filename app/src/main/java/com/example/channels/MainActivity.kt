@@ -13,7 +13,7 @@ import com.example.channels.model.retrofit.Epg
 class MainActivity : AppCompatActivity(), Navigator {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Di.init(applicationContext)
+        Di.init(applicationContext, this)
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

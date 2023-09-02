@@ -1,6 +1,7 @@
 package com.example.channels
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 
 import androidx.room.Room
@@ -20,7 +21,7 @@ class Di {
         lateinit var epgRepository: EpgRepositoryRetrofit
         lateinit var channelViewModel: ChannelViewModel
 
-        fun init(context: Context) {
+        fun init(context: Context, activity: AppCompatActivity) {
             val appDatabase = Room.databaseBuilder(context, AppDatabase::class.java, "database.db").build()
             val channelDao = appDatabase.getChannelDao()
             val epgDao = appDatabase.getEpgDao()
@@ -47,13 +48,13 @@ class Di {
 
             // Инициализируем channelViewModel
             channelViewModel = ViewModelProvider(
-                context as MainActivity,
+                activity ,
                 ChannelViewModelFactory(
                     downloadRepository,
                     channelRepository,
                     epgRepository
                 )
-            ).get(ChannelViewModel::class.java)
+            )[ChannelViewModel::class.java]
 
         }
     }

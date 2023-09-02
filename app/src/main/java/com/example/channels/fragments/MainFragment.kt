@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import com.example.channels.R
 import com.example.channels.databinding.FragmentMainBinding
-import com.example.channels.fragments.ListFragments.AllFragment
-import com.example.channels.fragments.ListFragments.FavoritesFragment
-import com.example.channels.fragments.ListFragments.FragmentAdapter
+import com.example.channels.fragments.listFragments.AllFragment
+import com.example.channels.fragments.listFragments.FavoritesFragment
+import com.example.channels.fragments.listFragments.FragmentAdapter
 
 class MainFragment : Fragment() {
 
