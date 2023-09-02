@@ -21,8 +21,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.Serializable
 
-/*TODO 1. исправить кнопку настройки( меню показывается снизу)*/
-
 class VideoPlayerFragment : Fragment() {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)

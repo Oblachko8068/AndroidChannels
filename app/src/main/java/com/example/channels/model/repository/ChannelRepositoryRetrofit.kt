@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ChannelRepositoryRetrofit(
-    context: Context,
     private val channelDao: ChannelDao
 ) : ChannelRepository {
 

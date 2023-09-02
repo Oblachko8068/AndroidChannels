@@ -33,16 +33,6 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //ViewModel
-        var channelViewModel = ViewModelProvider(
-            requireActivity(),
-            ChannelViewModelFactory(
-                Di.downloadRepository,
-                Di.channelRepository,
-                Di.epgRepository,
-            )
-        )[ChannelViewModel::class.java]
-
         //Поиск
        binding.searchViewTvChannels.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

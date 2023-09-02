@@ -11,7 +11,7 @@ import com.example.channels.model.retrofit.Epg
 
 
 class ChannelViewModel(
-    private val downloadRepository: DownloadRepository,
+    downloadRepository: DownloadRepository,
     channelRepository: ChannelRepository,
     epgRepository: EpgRepositoryRetrofit,
 ) : ViewModel() {

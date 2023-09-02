@@ -29,7 +29,6 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
 
     var searchQuery: String? = null
     lateinit var adapter: RecyclerAdapter
-    lateinit var layoutManager: LinearLayoutManager
     lateinit var channel: List<Channel>
     lateinit var epg: List<Epg>
 
@@ -54,8 +53,7 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
 
 
         binding.recyclerView4.setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView4.layoutManager = layoutManager
+        binding.recyclerView4.layoutManager = LinearLayoutManager(requireContext())
 
         val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -90,8 +88,7 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
         val intArray = getSavedNewIntArray(requireContext())
         val favoriteChannels = channelList.filter { it.id in intArray }
         adapter = RecyclerAdapter(requireContext(), favoriteChannels, epg, this)
-        val recyclerView: RecyclerView = binding.recyclerView4
-        recyclerView.adapter = adapter
+        binding.recyclerView4.adapter = adapter
         if (!searchQuery.isNullOrEmpty()) {
             filterChannels(searchQuery)
         }
@@ -107,8 +104,7 @@ class FavoritesFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener
         }
         val intArray = getSavedNewIntArray(requireContext())
         val favoriteChannels = filteredList.filter { it.id in intArray }
-        val recyclerView = binding.recyclerView4
-        val adapter = recyclerView.adapter as? RecyclerAdapter
+        val adapter = binding.recyclerView4.adapter as? RecyclerAdapter
         adapter?.setData(favoriteChannels)
     }
 

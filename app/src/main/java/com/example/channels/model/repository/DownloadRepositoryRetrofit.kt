@@ -12,7 +12,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 
 class DownloadRepositoryRetrofit(
-    private val context: Context,
     private val channelRepository: ChannelRepository,
     private val epgRepository: EpgRepository,
     private val retrofit: Retrofit

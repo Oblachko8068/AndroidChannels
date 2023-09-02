@@ -1,7 +1,10 @@
 package com.example.channels
 
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
+import com.example.channels.ViewModel.ChannelViewModel
+import com.example.channels.ViewModel.ChannelViewModelFactory
 import com.example.channels.model.repository.*
 import com.example.channels.model.room.AppDatabase
 import okhttp3.OkHttpClient
@@ -36,9 +39,19 @@ class Di {
                 .addConverterFactory(GsonConverterFactory.create()) // Конвертер JSON
                 .build()
 
-            channelRepository = ChannelRepositoryRetrofit(context, channelDao)
-            epgRepository = EpgRepositoryRetrofit(context, epgDao)
-            downloadRepository = DownloadRepositoryRetrofit(context, channelRepository, epgRepository, retrofit)
+            channelRepository = ChannelRepositoryRetrofit(channelDao)
+            epgRepository = EpgRepositoryRetrofit(epgDao)
+            downloadRepository = DownloadRepositoryRetrofit(channelRepository, epgRepository, retrofit)
+
+            //ViewModel
+            /*var channelViewModel = ViewModelProvider(
+                context,
+                ChannelViewModelFactory(
+                    downloadRepository,
+                    channelRepository,
+                    epgRepository,
+                )
+            )[ChannelViewModel::class.java]*/
 
         }
     }

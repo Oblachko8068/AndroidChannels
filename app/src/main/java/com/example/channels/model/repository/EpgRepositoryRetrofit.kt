@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EpgRepositoryRetrofit(
-    context: Context,
     private val epgDao: EpgDao
 ) : EpgRepository  {
 

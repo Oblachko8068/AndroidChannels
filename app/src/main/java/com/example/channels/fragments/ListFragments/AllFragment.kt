@@ -27,7 +27,6 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
     var searchQuery: String? = null
     lateinit var adapter: RecyclerAdapter
-    lateinit var layoutManager: LinearLayoutManager
     lateinit var channel: List<Channel>
     lateinit var epg: List<Epg>
 
@@ -60,8 +59,7 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
         })
 
         binding.recyclerView3.setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView3.layoutManager = layoutManager
+        binding.recyclerView3.layoutManager = LinearLayoutManager(requireContext())
 
         val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -75,7 +73,6 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
             override fun onPageSelected(position: Int) {
                 if (position == 0) {
                     updateChannelsAndEpg()
-                    //getAllChannelsList(channelList.value!!, epg)
                     if (!searchQuery.isNullOrEmpty()) {
                         filterChannels(searchQuery)
                     }
@@ -94,8 +91,7 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
     private fun getAllChannelsList(channelList: List<Channel>, epg: List<Epg>) {
         adapter = RecyclerAdapter(requireContext(), channelList, epg, this)
-        val recyclerView: RecyclerView = binding.recyclerView3
-        recyclerView.adapter = adapter
+        binding.recyclerView3.adapter = adapter
         if (!searchQuery.isNullOrEmpty()) {
             filterChannels(searchQuery)
         }
@@ -110,8 +106,7 @@ class AllFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
             channel
         }
 
-        val recyclerView = binding.recyclerView3
-        val adapter = recyclerView.adapter as? RecyclerAdapter
+        val adapter = binding.recyclerView3.adapter as? RecyclerAdapter
         adapter?.setData(filteredList)
     }
 
