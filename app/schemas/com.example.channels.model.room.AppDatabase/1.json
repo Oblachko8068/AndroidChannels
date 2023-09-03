@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1142e4fcc21d9012edb0b611a98e4993",
+    "identityHash": "d3ecf92f34d9aa251872be9d90662bc6",
     "entities": [
       {
         "tableName": "channels",
@@ -44,7 +44,7 @@
       },
       {
         "tableName": "epgs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelID` INTEGER NOT NULL, `id` INTEGER NOT NULL, `timestart` INTEGER NOT NULL, `timestop` INTEGER NOT NULL, `title` TEXT NOT NULL, PRIMARY KEY(`channelID`, `id`), FOREIGN KEY(`channelID`) REFERENCES `channels`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`channelID` INTEGER NOT NULL, `id` INTEGER NOT NULL, `timestart` INTEGER NOT NULL, `timestop` INTEGER NOT NULL, `title` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "channelID",
@@ -80,40 +80,17 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "channelID",
             "id"
           ]
         },
-        "indices": [
-          {
-            "name": "index_epgs_id",
-            "unique": false,
-            "columnNames": [
-              "id"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_epgs_id` ON `${TABLE_NAME}` (`id`)"
-          }
-        ],
-        "foreignKeys": [
-          {
-            "table": "channels",
-            "onDelete": "CASCADE",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "channelID"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          }
-        ]
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1142e4fcc21d9012edb0b611a98e4993')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd3ecf92f34d9aa251872be9d90662bc6')"
     ]
   }
 }

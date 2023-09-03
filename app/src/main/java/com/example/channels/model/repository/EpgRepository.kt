@@ -1,13 +1,14 @@
 package com.example.channels.model.repository
 
 import androidx.lifecycle.LiveData
-import com.example.channels.model.retrofit.EpgDb
+import com.example.channels.model.retrofit.Epg
+import com.example.channels.model.room.EpgDbEntity
 
 interface EpgRepository {
 
-    fun getEpgListLiveData(): LiveData<List<EpgDb>>
+    fun getEpgListLiveData(): LiveData<List<Epg>>
 
-    fun updateEpgList(epgDbList: List<EpgDb>)
+    fun updateEpgList(epgDbEntityList: List<EpgDbEntity>)
 
-    fun createEpg(epgDb: List<EpgDb>)
+    fun createEpg(epgDbEntityList: List<EpgDbEntity>)
 }

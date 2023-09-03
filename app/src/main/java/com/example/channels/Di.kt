@@ -1,9 +1,14 @@
 package com.example.channels
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+
 import androidx.room.Room
 import com.example.channels.model.repository.*
 import com.example.channels.model.room.AppDatabase
+import com.example.channels.ViewModel.ChannelViewModel
+import com.example.channels.ViewModel.ChannelViewModelFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -14,8 +19,9 @@ class Di {
         lateinit var downloadRepository: DownloadRepository
         lateinit var channelRepository: ChannelRepository
         lateinit var epgRepository: EpgRepositoryRetrofit
+        lateinit var channelViewModel: ChannelViewModel
 
-        fun init(context: Context) {
+        fun init(context: Context, activity: AppCompatActivity) {
             val appDatabase = Room.databaseBuilder(context, AppDatabase::class.java, "database.db").build()
             val channelDao = appDatabase.getChannelDao()
             val epgDao = appDatabase.getEpgDao()
@@ -36,9 +42,19 @@ class Di {
                 .addConverterFactory(GsonConverterFactory.create()) // Конвертер JSON
                 .build()
 
-            channelRepository = ChannelRepositoryRetrofit(context, channelDao)
-            epgRepository = EpgRepositoryRetrofit(context, epgDao)
-            downloadRepository = DownloadRepositoryRetrofit(context, channelRepository, epgRepository, retrofit)
+            channelRepository = ChannelRepositoryRetrofit(channelDao)
+            epgRepository = EpgRepositoryRetrofit(epgDao)
+            downloadRepository = DownloadRepositoryRetrofit(channelRepository, epgRepository, retrofit)
+
+            // Инициализируем channelViewModel
+            channelViewModel = ViewModelProvider(
+                activity ,
+                ChannelViewModelFactory(
+                    downloadRepository,
+                    channelRepository,
+                    epgRepository
+                )
+            )[ChannelViewModel::class.java]
 
         }
     }

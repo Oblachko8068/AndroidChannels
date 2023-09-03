@@ -8,26 +8,26 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.channels.databinding.ChannelBlockBinding
-import com.example.channels.model.retrofit.ChannelDb
-import com.example.channels.model.retrofit.EpgDb
+import com.example.channels.model.retrofit.Channel
+import com.example.channels.model.retrofit.Epg
 import com.google.gson.Gson
 
 
 class RecyclerAdapter(
     private val context: Context,
-    private var channelDb: List<ChannelDb>,
-    private var epgDb: List<EpgDb>,
+    private var channel: List<Channel>,
+    private var epg: List<Epg>,
     private val itemClickListener: OnChannelItemClickListener
 ) :
     RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
 
     interface OnChannelItemClickListener {
-        fun onChannelItemClicked(channel: ChannelDb)
+        fun onChannelItemClicked(channel: Channel, epg: Epg)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(newChannelDb: List<ChannelDb>) {
-        channelDb = newChannelDb
+    fun setData(newChannel: List<Channel>) {
+        channel = newChannel
         notifyDataSetChanged()
     }
 
@@ -39,7 +39,7 @@ class RecyclerAdapter(
 
     class MyViewHolder(private val binding: ChannelBlockBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(channelItem: ChannelDb, epgItem: EpgDb, context: Context) {
+        fun bind(channelItem: Channel, epgItem: Epg, context: Context) {
             Glide.with(context)
                 .load(channelItem.image)
                 .into(binding.channelIcon)
@@ -115,17 +115,19 @@ class RecyclerAdapter(
         }
     }
 
-    override fun getItemCount() = channelDb.size
+    override fun getItemCount() = channel.size
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val channel = channelDb[position]
-        val epg = epgDb.find { it.channelID == channel.id }
+        val channel = channel[position]
+        val epg = epg.find { it.channelID == channel.id }
         if (epg != null) {
             holder.bind(channel, epg, context)
         }
 
         holder.itemView.setOnClickListener {
-            itemClickListener.onChannelItemClicked(channel)
+            if (epg != null) {
+                itemClickListener.onChannelItemClicked(channel, epg)
+            }
         }
     }
 }

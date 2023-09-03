@@ -1,14 +1,15 @@
 package com.example.channels.model.room
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import com.example.channels.model.retrofit.EpgDb
+import androidx.room.PrimaryKey
+import com.example.channels.model.retrofit.ChannelJson
+import com.example.channels.model.retrofit.Epg
 
 @Entity(
     tableName = "epgs",
-    primaryKeys = [
+    /*primaryKeys = [
         "channelID",
         "id"
     ],
@@ -23,28 +24,33 @@ import com.example.channels.model.retrofit.EpgDb
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ]*/
 )
 data class EpgDbEntity(
     val channelID: Int,
-    val id: Long,
+    @PrimaryKey val id: Long,
     val timestart: Long,
     val timestop: Long,
     val title: String
 ) {
 
-    fun toEpgDb(): EpgDb = EpgDb(
-        channelID = channelID,
-        id = id,
-        timestart = timestart,
-        timestop = timestop,
-        title = title
+    fun toEpgDb(): Epg {
+        return Epg(
+            channelID = channelID,
+            id = id,
+            timestart = timestart,
+            timestop = timestop,
+            title = title
+        )
+    }
+}
+
+fun ChannelJson.fromChannelJsonToEpgDbEntity(): List<EpgDbEntity> = this.epg.map {
+    EpgDbEntity(
+        this.id,
+        id = it.id,
+        timestart = it.timestart,
+        timestop = it.timestop,
+        title = it.title
     )
 }
-fun EpgDb.fromEpgDb(): EpgDbEntity = EpgDbEntity(
-    channelID = this.channelID,
-    id = this.id,
-    timestart = this.timestart,
-    timestop = this.id,
-    title = this.title
-)

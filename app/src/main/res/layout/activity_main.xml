@@ -1,60 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@color/main_background">
+    tools:context=".MainActivity">
 
-    <!--Поиск-->
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchView_tv_channels"
-        android:theme="@style/SearchViewStyle"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/search_view_background"
-        android:imeOptions="flagNoExtractUi"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:searchHintIcon="@null"
-        app:closeIcon="@null"
-        app:queryHint="Напишите название телеканала" />
-
-    <!--Вкладки-->
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/main_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView_tv_channels"
-        app:tabIndicatorColor="@color/background_of_the_lower_tabs"
-        app:tabGravity="start"
-        app:tabMode="scrollable"
-        app:tabTextAppearance="@style/CustomTabTextAppearance"
-        app:tabSelectedTextColor ="@color/text_of_the_tabs_active"
-        app:tabTextColor ="@color/text_of_the_tabs"
-        tools:ignore="MissingConstraints" />
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpagerForTabs"
-        android:layout_width="match_parent"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainer"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/background_of_fragments"
-        android:paddingTop="15dp"
-        app:layout_constraintTop_toBottomOf="@+id/tabs"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-    <!---->
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

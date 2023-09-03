@@ -1,13 +1,14 @@
 package com.example.channels.model.repository
 
 import androidx.lifecycle.LiveData
-import com.example.channels.model.retrofit.ChannelDb
+import com.example.channels.model.retrofit.Channel
+import com.example.channels.model.room.ChannelDbEntity
 
 interface ChannelRepository {
 
-    fun getChannelListLiveData() : LiveData<List<ChannelDb>>
+    fun getChannelListLiveData() : LiveData<List<Channel>>
 
-    fun updateChannelList(channelDbList: List<ChannelDb>)
+    fun updateChannelList(channelDbList: List<ChannelDbEntity>)
 
-    fun createChannel(channelDb: List<ChannelDb>)
+    fun createChannel(channelDb: List<ChannelDbEntity>)
 }

@@ -12,28 +12,32 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentVideoPlayerBinding
-import com.example.channels.model.retrofit.ChannelDb
-import com.example.channels.model.retrofit.EpgDb
+import com.example.channels.model.retrofit.Channel
+import com.example.channels.model.retrofit.Epg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-/*TODO 1. исправить кнопку настройки( меню показывается снизу)
-       2. добавить обработку proggressbar
-       3. показ на весь экран
- */
+import java.io.Serializable
 
 class VideoPlayerFragment : Fragment() {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var channelStream =
-        "https://ia804503.us.archive.org/15/items/kikTXNL6MvX6ZpRXM/kikTXNL6MvX6ZpRXM.mp4"
+        "https://cdn-cache01.voka.tv/live/5117.m3u8"
     private var currentVideoPosition = 0
     private var _binding: FragmentVideoPlayerBinding? = null
     private val binding get() = _binding!!
     private var visibilityView: Boolean = true
+
+    private lateinit var channel: Channel
+    private lateinit var epg: Epg
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        /*channel = arguments?.getSerializable<Channel>(channel_data)*/
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,21 +54,20 @@ class VideoPlayerFragment : Fragment() {
         coroutineScope.cancel()
         visibilityView = true
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val channelDb = arguments?.getSerializable("channel_data") as? ChannelDb
-        val epgDb = arguments?.getSerializable("epg_data") as? EpgDb
-        if (channelDb != null) {
-            val channelName = channelDb.name
-            val channelDescription = epgDb?.title
-            val channelIconResource = channelDb.image
+        val channel = arguments?.getSerializable("channel_data") as? Channel
+        val epg = arguments?.getSerializable("epg_data") as? Epg
+        if (channel != null ) {
+            val channelName = channel.name
+            val channelDescription = epg?.title
+            val channelIconResource = channel.image
             //val channelStream = extras.getString("channel_stream")
-            val channelTimestart = epgDb?.timestart
-            val channelTimestop = epgDb?.timestop
+            val channelTimestart = epg?.timestart
+            val channelTimestop = epg?.timestop
             binding.activeChannelName.text = channelName
 
             //запись описания
@@ -83,29 +86,35 @@ class VideoPlayerFragment : Fragment() {
                 it.start()
             }
 
+
+
             //устанавливаем полоску
             //val totalTime = channelTimestop - channelTimestart // Общая продолжительность передачи в секундах
-            val totalTime = (channelTimestop?.minus(channelTimestart!!))?.div(60)
+            //val totalTime = (channelTimestop?.minus(channelTimestart!!))?.div(60)
+            val totalTime = 60
             val channelTimestart1 = System.currentTimeMillis() / 1000
+
+            updateProgressBar(totalTime, channelTimestart1)
+
+            //время до конца
             binding.textViewTimeToTheEnd.text = totalTime.toString()
-            //updateProgressBar(totalTime, channelTimestart1)
         }
         //кнопка назад
         binding.backToMain.setOnClickListener {
-            val fragment =
-                requireActivity().supportFragmentManager.findFragmentById(android.R.id.content)!!
-            requireActivity().supportFragmentManager.beginTransaction().remove(fragment).commit()
+            navigator().goBack()
         }
         binding.container.setOnClickListener {
             if (binding.playerVideoView.isPlaying) {
                 coroutineScope.launch {
                     if (visibilityView) {
+                        hideSystemUI()
                         hideOtherViews()
                         visibilityView = false
                     } else {
                         showOtherViews()
                         delay(3000)
                         hideOtherViews()
+                        hideSystemUI()
                     }
                 }
             }
@@ -114,35 +123,40 @@ class VideoPlayerFragment : Fragment() {
         binding.playerVideoView.setOnCompletionListener {
             currentVideoPosition = 0
         }
+
         binding.settings.setOnClickListener {
             val popupMenu = PopupMenu(requireContext(), binding.settings)
             popupMenu.menuInflater.inflate(R.menu.menu_settings, popupMenu.menu)
             popupMenu.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.action_setting1 -> {
-                        true
-                    }
+                currentVideoPosition = binding.playerVideoView.currentPosition
 
-                    R.id.action_setting2 -> {
-                        true
-                    }
-
-                    R.id.action_setting3 -> {
-                        true
-                    }
-
-                    R.id.action_setting4 -> {
-                        true
-                    }
-
-                    R.id.action_setting5 -> {
-                        true
-                    }
-
-                    else -> false
+                channelStream = when (item.itemId) {
+                    R.id.action_setting1 -> channelStream
+                    R.id.action_setting2 -> channelStream
+                    R.id.action_setting3 -> channelStream
+                    // Добавьте обработку других пунктов меню для других качеств видео
+                    else -> channelStream
                 }
-            }
+                updateVideoView()
+                true
+                }
             popupMenu.show()
+        }
+    }
+
+    private fun updateVideoView() {
+        val videoView = binding.playerVideoView
+        val channelStreamUri = Uri.parse(channelStream)
+        videoView.setVideoURI(channelStreamUri)
+
+        videoView.setOnPreparedListener { mediaPlayer ->
+            // Восстанавливаем позицию видео перед запуском
+            mediaPlayer.seekTo(currentVideoPosition)
+            mediaPlayer.start()
+        }
+
+        videoView.setOnCompletionListener {
+
         }
     }
 
@@ -167,14 +181,73 @@ class VideoPlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        //activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     override fun onPause() {
         super.onPause()
-        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        //activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         activity?.window?.decorView?.systemUiVisibility = 0
         coroutineScope.cancel()
     }
+
+    private fun updateProgressBar(totalTime: Int, channelTimestart1: Long) {
+        val interval = 1000L // Интервал обновления прогресса в миллисекундах (1 секунда)
+
+        coroutineScope.launch(Dispatchers.Main) {
+            while (true) {
+                val currentTime = System.currentTimeMillis() / 1000 // Текущее время в секундах
+                val elapsedTime = currentTime - channelTimestart1 // Время, которое пользователь уже смотрит передачу
+
+                // Вычисляем прогресс в процентах
+                val progress = (elapsedTime.toFloat() / totalTime.toFloat()) * 100
+
+                // Устанавливаем ширину полоски в процентах
+                binding.progressBar.layoutParams.width = (progress * resources.displayMetrics.density).toInt()
+                binding.progressBar.requestLayout()
+
+                delay(interval)
+            }
+        }
+    }
+
+    private fun hideSystemUI() {
+        val decorView: View = requireActivity().window.decorView
+        val uiOptions = decorView.systemUiVisibility
+        var newUiOptions = uiOptions
+        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_LOW_PROFILE
+        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_FULLSCREEN
+        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_IMMERSIVE
+        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        decorView.systemUiVisibility = newUiOptions
+    }
+
+    private fun showSystemUI() {
+        val decorView: View = requireActivity().window.decorView
+        val uiOptions = decorView.systemUiVisibility
+        var newUiOptions = uiOptions
+        newUiOptions = newUiOptions and View.SYSTEM_UI_FLAG_LOW_PROFILE.inv()
+        newUiOptions = newUiOptions and View.SYSTEM_UI_FLAG_FULLSCREEN.inv()
+        newUiOptions = newUiOptions and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION.inv()
+        newUiOptions = newUiOptions and View.SYSTEM_UI_FLAG_IMMERSIVE.inv()
+        newUiOptions = newUiOptions and View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY.inv()
+        decorView.systemUiVisibility = newUiOptions
+    }
+
+     companion object {
+         @JvmStatic private val channel_data = "channel_data"
+         @JvmStatic private val epg_data = "epg_data"
+        @JvmStatic
+        fun newInstance(channel: Channel, selectedEpgDb: Epg?): VideoPlayerFragment {
+            val args = Bundle()
+            args.putSerializable(channel_data, channel)
+            args.putSerializable(epg_data, selectedEpgDb)
+            val fragment = VideoPlayerFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
 }
 

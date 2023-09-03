@@ -1,33 +1,28 @@
 package com.example.channels.model.repository
 
-import android.content.Context
 import androidx.lifecycle.LiveData
-import com.example.channels.model.retrofit.ChannelDb
+import androidx.lifecycle.map
+import com.example.channels.model.retrofit.Channel
 import com.example.channels.model.room.ChannelDao
-import com.example.channels.model.room.fromChannelDb
+import com.example.channels.model.room.ChannelDbEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ChannelRepositoryRetrofit(
-    context: Context,
     private val channelDao: ChannelDao
 ) : ChannelRepository {
 
-    override fun updateChannelList(channelDbList: List<ChannelDb>) {
-        createChannel(channelDbList)
-        /*for (channel in channelDbList) {
-            createChannel(channel)
-        }*/
+    override fun updateChannelList(channelDbEntityList: List<ChannelDbEntity>) {
+        createChannel(channelDbEntityList)
     }
-    override fun createChannel(channelDb: List<ChannelDb>) {
+    override fun createChannel(channelDbEntityList: List<ChannelDbEntity>) {
         CoroutineScope(Dispatchers.IO).launch {
-            val entity = channelDb.map{ it.fromChannelDb() }
-            channelDao.createChannel(entity)
+            channelDao.createChannel(channelDbEntityList)
         }
     }
-    override fun getChannelListLiveData(): LiveData<List<ChannelDb>> {
-        return channelDao.getChannelListAll()
+    override fun getChannelListLiveData(): LiveData<List<Channel>> {
+        return channelDao.getChannelListAll().map { it.map{ it.toChannelDb()} }
     }
 }
 

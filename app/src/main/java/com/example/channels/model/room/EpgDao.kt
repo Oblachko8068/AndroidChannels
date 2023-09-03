@@ -5,13 +5,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.channels.model.retrofit.EpgDb
+import com.example.channels.model.retrofit.Epg
 
 @Dao
 interface EpgDao {
 
     @Query("SELECT * FROM epgs")
-    fun getEpgListAll(): LiveData<List<EpgDb>>
+    fun getEpgListAll(): LiveData<List<EpgDbEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun createEpg(epgDbEntity: List<EpgDbEntity>)
