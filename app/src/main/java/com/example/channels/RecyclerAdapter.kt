@@ -22,7 +22,7 @@ class RecyclerAdapter(
     RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
 
     interface OnChannelItemClickListener {
-        fun onChannelItemClicked(channel: Channel)
+        fun onChannelItemClicked(channel: Channel, epg: Epg)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -125,7 +125,9 @@ class RecyclerAdapter(
         }
 
         holder.itemView.setOnClickListener {
-            itemClickListener.onChannelItemClicked(channel)
+            if (epg != null) {
+                itemClickListener.onChannelItemClicked(channel, epg)
+            }
         }
     }
 }

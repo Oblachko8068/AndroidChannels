@@ -2,6 +2,7 @@ package com.example.channels
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 
 import androidx.room.Room
@@ -9,6 +10,7 @@ import com.example.channels.model.repository.*
 import com.example.channels.model.room.AppDatabase
 import com.example.channels.ViewModel.ChannelViewModel
 import com.example.channels.ViewModel.ChannelViewModelFactory
+import com.example.channels.model.retrofit.Epg
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -58,4 +60,17 @@ class Di {
 
         }
     }
+
+    class EpgUseCase(
+        private val epgRepository: EpgRepository
+    ) {
+        fun getCurrentEpgByChannelId(channelID: Int): LiveData<Epg> {
+            return epgRepository.getCurrentEpgByChannelId(channelID)
+        }
+    }
+
+
+
 }
+
+

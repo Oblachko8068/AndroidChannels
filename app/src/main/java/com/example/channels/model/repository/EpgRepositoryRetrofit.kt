@@ -25,4 +25,8 @@ class EpgRepositoryRetrofit(
         return epgDao.getEpgListAll().map { it.map{ it.toEpgDb()} }
     }
 
+    override fun getCurrentEpgByChannelId(channelID: Int): LiveData<Epg> {
+        return epgDao.getEpgByChannelID(channelID).map { it.toEpgDb()}
+    }
+
 }
