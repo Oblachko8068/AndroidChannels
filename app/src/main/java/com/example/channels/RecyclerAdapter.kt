@@ -17,9 +17,8 @@ class RecyclerAdapter(
     private val context: Context,
     private var channel: List<Channel>,
     private var epg: List<Epg>,
-    private val itemClickListener: OnChannelItemClickListener
-) :
-    RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
+    private val itemClickListener: OnChannelItemClickListener,
+) : RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
 
     interface OnChannelItemClickListener {
         fun onChannelItemClicked(channel: Channel, epg: Epg)
@@ -120,6 +119,9 @@ class RecyclerAdapter(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val channel = channel[position]
         val epg = epg.find { it.channelID == channel.id }
+
+        //val epgUseCase = Di.EpgUseCase(Di.epgRepository)
+        //val epg = epgUseCase.getCurrentEpgByChannelId(channel.id).value
         if (epg != null) {
             holder.bind(channel, epg, context)
         }

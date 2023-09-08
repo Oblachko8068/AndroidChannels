@@ -11,4 +11,6 @@ interface EpgRepository {
     fun updateEpgList(epgDbEntityList: List<EpgDbEntity>)
 
     fun createEpg(epgDbEntityList: List<EpgDbEntity>)
+
+    fun getCurrentEpgByChannelId(channelID: Int): LiveData<Epg>
 }

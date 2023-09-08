@@ -35,7 +35,9 @@ class AllFragment : BaseChannelFragment() {
         return FragmentAllBinding.inflate(inflater, container, false)
     }
 
-
+    fun getNumberOfFragment(): Int {
+        return 0
+    }
     override fun onPageChanged(position: Int) {
         if (position == 0) {
             updateChannelsAndEpg()
@@ -46,22 +48,12 @@ class AllFragment : BaseChannelFragment() {
     }
 
     override fun filterChannels(searchQuery: String?) {
-        val filteredList: List<Channel> = if (!searchQuery.isNullOrEmpty()) {
-            channel.filter { channel ->
-                channel.name.contains(searchQuery, ignoreCase = true)
-            }
-        } else {
-            channel
-        }
+        val filteredList = filterChannelsCommon(searchQuery)
         val adapter = recyclerView?.adapter as? RecyclerAdapter
         adapter?.setData(filteredList)
     }
 
     override fun getAllChannelsList(channelList: List<Channel>, epg: List<Epg>) {
-        adapter = RecyclerAdapter(requireContext(), channelList, epg, this)
-        recyclerView?.adapter = adapter
-        if (!searchQuery.isNullOrEmpty()) {
-            filterChannels(searchQuery)
-        }
+        createAdapter(channelList, epg)
     }
 }
