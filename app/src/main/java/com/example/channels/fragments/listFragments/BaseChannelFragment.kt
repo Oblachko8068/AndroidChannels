@@ -22,35 +22,23 @@ import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 
 abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
-    private val channelViewModel by viewModels<ChannelViewModel> {
-        ChannelViewModelFactory(
-            Di.downloadRepository,
-            Di.channelRepository,
-            Di.epgRepository
-        )
-    }
-    private var _binding: ViewBinding? = null
-    open val binding get() = _binding!!
+
+    abstract var recyclerView: RecyclerView
     val recyclerViewId: Int
         get() = when (this) {
             is AllFragment -> R.id.recyclerView3
             is FavoritesFragment -> R.id.recyclerView4
             else -> throw IllegalArgumentException("")
         }
-    protected var recyclerView: RecyclerView? = null
-
     var searchQuery: String? = null
-    lateinit var adapter: RecyclerAdapter
-    lateinit var channel: List<Channel>
-    lateinit var epg: List<Epg>
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = onCreateViewBinding(inflater, container, savedInstanceState)
-        return binding.root
+    private lateinit var channel: List<Channel>
+    private lateinit var epg: List<Epg>
+    private val channelViewModel by viewModels<ChannelViewModel> {
+        ChannelViewModelFactory(
+            Di.downloadRepository,
+            Di.channelRepository,
+            Di.epgRepository
+        )
     }
 
     abstract fun onCreateViewBinding(
@@ -62,7 +50,6 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val channelViewModel = channelViewModel
         val channelList = channelViewModel.getChannelListLiveData()
         val epgList = channelViewModel.getEpgListLiveData()
 
@@ -86,9 +73,8 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
             updateChannelsAndEpg()
         })
 
-        recyclerView = view.findViewById(recyclerViewId)
-        recyclerView?.setHasFixedSize(true)
-        recyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -116,8 +102,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     }
 
     protected fun createAdapter(channelList: List<Channel>, epgList: List<Epg>) {
-        adapter = RecyclerAdapter(requireContext(), channelList, epgList, this)
-        recyclerView?.adapter = adapter
+        recyclerView.adapter = RecyclerAdapter(requireContext(), channelList, epgList, this)
         if (!searchQuery.isNullOrEmpty()) {
             filterChannels(searchQuery)
         }
