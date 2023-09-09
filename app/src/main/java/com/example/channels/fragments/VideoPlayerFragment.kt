@@ -6,20 +6,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentVideoPlayerBinding
-import com.example.channels.model.retrofit.Channel
-import com.example.channels.model.retrofit.Epg
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.Serializable
 
 class VideoPlayerFragment : Fragment() {
 
@@ -61,7 +59,7 @@ class VideoPlayerFragment : Fragment() {
 
         val channel = arguments?.getSerializable("channel_data") as? Channel
         val epg = arguments?.getSerializable("epg_data") as? Epg
-        if (channel != null ) {
+        if (channel != null) {
             val channelName = channel.name
             val channelDescription = epg?.title
             val channelIconResource = channel.image
@@ -85,7 +83,6 @@ class VideoPlayerFragment : Fragment() {
             binding.playerVideoView.setOnPreparedListener {
                 it.start()
             }
-
 
 
             //устанавливаем полоску
@@ -139,7 +136,7 @@ class VideoPlayerFragment : Fragment() {
                 }
                 updateVideoView()
                 true
-                }
+            }
             popupMenu.show()
         }
     }
@@ -197,13 +194,15 @@ class VideoPlayerFragment : Fragment() {
         coroutineScope.launch(Dispatchers.Main) {
             while (true) {
                 val currentTime = System.currentTimeMillis() / 1000 // Текущее время в секундах
-                val elapsedTime = currentTime - channelTimestart1 // Время, которое пользователь уже смотрит передачу
+                val elapsedTime =
+                    currentTime - channelTimestart1 // Время, которое пользователь уже смотрит передачу
 
                 // Вычисляем прогресс в процентах
                 val progress = (elapsedTime.toFloat() / totalTime.toFloat()) * 100
 
                 // Устанавливаем ширину полоски в процентах
-                binding.progressBar.layoutParams.width = (progress * resources.displayMetrics.density).toInt()
+                binding.progressBar.layoutParams.width =
+                    (progress * resources.displayMetrics.density).toInt()
                 binding.progressBar.requestLayout()
 
                 delay(interval)
@@ -235,9 +234,12 @@ class VideoPlayerFragment : Fragment() {
         decorView.systemUiVisibility = newUiOptions
     }
 
-     companion object {
-         @JvmStatic private val channel_data = "channel_data"
-         @JvmStatic private val epg_data = "epg_data"
+    companion object {
+        @JvmStatic
+        private val channel_data = "channel_data"
+        @JvmStatic
+        private val epg_data = "epg_data"
+
         @JvmStatic
         fun newInstance(channel: Channel, selectedEpgDb: Epg?): VideoPlayerFragment {
             val args = Bundle()

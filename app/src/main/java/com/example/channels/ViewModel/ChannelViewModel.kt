@@ -1,25 +1,25 @@
 package com.example.channels.ViewModel
 
 import androidx.lifecycle.LiveData
-//import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.example.channels.model.repository.ChannelRepository
-import com.example.channels.model.repository.DownloadRepository
-import com.example.channels.model.repository.EpgRepositoryRetrofit
-import com.example.channels.model.retrofit.Channel
-import com.example.channels.model.retrofit.Epg
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
+import com.example.domain.repository.ChannelRepository
+import com.example.domain.repository.DownloadRepository
+import com.example.domain.repository.EpgRepository
 
 
 class ChannelViewModel(
     downloadRepository: DownloadRepository,
     channelRepository: ChannelRepository,
-    epgRepository: EpgRepositoryRetrofit,
+    epgRepository: EpgRepository,
 ) : ViewModel() {
 
-    private var channelLiveData: LiveData<List<Channel>> = channelRepository.getChannelListLiveData()
+    private var channelLiveData: LiveData<List<Channel>> =
+        channelRepository.getChannelListLiveData()
     private var epgLiveData: LiveData<List<Epg>> = epgRepository.getEpgListLiveData()
 
-    init{
+    init {
         downloadRepository.fetchChannels()
     }
 
@@ -27,7 +27,7 @@ class ChannelViewModel(
         return channelLiveData
     }
 
-    fun getEpgListLiveData(): LiveData<List<Epg>>{
+    fun getEpgListLiveData(): LiveData<List<Epg>> {
         return epgLiveData
     }
 

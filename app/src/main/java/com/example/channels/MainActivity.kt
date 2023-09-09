@@ -7,13 +7,13 @@ import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.fragments.MainFragment
 import com.example.channels.fragments.Navigator
 import com.example.channels.fragments.VideoPlayerFragment
-import com.example.channels.model.retrofit.Channel
-import com.example.channels.model.retrofit.Epg
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
 
 class MainActivity : AppCompatActivity(), Navigator {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Di.init(applicationContext, this)
+        com.example.di.di.Di.init(applicationContext, this)
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

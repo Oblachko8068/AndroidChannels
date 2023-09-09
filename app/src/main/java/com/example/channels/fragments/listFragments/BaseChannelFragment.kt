@@ -5,21 +5,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import androidx.viewpager.widget.ViewPager
-import com.example.channels.Di
 import com.example.channels.R
 import com.example.channels.RecyclerAdapter
+import com.example.channels.ViewModel.ChannelViewModel
+import com.example.channels.ViewModel.ChannelViewModelFactory
 import com.example.channels.fragments.navigator
-import com.example.channels.model.retrofit.Channel
-import com.example.channels.model.retrofit.Epg
+import com.example.di.di.Di
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
 
 abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
-
+    private val channelViewModel by viewModels<ChannelViewModel> {
+        ChannelViewModelFactory(
+            Di.downloadRepository,
+            Di.channelRepository,
+            Di.epgRepository
+        )
+    }
     private var _binding: ViewBinding? = null
     open val binding get() = _binding!!
     val recyclerViewId: Int
@@ -53,7 +62,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val channelViewModel = Di.channelViewModel
+        val channelViewModel = channelViewModel
         val channelList = channelViewModel.getChannelListLiveData()
         val epgList = channelViewModel.getEpgListLiveData()
 
@@ -113,6 +122,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
             filterChannels(searchQuery)
         }
     }
+
     abstract fun getAllChannelsList(channelList: List<Channel>, epg: List<Epg>)
 
     protected fun filterChannelsCommon(searchQuery: String?): List<Channel> {
@@ -124,6 +134,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
             channel
         }
     }
+
     abstract fun filterChannels(searchQuery: String?)
 
     override fun onChannelItemClicked(channel: Channel, epg: Epg) {

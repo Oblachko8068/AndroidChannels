@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.example.channels.RecyclerAdapter
-import com.example.channels.databinding.FragmentAllBinding
 import com.example.channels.databinding.FragmentFavoritesBinding
-import com.example.channels.model.retrofit.Channel
-import com.example.channels.model.retrofit.Epg
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
 import com.google.gson.Gson
 
 

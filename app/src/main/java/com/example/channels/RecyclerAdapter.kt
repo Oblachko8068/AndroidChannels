@@ -8,8 +8,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.channels.databinding.ChannelBlockBinding
-import com.example.channels.model.retrofit.Channel
-import com.example.channels.model.retrofit.Epg
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
 import com.google.gson.Gson
 
 
