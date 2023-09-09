@@ -22,8 +22,7 @@ class AllFragment : BaseChannelFragment() {
     ): View {
         _binding = FragmentAllBinding.inflate(inflater, container, false)
         val rootView = binding.root
-        recyclerView =
-            rootView.findViewById(recyclerViewId)
+        recyclerView = binding.recyclerView3
         return rootView
     }
 
@@ -35,10 +34,6 @@ class AllFragment : BaseChannelFragment() {
         return FragmentAllBinding.inflate(inflater, container, false)
     }
 
-    fun getNumberOfFragment(): Int {
-        return 0
-    }
-
     override fun onPageChanged(position: Int) {
         if (position == 0) {
             updateChannelsAndEpg()
@@ -47,8 +42,6 @@ class AllFragment : BaseChannelFragment() {
             }
         }
     }
-
-
     override fun filterChannels(searchQuery: String?) {
         val filteredList = filterChannelsCommon(searchQuery)
         val adapter = recyclerView?.adapter as? RecyclerAdapter

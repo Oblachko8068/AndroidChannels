@@ -24,8 +24,7 @@ class FavoritesFragment : BaseChannelFragment() {
     ): View {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         val rootView = binding.root
-        recyclerView =
-            rootView.findViewById(recyclerViewId)
+        recyclerView = binding.recyclerView4
         return rootView
     }
 

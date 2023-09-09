@@ -31,18 +31,12 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     }
     private var _binding: ViewBinding? = null
     open val binding get() = _binding!!
-    val recyclerViewId: Int
-        get() = when (this) {
-            is AllFragment -> R.id.recyclerView3
-            is FavoritesFragment -> R.id.recyclerView4
-            else -> throw IllegalArgumentException("")
-        }
     protected var recyclerView: RecyclerView? = null
 
     var searchQuery: String? = null
-    lateinit var adapter: RecyclerAdapter
-    lateinit var channel: List<Channel>
-    lateinit var epg: List<Epg>
+    private lateinit var adapter: RecyclerAdapter
+    private lateinit var channel: List<Channel>
+    private lateinit var epg: List<Epg>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,7 +80,6 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
             updateChannelsAndEpg()
         })
 
-        recyclerView = view.findViewById(recyclerViewId)
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
 
