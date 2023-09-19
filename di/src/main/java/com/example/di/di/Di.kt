@@ -51,7 +51,7 @@ class Di {
         }
     }
     class EpgUseCase(
-        private val epgRepository: com.example.domain.repository.EpgRepository
+        private val epgRepository: EpgRepository
     ) {
         fun getCurrentEpgByChannelId(channelID: Int): LiveData<Epg> {
             return epgRepository.getCurrentEpgByChannelId(channelID)
