@@ -21,6 +21,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.bumptech.glide.Glide
@@ -30,7 +31,8 @@ import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 
 class ExoPlayerFragment: Fragment(), Player.Listener {
-    val mp4 = "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4"
+    private val mp4 = "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4"
+    private val hlsUri = "https://cdn-cache01.voka.tv/live/5117.m3u8"
     private lateinit var mainBinding: FragmentExoplayerBinding
     private lateinit var player: ExoPlayer
     private var playbackPosition: Long = 0
@@ -38,8 +40,6 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
     private var channelStream =
         "https://cdn-cache01.voka.tv/live/5117.m3u8"
 
-
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,11 +47,6 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
     ): View {
         //activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         mainBinding = FragmentExoplayerBinding.inflate(inflater, container, false)
-        activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, false) }
-        activity?.let { WindowInsetsControllerCompat(it.window, mainBinding.container) }.let {
-            it?.hide(WindowInsetsCompat.Type.statusBars())
-            it?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         return mainBinding.root
     }
@@ -103,7 +98,7 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
             popupMenu.show()
         }
 
-        setupPlayer()
+        initializePlayer()
         player.addMediaItem(MediaItem.fromUri(mp4))
         if (savedInstanceState != null) {
             playbackPosition = savedInstanceState.getLong("playbackPosition")
@@ -121,9 +116,21 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
         player.play()
     }
 
-    private fun setupPlayer() {
-        player = ExoPlayer.Builder(requireContext()).build()
-        mainBinding.exoplayerView.player = player
+    private fun initializePlayer() {
+        player = ExoPlayer.Builder(requireContext())
+            .build()
+            .also { exoPlayer ->
+                mainBinding.exoplayerView.player = exoPlayer
+                exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
+                    .buildUpon()
+                    .setMaxVideoSizeSd()
+                    .build()
+                val mediaItem = MediaItem.Builder()
+                    .setUri(mp4)
+                    .build()
+                exoPlayer.setMediaItem(mediaItem, playbackPosition)
+                exoPlayer.prepare()
+            }
         player.addListener(this)
     }
 
@@ -142,9 +149,17 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
     }
     override fun onResume() {
         super.onResume()
+        hideSystemUi()
         if (playbackState == Player.STATE_READY) {
             player.seekTo(playbackPosition)
             player.play()
+        }
+    }
+    private fun hideSystemUi() {
+        activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, false) }
+        activity?.let { WindowInsetsControllerCompat(it.window, mainBinding.container) }.let {
+            it?.hide(WindowInsetsCompat.Type.statusBars())
+            it?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
     override fun onPlaybackStateChanged(playbackState: Int) {
