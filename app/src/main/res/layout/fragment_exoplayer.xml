@@ -10,14 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark_primary"
-        app:hide_on_touch="true"
         app:controller_layout_id="@layout/custom_controller">
         <ProgressBar
             android:id="@+id/buffering"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
     </androidx.media3.ui.PlayerView>
 
 </RelativeLayout>

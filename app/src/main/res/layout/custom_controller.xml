@@ -17,7 +17,7 @@
         tools:ignore="MissingConstraints">
 
         <ImageButton
-            android:id="@+id/backToMain"
+            android:id="@+id/backToMain1"
             android:layout_width="40dp"
             android:layout_height="36dp"
             android:layout_gravity="center_vertical"
@@ -29,7 +29,7 @@
             android:layout_height="44dp" />
 
         <ImageView
-            android:id="@+id/activeChannelIcon"
+            android:id="@+id/activeChannelIcon1"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_gravity="center_vertical"
@@ -46,7 +46,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/activeChannelDesc"
+                android:id="@+id/activeChannelDesc1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_active_channel_description"
@@ -54,7 +54,7 @@
                 tools:ignore="MissingConstraints" />
 
             <TextView
-                android:id="@+id/activeChannelName"
+                android:id="@+id/activeChannelName1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_active_channel_name"
@@ -86,7 +86,7 @@
             tools:ignore="MissingConstraints"/>
 
         <ImageButton
-            android:id="@+id/exo_settings"
+            android:id="@+id/settings1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/exo_progress"
