@@ -1,5 +1,6 @@
 package com.example.channels.fragments
 
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
@@ -23,7 +24,10 @@ import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.hls.HlsMediaSource
 import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentExoplayerBinding
@@ -37,15 +41,12 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
     private lateinit var player: ExoPlayer
     private var playbackPosition: Long = 0
     private var playbackState: Int = Player.STATE_IDLE
-    private var channelStream =
-        "https://cdn-cache01.voka.tv/live/5117.m3u8"
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        //activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         mainBinding = FragmentExoplayerBinding.inflate(inflater, container, false)
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         return mainBinding.root
@@ -79,7 +80,7 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
         backToMain.setOnClickListener {
             navigator().goBack()
         }
-        val settings = view.findViewById<ImageButton>(R.id.settings1)
+        /*val settings = view.findViewById<ImageButton>(R.id.settings1)
         settings.setOnClickListener {
             val popupMenu = PopupMenu(requireContext(), settings)
             popupMenu.menuInflater.inflate(R.menu.menu_settings, popupMenu.menu)
@@ -96,7 +97,7 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
                 true
             }
             popupMenu.show()
-        }
+        }*/
 
         initializePlayer()
         player.addMediaItem(MediaItem.fromUri(mp4))
@@ -116,21 +117,17 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
         player.play()
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun initializePlayer() {
-        player = ExoPlayer.Builder(requireContext())
-            .build()
-            .also { exoPlayer ->
-                mainBinding.exoplayerView.player = exoPlayer
-                exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
-                    .buildUpon()
-                    .setMaxVideoSizeSd()
-                    .build()
-                val mediaItem = MediaItem.Builder()
-                    .setUri(mp4)
-                    .build()
-                exoPlayer.setMediaItem(mediaItem, playbackPosition)
-                exoPlayer.prepare()
-            }
+        val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
+        val hlsMediaSource =
+            HlsMediaSource.Factory(dataSourceFactory)
+                .setAllowChunklessPreparation(false)
+                .createMediaSource(MediaItem.fromUri(hlsUri))
+        player = ExoPlayer.Builder(requireContext()).build()
+        player.setMediaSource(hlsMediaSource)
+        player.prepare()
+        mainBinding.exoplayerView.player = player
         player.addListener(this)
     }
 
