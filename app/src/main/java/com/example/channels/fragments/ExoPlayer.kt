@@ -2,42 +2,45 @@ package com.example.channels.fragments
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowInsets
-import android.view.WindowInsetsController
-import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
+import androidx.media3.exoplayer.offline.DownloadHelper
 import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentExoplayerBinding
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+const val channel_data = "channel_exo_data"
+const val epg_data = "epg_exo_data"
+const val hlsUri = "https://cdn-cache01.voka.tv/live/5117.m3u8"
 class ExoPlayerFragment: Fragment(), Player.Listener {
-    private val mp4 = "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4"
-    private val hlsUri = "https://cdn-cache01.voka.tv/live/5117.m3u8"
-    private lateinit var mainBinding: FragmentExoplayerBinding
+
+    private var visibilityView: Boolean = true
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private lateinit var binding: FragmentExoplayerBinding
     private lateinit var player: ExoPlayer
     private var playbackPosition: Long = 0
     private var playbackState: Int = Player.STATE_IDLE
@@ -47,14 +50,12 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mainBinding = FragmentExoplayerBinding.inflate(inflater, container, false)
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        return mainBinding.root
+        binding = FragmentExoplayerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //binding = CustomControllerBinding.inflate(layoutInflater)
         val channel = arguments?.getSerializable("channel_exo_data") as? Channel
         val epg = arguments?.getSerializable("epg_exo_data") as? Epg
         if (channel != null) {
@@ -64,43 +65,55 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
             //val channelStream = extras.getString("channel_stream")
             val channelTimestart = epg?.timestart
             val channelTimestop = epg?.timestop
-            val activeChannelName = view.findViewById<TextView>(R.id.activeChannelName1)
-            activeChannelName.text = channelName
-            val activeChannelDesc = view.findViewById<TextView>(R.id.activeChannelDesc1)
-            activeChannelDesc.text = "$channelDescription"
-            val activeChannelIcon = view.findViewById<ImageView>(R.id.activeChannelIcon1)
+            binding.activeChannelName.text = channelName
+            binding.activeChannelDesc.text = "$channelDescription"
             //запись иконки
             context?.let {
                 Glide.with(it)
                     .load(channelIconResource)
-                    .into(activeChannelIcon)
+                    .into(binding.activeChannelIcon)
             }
+            val totalTime = 60
+            val channelTimestart1 = System.currentTimeMillis() / 1000
+            //updateProgressBar(totalTime, channelTimestart1)
+
+            binding.textViewTimeToTheEnd.text = totalTime.toString()
         }
-        val backToMain = view.findViewById<ImageButton>(R.id.backToMain1)
-        backToMain.setOnClickListener {
+        binding.backToMain.setOnClickListener {
             navigator().goBack()
         }
-        /*val settings = view.findViewById<ImageButton>(R.id.settings1)
-        settings.setOnClickListener {
-            val popupMenu = PopupMenu(requireContext(), settings)
+        binding.container.setOnClickListener {
+            if (player.isPlaying) {
+                coroutineScope.launch {
+                    if (visibilityView) {
+                        hideOtherViews()
+                        visibilityView = false
+                    } else {
+                        showOtherViews()
+                        delay(3000)
+                        hideOtherViews()
+                    }
+                }
+            }
+        }
+
+        binding.settings.setOnClickListener {
+            val popupMenu = PopupMenu(requireContext(), binding.settings)
             popupMenu.menuInflater.inflate(R.menu.menu_settings, popupMenu.menu)
             popupMenu.setOnMenuItemClickListener { item ->
-                playbackPosition = player.currentPosition
-
-                channelStream = when (item.itemId) {
-                    R.id.action_setting1 -> mp4
-                    R.id.action_setting2 -> mp4
-                    R.id.action_setting3 -> mp4
-                    else -> mp4
+                /*channelStream = when (item.itemId) {
+                    R.id.action_setting1 ->
+                    R.id.action_setting2 ->
+                    R.id.action_setting3 ->
+                    // Добавьте обработку других пунктов меню для других качеств видео
+                    else -> channelStream
                 }
-                updateVideoView()
+                updateVideoView()*/
                 true
             }
             popupMenu.show()
-        }*/
-
+        }
         initializePlayer()
-        player.addMediaItem(MediaItem.fromUri(mp4))
         if (savedInstanceState != null) {
             playbackPosition = savedInstanceState.getLong("playbackPosition")
             playbackState = savedInstanceState.getInt("playbackState")
@@ -109,12 +122,6 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
                 player.play()
             }
         }
-    }
-
-    private fun updateVideoView() {
-        player.addMediaItem(MediaItem.fromUri(mp4))
-        player.seekTo(playbackPosition)
-        player.play()
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -127,8 +134,9 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
         player = ExoPlayer.Builder(requireContext()).build()
         player.setMediaSource(hlsMediaSource)
         player.prepare()
-        mainBinding.exoplayerView.player = player
+        binding.exoplayerView.player = player
         player.addListener(this)
+        player.play()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -136,8 +144,30 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
         outState.putLong("playbackPosition", playbackPosition)
         outState.putInt("playbackState", playbackState)
     }
+    /*private fun updateProgressBar(totalTime: Int, channelTimestart1: Long) {
+        val interval = 1000L // Интервал обновления прогресса в миллисекундах (1 секунда)
+
+        coroutineScope.launch(Dispatchers.Main) {
+            while (true) {
+                val currentTime = System.currentTimeMillis() / 1000 // Текущее время в секундах
+                val elapsedTime =
+                    currentTime - channelTimestart1 // Время, которое пользователь уже смотрит передачу
+
+                // Вычисляем прогресс в процентах
+                val progress = (elapsedTime.toFloat() / totalTime.toFloat()) * 100
+
+                // Устанавливаем ширину полоски в процентах
+                binding.progressBar.layoutParams.width =
+                    (progress * resources.displayMetrics.density).toInt()
+                binding.progressBar.requestLayout()
+
+                delay(interval)
+            }
+        }
+    }*/
     override fun onPause() {
         super.onPause()
+        coroutineScope.cancel()
         if (player.isPlaying) {
             playbackPosition = player.currentPosition
             playbackState = player.playbackState
@@ -153,22 +183,44 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
         }
     }
     private fun hideSystemUi() {
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, false) }
-        activity?.let { WindowInsetsControllerCompat(it.window, mainBinding.container) }.let {
+        activity?.let { WindowInsetsControllerCompat(it.window, binding.container) }.let {
             it?.hide(WindowInsetsCompat.Type.statusBars())
             it?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
-    override fun onPlaybackStateChanged(playbackState: Int) {
-        super.onPlaybackStateChanged(playbackState)
-        when (playbackState){
-            Player.STATE_BUFFERING -> {
-                mainBinding.buffering.visibility = View.VISIBLE
-            }
-            Player.STATE_READY -> {
-                mainBinding.buffering.visibility = View.INVISIBLE
-            }
-        }
+
+    private fun showSystemUi() {
+        activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, true) }
+        activity?.let { WindowInsetsControllerCompat(it.window, binding.container) }?.show(WindowInsetsCompat.Type.systemBars())
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    }
+
+    private fun showOtherViews() {
+        binding.layoutTop.visibility = View.VISIBLE
+        binding.layoutBottom.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
+        binding.unplayedBar.visibility = View.VISIBLE
+        binding.textViewTimeToTheEnd.visibility = View.VISIBLE
+        binding.settings.visibility = View.VISIBLE
+        binding.backToMain.visibility = View.VISIBLE
+        binding.activeChannelIcon.visibility = View.VISIBLE
+        binding.activeChannelDesc.visibility = View.VISIBLE
+        binding.activeChannelName.visibility = View.VISIBLE
+    }
+
+    private fun hideOtherViews() {
+        binding.layoutTop.visibility = View.INVISIBLE
+        binding.layoutBottom.visibility = View.INVISIBLE
+        binding.unplayedBar.visibility = View.INVISIBLE
+        binding.progressBar.visibility = View.INVISIBLE
+        binding.textViewTimeToTheEnd.visibility = View.INVISIBLE
+        binding.settings.visibility = View.INVISIBLE
+        binding.backToMain.visibility = View.INVISIBLE
+        binding.activeChannelIcon.visibility = View.INVISIBLE
+        binding.activeChannelDesc.visibility = View.INVISIBLE
+        binding.activeChannelName.visibility = View.INVISIBLE
     }
     override fun onStop() {
         super.onStop()
@@ -176,18 +228,11 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
     }
     override fun onDestroyView() {
         super.onDestroyView()
-        activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, true) }
-        activity?.let { WindowInsetsControllerCompat(it.window, mainBinding.container) }?.show(WindowInsetsCompat.Type.systemBars())
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        coroutineScope.cancel()
+        showSystemUi()
     }
 
     companion object {
-        @JvmStatic
-        private val channel_data = "channel_exo_data"
-        @JvmStatic
-        private val epg_data = "epg_exo_data"
-
-        @JvmStatic
         fun newInstance(channel: Channel, selectedEpgDb: Epg?): ExoPlayerFragment {
             val args = Bundle()
             args.putSerializable(channel_data, channel)

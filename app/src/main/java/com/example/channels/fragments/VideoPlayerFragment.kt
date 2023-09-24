@@ -127,13 +127,13 @@ class VideoPlayerFragment : Fragment() {
             popupMenu.setOnMenuItemClickListener { item ->
                 currentVideoPosition = binding.playerVideoView.currentPosition
 
-                channelStream = when (item.itemId) {
+                /*channelStream = when (item.itemId) {
                     R.id.action_setting1 -> channelStream
                     R.id.action_setting2 -> channelStream
                     R.id.action_setting3 -> channelStream
                     // Добавьте обработку других пунктов меню для других качеств видео
                     else -> channelStream
-                }
+                }*/
                 updateVideoView()
                 true
             }
