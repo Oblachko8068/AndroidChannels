@@ -8,7 +8,6 @@ import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.fragments.ExoPlayerFragment
 import com.example.channels.fragments.MainFragment
 import com.example.channels.fragments.Navigator
-import com.example.channels.fragments.VideoPlayerFragment
 import com.example.di.di.Di
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg

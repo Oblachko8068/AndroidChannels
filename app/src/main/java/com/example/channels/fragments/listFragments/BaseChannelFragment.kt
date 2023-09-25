@@ -34,9 +34,8 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     protected var recyclerView: RecyclerView? = null
 
     var searchQuery: String? = null
-    private lateinit var adapter: RecyclerAdapter
-    private lateinit var channel: List<Channel>
-    private lateinit var epg: List<Epg>
+    private var channel: List<Channel> = emptyList()
+    private var epg: List<Epg> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,31 +54,14 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val mediatorLiveData = channelViewModel.getMediatorLiveData()
 
-        val channelViewModel = channelViewModel
-        val channelList = channelViewModel.getChannelListLiveData()
-        val epgList = channelViewModel.getEpgListLiveData()
-
-        val mediatorLiveData = MediatorLiveData<Pair<List<Channel>, List<Epg>>>()
-
-        mediatorLiveData.addSource(channelList) { channels ->
-            val epg = epgList.value ?: emptyList()
-            mediatorLiveData.value = Pair(channels, epg)
-        }
-
-        mediatorLiveData.addSource(epgList) { epg ->
-            val channels = channelList.value ?: emptyList()
-            mediatorLiveData.value = Pair(channels, epg)
-        }
-
-        epg = epgList.value ?: emptyList()
-        channel = channelList.value ?: emptyList()
-        mediatorLiveData.observe(viewLifecycleOwner, Observer { pair ->
+        mediatorLiveData.observe(viewLifecycleOwner) { pair ->
             channel = pair.first
             epg = pair.second
             updateChannelsAndEpg()
-        })
-
+        }
+        updateChannelsAndEpg()
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
 
@@ -103,14 +85,11 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     abstract fun onPageChanged(position: Int)
 
     fun updateChannelsAndEpg() {
-        if (::channel.isInitialized && ::epg.isInitialized) {
-            getAllChannelsList(channel, epg)
-        }
+        getAllChannelsList(channel, epg)
     }
 
     protected fun createAdapter(channelList: List<Channel>, epgList: List<Epg>) {
-        adapter = RecyclerAdapter(requireContext(), channelList, epgList, this)
-        recyclerView?.adapter = adapter
+        recyclerView?.adapter = RecyclerAdapter(requireContext(), channelList, epgList, this)
         if (!searchQuery.isNullOrEmpty()) {
             filterChannels(searchQuery)
         }
@@ -134,6 +113,3 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
         navigator().showVideoPlayerFragment(channel, epg)
     }
 }
-
-
-

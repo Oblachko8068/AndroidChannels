@@ -2,14 +2,10 @@ package com.example.channels.fragments
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -21,7 +17,8 @@ import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
-import androidx.media3.exoplayer.offline.DownloadHelper
+import androidx.media3.exoplayer.hls.playlist.HlsPlaylistParser
+import androidx.media3.exoplayer.hls.playlist.HlsPlaylistParserFactory
 import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentExoplayerBinding
@@ -36,7 +33,8 @@ import kotlinx.coroutines.launch
 const val channel_data = "channel_exo_data"
 const val epg_data = "epg_exo_data"
 const val hlsUri = "https://cdn-cache01.voka.tv/live/5117.m3u8"
-class ExoPlayerFragment: Fragment(), Player.Listener {
+
+class ExoPlayerFragment : Fragment(), Player.Listener {
 
     private var visibilityView: Boolean = true
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -51,6 +49,8 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentExoplayerBinding.inflate(inflater, container, false)
+
+        hideSystemUi()
         return binding.root
     }
 
@@ -144,6 +144,7 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
         outState.putLong("playbackPosition", playbackPosition)
         outState.putInt("playbackState", playbackState)
     }
+
     /*private fun updateProgressBar(totalTime: Int, channelTimestart1: Long) {
         val interval = 1000L // Интервал обновления прогресса в миллисекундах (1 секунда)
 
@@ -174,26 +175,29 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
             player.pause()
         }
     }
+
     override fun onResume() {
         super.onResume()
-        hideSystemUi()
         if (playbackState == Player.STATE_READY) {
             player.seekTo(playbackPosition)
             player.play()
         }
     }
+
     private fun hideSystemUi() {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, false) }
         activity?.let { WindowInsetsControllerCompat(it.window, binding.container) }.let {
             it?.hide(WindowInsetsCompat.Type.statusBars())
-            it?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            it?.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 
     private fun showSystemUi() {
         activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, true) }
-        activity?.let { WindowInsetsControllerCompat(it.window, binding.container) }?.show(WindowInsetsCompat.Type.systemBars())
+        activity?.let { WindowInsetsControllerCompat(it.window, binding.container) }
+            ?.show(WindowInsetsCompat.Type.systemBars())
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 
@@ -222,10 +226,12 @@ class ExoPlayerFragment: Fragment(), Player.Listener {
         binding.activeChannelDesc.visibility = View.INVISIBLE
         binding.activeChannelName.visibility = View.INVISIBLE
     }
+
     override fun onStop() {
         super.onStop()
         player.stop()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         coroutineScope.cancel()
