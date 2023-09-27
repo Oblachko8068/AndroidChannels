@@ -8,8 +8,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.channels.databinding.ChannelBlockBinding
-import com.example.channels.model.retrofit.Channel
-import com.example.channels.model.retrofit.Epg
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
 import com.google.gson.Gson
 
 
@@ -17,9 +17,8 @@ class RecyclerAdapter(
     private val context: Context,
     private var channel: List<Channel>,
     private var epg: List<Epg>,
-    private val itemClickListener: OnChannelItemClickListener
-) :
-    RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
+    private val itemClickListener: OnChannelItemClickListener,
+) : RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
 
     interface OnChannelItemClickListener {
         fun onChannelItemClicked(channel: Channel, epg: Epg)
@@ -120,6 +119,9 @@ class RecyclerAdapter(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val channel = channel[position]
         val epg = epg.find { it.channelID == channel.id }
+
+        //val epgUseCase = Di.EpgUseCase(Di.epgRepository)
+        //val epg = epgUseCase.getCurrentEpgByChannelId(channel.id).value
         if (epg != null) {
             holder.bind(channel, epg, context)
         }

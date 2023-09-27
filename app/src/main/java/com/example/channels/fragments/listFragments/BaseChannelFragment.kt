@@ -5,35 +5,35 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import androidx.viewpager.widget.ViewPager
-import com.example.channels.Di
 import com.example.channels.R
 import com.example.channels.RecyclerAdapter
+import com.example.channels.ViewModel.ChannelViewModel
+import com.example.channels.ViewModel.ChannelViewModelFactory
 import com.example.channels.fragments.navigator
-import com.example.channels.model.retrofit.Channel
-import com.example.channels.model.retrofit.Epg
+import com.example.di.di.Di
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
 
 abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
-
+    private val channelViewModel by viewModels<ChannelViewModel> {
+        ChannelViewModelFactory(
+            Di.downloadRepository,
+            Di.channelRepository,
+            Di.epgRepository
+        )
+    }
     private var _binding: ViewBinding? = null
     open val binding get() = _binding!!
-    val recyclerViewId: Int
-        get() = when (this) {
-            is AllFragment -> R.id.recyclerView3
-            is FavoritesFragment -> R.id.recyclerView4
-            else -> throw IllegalArgumentException("")
-        }
     protected var recyclerView: RecyclerView? = null
 
     var searchQuery: String? = null
-    lateinit var adapter: RecyclerAdapter
-    lateinit var channel: List<Channel>
-    lateinit var epg: List<Epg>
+    private var channel: List<Channel> = emptyList()
+    private var epg: List<Epg> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,42 +52,14 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val mediatorLiveData = channelViewModel.getMediatorLiveData()
 
-        val channelViewModel = Di.channelViewModel
-        val channelList = channelViewModel.getChannelListLiveData()
-        val epgList = channelViewModel.getEpgListLiveData()
-
-        val mediatorLiveData = MediatorLiveData<Pair<List<Channel>, List<Epg>>>()
-
-        mediatorLiveData.addSource(channelList) { channels ->
-            val epg = epgList.value ?: emptyList()
-            mediatorLiveData.value = Pair(channels, epg)
-        }
-
-        mediatorLiveData.addSource(epgList) { epg ->
-            val channels = channelList.value ?: emptyList()
-            mediatorLiveData.value = Pair(channels, epg)
-        }
-
-        epg = epgList.value ?: emptyList()
-        channel = channelList.value ?: emptyList()
-        /*channelList.observe(viewLifecycleOwner, Observer { channelList ->
-            channel = channelList
-            updateChannelsAndEpg()
-        })
-
-        epgList.observe(viewLifecycleOwner, Observer { epgList ->
-            epg = epgList
-            updateChannelsAndEpg()
-        })*/
-
-        mediatorLiveData.observe(viewLifecycleOwner, Observer { pair ->
+        mediatorLiveData.observe(viewLifecycleOwner) { pair ->
             channel = pair.first
             epg = pair.second
             updateChannelsAndEpg()
-        })
-
-        recyclerView = view.findViewById(recyclerViewId)
+        }
+        updateChannelsAndEpg()
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
 
@@ -111,12 +83,27 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     abstract fun onPageChanged(position: Int)
 
     fun updateChannelsAndEpg() {
-        if (::channel.isInitialized && ::epg.isInitialized) {
-            getAllChannelsList(channel, epg)
+        getAllChannelsList(channel, epg)
+    }
+
+    protected fun createAdapter(channelList: List<Channel>, epgList: List<Epg>) {
+        recyclerView?.adapter = RecyclerAdapter(requireContext(), channelList, epgList, this)
+        if (!searchQuery.isNullOrEmpty()) {
+            filterChannels(searchQuery)
         }
     }
 
     abstract fun getAllChannelsList(channelList: List<Channel>, epg: List<Epg>)
+
+    protected fun filterChannelsCommon(searchQuery: String?): List<Channel> {
+        return if (!searchQuery.isNullOrEmpty()) {
+            channel.filter { channel ->
+                channel.name.contains(searchQuery, ignoreCase = true)
+            }
+        } else {
+            channel
+        }
+    }
 
     abstract fun filterChannels(searchQuery: String?)
 
@@ -124,6 +111,3 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
         navigator().showVideoPlayerFragment(channel, epg)
     }
 }
-
-
-

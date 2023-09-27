@@ -33,4 +33,7 @@
     <color name="text_channel_description">#E9EAEF</color>
     <color name="text_active_channel_name">#33FFFFFF</color>
     <color name="text_active_channel_description">#FFFFFFFF</color>
+
+    <color name="unplayed_video">#80FFFFFF</color>
+    <color name="played_video">#0077FF</color>
 </resources>

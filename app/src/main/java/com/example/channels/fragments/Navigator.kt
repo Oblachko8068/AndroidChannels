@@ -1,11 +1,8 @@
 package com.example.channels.fragments
 
-import android.os.Parcelable
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
-import com.example.channels.model.retrofit.Channel
-import com.example.channels.model.retrofit.Epg
-import java.io.Serializable
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
 
 typealias ResultListener<T> = (T) -> Unit
 
@@ -15,7 +12,7 @@ fun Fragment.navigator(): Navigator {
 
 interface Navigator {
 
-    fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg ?)
+    fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?)
 
     fun goBack()
 

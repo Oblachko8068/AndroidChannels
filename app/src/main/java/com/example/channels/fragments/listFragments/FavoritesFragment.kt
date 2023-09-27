@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.example.channels.RecyclerAdapter
-import com.example.channels.databinding.FragmentAllBinding
 import com.example.channels.databinding.FragmentFavoritesBinding
-import com.example.channels.model.retrofit.Channel
-import com.example.channels.model.retrofit.Epg
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
 import com.google.gson.Gson
 
 
@@ -25,8 +24,7 @@ class FavoritesFragment : BaseChannelFragment() {
     ): View {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         val rootView = binding.root
-        recyclerView =
-            rootView.findViewById(recyclerViewId)
+        recyclerView = binding.recyclerView4
         return rootView
     }
 
@@ -35,7 +33,7 @@ class FavoritesFragment : BaseChannelFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): ViewBinding {
-        return FragmentAllBinding.inflate(inflater, container, false)
+        return FragmentFavoritesBinding.inflate(inflater, container, false)
     }
 
     override fun onPageChanged(position: Int) {
@@ -50,25 +48,15 @@ class FavoritesFragment : BaseChannelFragment() {
     override fun getAllChannelsList(channelList: List<Channel>, epg: List<Epg>) {
         val intArray = getSavedNewIntArray(requireContext())
         val favoriteChannels = channelList.filter { it.id in intArray }
-        adapter = RecyclerAdapter(requireContext(), favoriteChannels, epg, this)
-        recyclerView?.adapter = adapter
-        if (!searchQuery.isNullOrEmpty()) {
-            filterChannels(searchQuery)
-        }
+        createAdapter(favoriteChannels, epg)
     }
 
     override fun filterChannels(searchQuery: String?) {
-        val filteredList: List<Channel> = if (!searchQuery.isNullOrEmpty()) {
-            channel.filter { channel ->
-                channel.name.contains(searchQuery, ignoreCase = true)
-            }
-        } else {
-            channel
-        }
+        val filteredList = filterChannelsCommon(searchQuery)
         val intArray = getSavedNewIntArray(requireContext())
-        val favoriteChannels = filteredList.filter { it.id in intArray }
+        val filteredChannels = filteredList.filter { it.id in intArray }
         val adapter = recyclerView?.adapter as? RecyclerAdapter
-        adapter?.setData(favoriteChannels)
+        adapter?.setData(filteredChannels)
     }
 
     private fun getSavedNewIntArray(context: Context): IntArray {
