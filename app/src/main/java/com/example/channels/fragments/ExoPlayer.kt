@@ -27,7 +27,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.net.URL
 
 const val channel_data = "channel_exo_data"
 const val epg_data = "epg_exo_data"
@@ -113,7 +112,23 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 player.play()
             }
         }
-        //parentFragmentManager.setFragmentResultListener("result")
+        parentFragmentManager.setFragmentResultListener("result", viewLifecycleOwner) { _, res ->
+            val result = res.getInt("quality")
+            if (result == 0) {
+                initializePlayer()
+            } else {
+                val urlToSet = urlList[qualityList.indexOf(result)]
+                updatePlayer(urlToSet)
+            }
+        }
+    }
+
+    private fun updatePlayer(urlToSet: Uri) {
+        player.stop()
+        player.setMediaItem(MediaItem.fromUri(urlToSet))
+        player.prepare()
+        binding.exoplayerView.player = player
+        player.play()
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -134,7 +149,8 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                     val manifest = player.currentManifest
                     if (manifest is HlsManifest) {
                         for (i in 0 until manifest.multivariantPlaylist.variants.size) {
-                            if (manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D0029") {
+                            if (manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D0029"
+                                || manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D001E") {
                                 val height = manifest.multivariantPlaylist.variants[i].format.height
                                 val url = manifest.multivariantPlaylist.variants[i].url
                                 qualityAdd(height, url)
@@ -147,7 +163,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     }
 
     private fun qualityAdd(height: Int, url: Uri) {
-        if (!qualityList.contains(height)) {
+        if (!qualityList.contains(height) && !urlList.contains(url)) {
             qualityList.add(height)
             urlList.add(url)
         }

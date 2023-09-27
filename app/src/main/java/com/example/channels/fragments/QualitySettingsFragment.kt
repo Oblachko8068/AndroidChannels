@@ -46,7 +46,7 @@ class QualitySettingsFragment : DialogFragment() {
                 text.setBackgroundResource(R.color.text_active)
             }
             val resultData = Bundle()
-            resultData.putString("quality", "auto")
+            resultData.putInt("quality", 0)
             setFragmentResult("result", resultData)
         }
 
@@ -70,6 +70,9 @@ class QualitySettingsFragment : DialogFragment() {
                         it.setBackgroundResource(R.color.text_active)
                     }
                 }
+                val resultData = Bundle()
+                resultData.putInt("quality", quality)
+                setFragmentResult("result", resultData)
             }
             textViews.add(textView)
             binding.container.addView(textView)
