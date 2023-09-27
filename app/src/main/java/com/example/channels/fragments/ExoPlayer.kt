@@ -2,11 +2,11 @@ package com.example.channels.fragments
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -19,7 +19,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsManifest
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import com.bumptech.glide.Glide
-import com.example.channels.R
 import com.example.channels.databinding.FragmentExoplayerBinding
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
@@ -28,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.net.URL
 
 const val channel_data = "channel_exo_data"
 const val epg_data = "epg_exo_data"
@@ -41,7 +41,8 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private lateinit var player: ExoPlayer
     private var playbackPosition: Long = 0
     private var playbackState: Int = Player.STATE_IDLE
-    private val qualityList = mutableListOf<String>()
+    private val qualityList = mutableListOf<Int>()
+    private val urlList = mutableListOf<Uri>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +50,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentExoplayerBinding.inflate(inflater, container, false)
-
         hideSystemUi()
         return binding.root
     }
@@ -99,26 +99,10 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
 
 
         binding.settings.setOnClickListener {
-            val dialogFragment = QualitySettingsFragment.newInstance("HI")
+            val location = IntArray(2)
+            binding.settings.getLocationInWindow(location)
+            val dialogFragment = QualitySettingsFragment.newInstance(qualityList, location)
             dialogFragment.show(parentFragmentManager, "setting")
-            /*val popupMenu = PopupMenu(requireContext(), binding.settings)
-            popupMenu.menuInflater.inflate(R.menu.menu_settings, popupMenu.menu)
-            popupMenu.menu.clear()
-            qualityList.forEach {
-                popupMenu.menu.add(it)
-            }
-            popupMenu.setOnMenuItemClickListener { item ->
-                /*channelStream = when (item.itemId) {
-                    R.id.action_setting1 ->
-                    R.id.action_setting2 ->
-                    R.id.action_setting3 ->
-                    // Добавьте обработку других пунктов меню для других качеств видео
-                    else -> channelStream
-                }
-                updateVideoView()*/
-                true
-            }
-            popupMenu.show()*/
         }
         initializePlayer()
         if (savedInstanceState != null) {
@@ -129,6 +113,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 player.play()
             }
         }
+        //parentFragmentManager.setFragmentResultListener("result")
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -151,7 +136,8 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                         for (i in 0 until manifest.multivariantPlaylist.variants.size) {
                             if (manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D0029") {
                                 val height = manifest.multivariantPlaylist.variants[i].format.height
-                                qualityListAdd(height)
+                                val url = manifest.multivariantPlaylist.variants[i].url
+                                qualityAdd(height, url)
                             }
                         }
                     }
@@ -160,10 +146,10 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         )
     }
 
-    private fun qualityListAdd(height: Int) {
-        val quality = "${height}p"
-        if (!qualityList.contains(quality)) {
-            qualityList.add(quality)
+    private fun qualityAdd(height: Int, url: Uri) {
+        if (!qualityList.contains(height)) {
+            qualityList.add(height)
+            urlList.add(url)
         }
     }
 
