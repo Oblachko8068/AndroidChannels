@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -17,9 +16,8 @@ import androidx.media3.common.Player
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.hls.HlsManifest
 import androidx.media3.exoplayer.hls.HlsMediaSource
-import androidx.media3.exoplayer.hls.playlist.HlsPlaylistParser
-import androidx.media3.exoplayer.hls.playlist.HlsPlaylistParserFactory
 import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentExoplayerBinding
@@ -43,6 +41,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private lateinit var player: ExoPlayer
     private var playbackPosition: Long = 0
     private var playbackState: Int = Player.STATE_IDLE
+    private val qualityList = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -98,9 +97,16 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             }
         }
 
+
         binding.settings.setOnClickListener {
-            val popupMenu = PopupMenu(requireContext(), binding.settings)
+            val dialogFragment = QualitySettingsFragment.newInstance("HI")
+            dialogFragment.show(parentFragmentManager, "setting")
+            /*val popupMenu = PopupMenu(requireContext(), binding.settings)
             popupMenu.menuInflater.inflate(R.menu.menu_settings, popupMenu.menu)
+            popupMenu.menu.clear()
+            qualityList.forEach {
+                popupMenu.menu.add(it)
+            }
             popupMenu.setOnMenuItemClickListener { item ->
                 /*channelStream = when (item.itemId) {
                     R.id.action_setting1 ->
@@ -112,7 +118,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 updateVideoView()*/
                 true
             }
-            popupMenu.show()
+            popupMenu.show()*/
         }
         initializePlayer()
         if (savedInstanceState != null) {
@@ -136,8 +142,29 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         player.setMediaSource(hlsMediaSource)
         player.prepare()
         binding.exoplayerView.player = player
-        player.addListener(this)
         player.play()
+        player.addListener(
+            object : Player.Listener {
+                override fun onEvents(player: Player, events: Player.Events) {
+                    val manifest = player.currentManifest
+                    if (manifest is HlsManifest) {
+                        for (i in 0 until manifest.multivariantPlaylist.variants.size) {
+                            if (manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D0029") {
+                                val height = manifest.multivariantPlaylist.variants[i].format.height
+                                qualityListAdd(height)
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+    private fun qualityListAdd(height: Int) {
+        val quality = "${height}p"
+        if (!qualityList.contains(quality)) {
+            qualityList.add(quality)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -146,27 +173,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         outState.putInt("playbackState", playbackState)
     }
 
-    /*private fun updateProgressBar(totalTime: Int, channelTimestart1: Long) {
-        val interval = 1000L // Интервал обновления прогресса в миллисекундах (1 секунда)
-
-        coroutineScope.launch(Dispatchers.Main) {
-            while (true) {
-                val currentTime = System.currentTimeMillis() / 1000 // Текущее время в секундах
-                val elapsedTime =
-                    currentTime - channelTimestart1 // Время, которое пользователь уже смотрит передачу
-
-                // Вычисляем прогресс в процентах
-                val progress = (elapsedTime.toFloat() / totalTime.toFloat()) * 100
-
-                // Устанавливаем ширину полоски в процентах
-                binding.progressBar.layoutParams.width =
-                    (progress * resources.displayMetrics.density).toInt()
-                binding.progressBar.requestLayout()
-
-                delay(interval)
-            }
-        }
-    }*/
     override fun onPause() {
         super.onPause()
         coroutineScope.cancel()
@@ -249,6 +255,28 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             return fragment
         }
     }
+
+    /*private fun updateProgressBar(totalTime: Int, channelTimestart1: Long) {
+        val interval = 1000L // Интервал обновления прогресса в миллисекундах (1 секунда)
+
+        coroutineScope.launch(Dispatchers.Main) {
+            while (true) {
+                val currentTime = System.currentTimeMillis() / 1000 // Текущее время в секундах
+                val elapsedTime =
+                    currentTime - channelTimestart1 // Время, которое пользователь уже смотрит передачу
+
+                // Вычисляем прогресс в процентах
+                val progress = (elapsedTime.toFloat() / totalTime.toFloat()) * 100
+
+                // Устанавливаем ширину полоски в процентах
+                binding.progressBar.layoutParams.width =
+                    (progress * resources.displayMetrics.density).toInt()
+                binding.progressBar.requestLayout()
+
+                delay(interval)
+            }
+        }
+    }*/
 }
 
 
