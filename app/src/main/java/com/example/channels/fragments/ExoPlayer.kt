@@ -42,6 +42,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private var playbackState: Int = Player.STATE_IDLE
     private val qualityList = mutableListOf<Int>()
     private val urlList = mutableListOf<Uri>()
+    private var currentResolution = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,10 +101,10 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         binding.settings.setOnClickListener {
             val location = IntArray(2)
             binding.settings.getLocationInWindow(location)
-            val dialogFragment = QualitySettingsFragment.newInstance(qualityList, location)
+            val dialogFragment =
+                QualitySettingsFragment.newInstance(qualityList, location, currentResolution)
             dialogFragment.show(parentFragmentManager, "setting")
         }
-        initializePlayer()
         if (savedInstanceState != null) {
             playbackPosition = savedInstanceState.getLong("playbackPosition")
             playbackState = savedInstanceState.getInt("playbackState")
@@ -115,14 +116,18 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         parentFragmentManager.setFragmentResultListener("result", viewLifecycleOwner) { _, res ->
             val result = res.getInt("quality")
             if (result == 0) {
+                currentResolution = 0
                 initializePlayer()
             } else {
+                currentResolution = result
                 val urlToSet = urlList[qualityList.indexOf(result)]
                 updatePlayer(urlToSet)
             }
         }
+        initializePlayer()
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun updatePlayer(urlToSet: Uri) {
         player.stop()
         player.setMediaItem(MediaItem.fromUri(urlToSet))
@@ -139,6 +144,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 .setAllowChunklessPreparation(false)
                 .createMediaSource(MediaItem.fromUri(hlsUri))
         player = ExoPlayer.Builder(requireContext()).build()
+        player.stop()
         player.setMediaSource(hlsMediaSource)
         player.prepare()
         binding.exoplayerView.player = player
@@ -150,7 +156,8 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                     if (manifest is HlsManifest) {
                         for (i in 0 until manifest.multivariantPlaylist.variants.size) {
                             if (manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D0029"
-                                || manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D001E") {
+                                || manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D001E"
+                            ) {
                                 val height = manifest.multivariantPlaylist.variants[i].format.height
                                 val url = manifest.multivariantPlaylist.variants[i].url
                                 qualityAdd(height, url)
@@ -198,6 +205,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, false) }
         activity?.let { WindowInsetsControllerCompat(it.window, binding.container) }.let {
             it?.hide(WindowInsetsCompat.Type.statusBars())
+            it?.hide(WindowInsetsCompat.Type.navigationBars())
             it?.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }

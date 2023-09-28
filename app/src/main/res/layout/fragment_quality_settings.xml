@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="128dp"
+    android:layout_width="250dp"
     android:layout_height="wrap_content"
     android:id="@+id/container"
     tools:context=".fragments.QualitySettingsFragment"
@@ -10,24 +10,4 @@
     android:layout_gravity="bottom|end"
     android:orientation="vertical">
 
-    <Button
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:id="@+id/auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:text="AUTO"
-        android:textSize="16sp"
-        android:textColor="@color/tab_block_background"/>
-
-    <Button
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:text="AUTO"
-        android:textColor="@color/tab_block_background"
-        android:textSize="16sp" />
 </LinearLayout>
