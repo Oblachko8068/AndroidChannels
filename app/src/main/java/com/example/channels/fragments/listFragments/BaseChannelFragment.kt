@@ -13,20 +13,16 @@ import androidx.viewpager.widget.ViewPager
 import com.example.channels.R
 import com.example.channels.RecyclerAdapter
 import com.example.channels.ViewModel.ChannelViewModel
-import com.example.channels.ViewModel.ChannelViewModelFactory
 import com.example.channels.fragments.navigator
-import com.example.di.di.Di
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
-    private val channelViewModel by viewModels<ChannelViewModel> {
-        ChannelViewModelFactory(
-            Di.downloadRepository,
-            Di.channelRepository,
-            Di.epgRepository
-        )
-    }
+
+    private val channelViewModel: ChannelViewModel by viewModels()
+
     private var _binding: ViewBinding? = null
     open val binding get() = _binding!!
     protected var recyclerView: RecyclerView? = null

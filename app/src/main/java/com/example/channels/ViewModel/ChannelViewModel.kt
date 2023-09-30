@@ -8,8 +8,12 @@ import com.example.domain.model.Epg
 import com.example.domain.repository.ChannelRepository
 import com.example.domain.repository.DownloadRepository
 import com.example.domain.repository.EpgRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ChannelViewModel(
+@HiltViewModel
+class ChannelViewModel @Inject constructor(
     downloadRepository: DownloadRepository,
     channelRepository: ChannelRepository,
     epgRepository: EpgRepository,

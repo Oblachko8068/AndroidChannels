@@ -2,11 +2,12 @@ package com.example.channels.fragments
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.PopupMenu
+import android.widget.Toast
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -19,7 +20,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsManifest
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import com.bumptech.glide.Glide
-import com.example.channels.R
 import com.example.channels.databinding.FragmentExoplayerBinding
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
@@ -41,7 +41,9 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private lateinit var player: ExoPlayer
     private var playbackPosition: Long = 0
     private var playbackState: Int = Player.STATE_IDLE
-    private val qualityList = mutableListOf<String>()
+    private val qualityList = mutableListOf<Int>()
+    private val urlList = mutableListOf<Uri>()
+    private var currentResolution = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +51,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentExoplayerBinding.inflate(inflater, container, false)
-
         hideSystemUi()
         return binding.root
     }
@@ -99,28 +100,12 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
 
 
         binding.settings.setOnClickListener {
-            val dialogFragment = QualitySettingsFragment.newInstance("HI")
+            val location = IntArray(2)
+            binding.settings.getLocationInWindow(location)
+            val dialogFragment =
+                QualitySettingsFragment.newInstance(qualityList, location, currentResolution)
             dialogFragment.show(parentFragmentManager, "setting")
-            /*val popupMenu = PopupMenu(requireContext(), binding.settings)
-            popupMenu.menuInflater.inflate(R.menu.menu_settings, popupMenu.menu)
-            popupMenu.menu.clear()
-            qualityList.forEach {
-                popupMenu.menu.add(it)
-            }
-            popupMenu.setOnMenuItemClickListener { item ->
-                /*channelStream = when (item.itemId) {
-                    R.id.action_setting1 ->
-                    R.id.action_setting2 ->
-                    R.id.action_setting3 ->
-                    // Добавьте обработку других пунктов меню для других качеств видео
-                    else -> channelStream
-                }
-                updateVideoView()*/
-                true
-            }
-            popupMenu.show()*/
         }
-        initializePlayer()
         if (savedInstanceState != null) {
             playbackPosition = savedInstanceState.getLong("playbackPosition")
             playbackState = savedInstanceState.getInt("playbackState")
@@ -129,6 +114,27 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 player.play()
             }
         }
+        parentFragmentManager.setFragmentResultListener("result", viewLifecycleOwner) { _, res ->
+            val result = res.getInt("quality")
+            if (result == 0) {
+                currentResolution = 0
+                initializePlayer()
+            } else {
+                currentResolution = result
+                val urlToSet = urlList[qualityList.indexOf(result)]
+                updatePlayer(urlToSet)
+            }
+        }
+        initializePlayer()
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun updatePlayer(urlToSet: Uri) {
+        player.stop()
+        player.setMediaItem(MediaItem.fromUri(urlToSet))
+        player.prepare()
+        binding.exoplayerView.player = player
+        player.play()
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -139,6 +145,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 .setAllowChunklessPreparation(false)
                 .createMediaSource(MediaItem.fromUri(hlsUri))
         player = ExoPlayer.Builder(requireContext()).build()
+        player.stop()
         player.setMediaSource(hlsMediaSource)
         player.prepare()
         binding.exoplayerView.player = player
@@ -149,9 +156,12 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                     val manifest = player.currentManifest
                     if (manifest is HlsManifest) {
                         for (i in 0 until manifest.multivariantPlaylist.variants.size) {
-                            if (manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D0029") {
+                            if (manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D0029"
+                                || manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D001E"
+                            ) {
                                 val height = manifest.multivariantPlaylist.variants[i].format.height
-                                qualityListAdd(height)
+                                val url = manifest.multivariantPlaylist.variants[i].url
+                                qualityAdd(height, url)
                             }
                         }
                     }
@@ -160,10 +170,10 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         )
     }
 
-    private fun qualityListAdd(height: Int) {
-        val quality = "${height}p"
-        if (!qualityList.contains(quality)) {
-            qualityList.add(quality)
+    private fun qualityAdd(height: Int, url: Uri) {
+        if (!qualityList.contains(height) && !urlList.contains(url)) {
+            qualityList.add(height)
+            urlList.add(url)
         }
     }
 
@@ -196,9 +206,11 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, false) }
         activity?.let { WindowInsetsControllerCompat(it.window, binding.container) }.let {
             it?.hide(WindowInsetsCompat.Type.statusBars())
+            it?.hide(WindowInsetsCompat.Type.navigationBars())
             it?.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
+
     }
 
     private fun showSystemUi() {

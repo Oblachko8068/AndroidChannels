@@ -15,8 +15,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import javax.inject.Inject
 
-class DownloadRepositoryRetrofit(
+class DownloadRepositoryRetrofit @Inject constructor (
     private val channelDao: ChannelDao,
     private val epgDao: EpgDao,
     private val retrofit: Retrofit

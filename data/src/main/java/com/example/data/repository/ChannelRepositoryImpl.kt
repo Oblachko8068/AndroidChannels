@@ -9,8 +9,9 @@ import com.example.domain.repository.ChannelRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChannelRepositoryImpl(
+class ChannelRepositoryImpl @Inject constructor(
     private val channelDao: ChannelDao
 ) : ChannelRepository {
 
