@@ -8,6 +8,7 @@
     android:background="@color/main_background">
 
     <!--Поиск-->
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView_tv_channels"
         android:theme="@style/SearchViewStyle"
@@ -25,6 +26,12 @@
         app:closeIcon="@null"
         app:queryHint="Напишите название телеканала" />
 
+    <Button
+        android:id="@+id/CrashButton"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:text="CrashButton"
+        tools:ignore="MissingConstraints" />
     <!--Вкладки-->
 
     <com.google.android.material.tabs.TabLayout

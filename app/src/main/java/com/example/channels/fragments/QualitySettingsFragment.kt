@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
+import androidx.media3.common.Tracks
 import com.example.channels.R
 import com.example.channels.databinding.FragmentQualitySettingsBinding
 
@@ -21,6 +24,11 @@ class QualitySettingsFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val lp = WindowManager.LayoutParams()
+        lp.gravity = Gravity.BOTTOM or Gravity.RIGHT
+        lp.x = 80
+        lp.y = 100
+        dialog!!.window?.attributes = lp
         binding = FragmentQualitySettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -38,24 +46,6 @@ class QualitySettingsFragment : DialogFragment() {
             TypedValue.COMPLEX_UNIT_DIP, 128f, resources.displayMetrics
         ).toInt()
         val buttonViews = mutableListOf<Button>()
-
-        //фигня
-        val x = location?.get(0)
-        val y = location?.get(1)
-        dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        val layoutParams = dialog?.window?.attributes
-        //layoutParams?.gravity = Gravity.TOP or Gravity.START
-
-        if (x != null) {
-            layoutParams?.x = x - dialog?.window?.decorView?.width!!
-        }
-        if (y != null) {
-            layoutParams?.y = y - 100
-        }
-        dialog?.window?.attributes = layoutParams
 
         //качества
         qualityList?.asReversed()?.forEach { quality ->
@@ -118,7 +108,7 @@ class QualitySettingsFragment : DialogFragment() {
         fun newInstance(
             qualityList: MutableList<Int>,
             location: IntArray,
-            currentResolution: Int
+            currentResolution: Int,
         ): QualitySettingsFragment {
             return QualitySettingsFragment().apply {
                 arguments = Bundle().apply {

@@ -11,12 +11,13 @@ import com.example.channels.fragments.Navigator
 import com.example.di.di.Di
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {
 
     @SuppressLint("CommitTransaction")
     override fun onCreate(savedInstanceState: Bundle?) {
-        Di.init(applicationContext, this)
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

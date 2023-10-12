@@ -13,11 +13,13 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.Tracks
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsManifest
 import androidx.media3.exoplayer.hls.HlsMediaSource
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.bumptech.glide.Glide
 import com.example.channels.databinding.FragmentExoplayerBinding
 import com.example.domain.model.Channel
@@ -30,7 +32,8 @@ import kotlinx.coroutines.launch
 
 const val channel_data = "channel_exo_data"
 const val epg_data = "epg_exo_data"
-const val hlsUri = "https://cdn-cache01.voka.tv/live/5117.m3u8"
+//https://cdn-cache01.voka.tv/live/5117.m3u8
+const val hlsUri = "https://linear-143.frequency.stream/dist/localnow/143/hls/master/playlist.m3u8"
 
 class ExoPlayerFragment : Fragment(), Player.Listener {
 
@@ -43,6 +46,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private val qualityList = mutableListOf<Int>()
     private val urlList = mutableListOf<Uri>()
     private var currentResolution = 0
+    private var tracksList = mutableListOf<Tracks.Group>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -143,15 +147,32 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             HlsMediaSource.Factory(dataSourceFactory)
                 .setAllowChunklessPreparation(false)
                 .createMediaSource(MediaItem.fromUri(hlsUri))
-        player = ExoPlayer.Builder(requireContext()).build()
+
+        val trackSelector = DefaultTrackSelector(requireContext())
+        player = ExoPlayer.Builder(requireContext())
+            .setTrackSelector(trackSelector)
+            .build()
         player.stop()
         player.setMediaSource(hlsMediaSource)
         player.prepare()
         binding.exoplayerView.player = player
         player.play()
+
+        val p = player.currentTracks
+        player.addListener(
+            object : Player.Listener {
+                override fun onTracksChanged(tracks: Tracks) {
+                    super.onTracksChanged(tracks)
+                    val mappedTrackInfo = trackSelector.currentMappedTrackInfo
+                    val trackGroups = mappedTrackInfo?.getTrackGroups(0)
+                    tracksAdd(tracks)
+                }
+            }
+        )
         player.addListener(
             object : Player.Listener {
                 override fun onEvents(player: Player, events: Player.Events) {
+                    super.onEvents(player, events)
                     val manifest = player.currentManifest
                     if (manifest is HlsManifest) {
                         for (i in 0 until manifest.multivariantPlaylist.variants.size) {
@@ -165,8 +186,29 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                         }
                     }
                 }
+                /*override fun onEvents(player: Player, events: Player.Events) {
+                    val manifest = player.currentManifest
+                    if (manifest is HlsManifest) {
+                        for (i in 0 until manifest.multivariantPlaylist.variants.size) {
+                            if (manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D0029"
+                                || manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D001E"
+                            ) {
+                                val height = manifest.multivariantPlaylist.variants[i].format.height
+                                val url = manifest.multivariantPlaylist.variants[i].url
+                                qualityAdd(height, url)
+                            }
+                        }
+                    }
+                }*/
             }
         )
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun tracksAdd(tracks: Tracks) {
+        tracks.groups.forEach {
+            tracksList.add(it)
+        }
     }
 
     private fun qualityAdd(height: Int, url: Uri) {
@@ -209,6 +251,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             it?.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
+
     }
 
     private fun showSystemUi() {
