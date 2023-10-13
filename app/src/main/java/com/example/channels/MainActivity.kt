@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     override fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?) {
         launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
-        //launchFragment(VideoPlayerFragment.newInstance(channel, selectedEpgDb))
     }
 
     override fun goBack() {

@@ -1,7 +1,7 @@
 package com.example.channels.fragments
 
 import android.annotation.SuppressLint
-import android.graphics.Color
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Gravity
@@ -10,25 +10,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
-import androidx.media3.common.Tracks
 import com.example.channels.R
 import com.example.channels.databinding.FragmentQualitySettingsBinding
 
 
 class QualitySettingsFragment : DialogFragment() {
+    override fun getTheme() = R.style.RoundedCornersDialog
 
     private lateinit var binding: FragmentQualitySettingsBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val lp = WindowManager.LayoutParams()
-        lp.gravity = Gravity.BOTTOM or Gravity.RIGHT
-        lp.x = 80
-        lp.y = 100
-        dialog!!.window?.attributes = lp
+        val location = WindowManager.LayoutParams()
+        location.gravity = Gravity.BOTTOM or Gravity.END
+        location.x = 15
+        location.y = 115
+        dialog!!.window?.attributes = location
         binding = FragmentQualitySettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -37,86 +38,75 @@ class QualitySettingsFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val qualityList = arguments?.getIntegerArrayList("qualityList")
-        val location = arguments?.getIntArray("locationSettings")
+
         val currentResolution = arguments?.getInt("currentResolution")
-        val padding10inDp = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 10f, resources.displayMetrics
-        ).toInt()
-        val width = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 128f, resources.displayMetrics
-        ).toInt()
-        val buttonViews = mutableListOf<Button>()
 
         //качества
-        qualityList?.asReversed()?.forEach { quality ->
-            val button = Button(requireContext())
-            button.id = quality
-            button.textSize = 16F
-            button.text = "${quality}p"
-            button.setPadding(0, padding10inDp, 0, padding10inDp)
-
-            if (currentResolution == quality) {
-                button.setBackgroundResource(R.color.icon_enable)
-                button.setTextColor(R.color.text_active)
-            } else {
-                button.setBackgroundResource(R.color.text_dark)
-                button.setTextColor(R.color.text_default)
-            }
-            button.setOnClickListener {
-                val resultData = Bundle()
-                resultData.putInt("quality", quality)
-                setFragmentResult("result", resultData)
-                dismiss()
-            }
-            buttonViews.add(button)
+        qualityList?.forEach { quality ->
+            val button = createButton(false, quality, currentResolution)
             binding.container.addView(button)
             val line = View(requireContext())
             line.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams(width, 1)
+                ViewGroup.LayoutParams(128.dp(), 1.dp())
             )
             binding.container.addView(line)
         }
-
         //Auto
-        val button = Button(requireContext())
-        button.id = 0
-        button.textSize = 16F
-        button.text = "AUTO"
-        if (currentResolution == 0) {
-            button.setBackgroundResource(R.color.icon_enable)
-            button.setTextColor(R.color.text_active)
-        } else {
-            button.setBackgroundResource(R.color.text_dark)
-            button.setTextColor(R.color.text_default)
-        }
-        buttonViews.add(button)
+        val button = createButton(true, 0, currentResolution)
         binding.container.addView(button)
-        button.setOnClickListener {
-            it.setBackgroundResource(R.color.icon_enable)
-            buttonViews.forEach { text ->
-                text.setTextColor(Color.BLACK)
-                text.setBackgroundResource(R.color.text_active)
+    }
+    private fun createButton(isAuto: Boolean, quality: Int, currentResolution: Int?): Button{
+        val button = Button(requireContext())
+        button.id = if (isAuto) -1 else quality
+        button.textSize = 16F
+        button.text = if (isAuto) "AUTO" else "${quality}p"
+        if (isAuto){
+            if (currentResolution == -1) {
+                button.setBackgroundResource(R.color.played_video)
+                button.setTextColor(ContextCompat.getColor(requireContext(),R.color.text_active))
+            } else {
+                button.setBackgroundResource(R.color.text_dark)
+                button.setTextColor(ContextCompat.getColor(requireContext(),R.color.unplayed_video_text_color))
             }
+        } else {
+            if (currentResolution == quality) {
+                button.setBackgroundResource(R.color.played_video)
+                button.setTextColor(ContextCompat.getColor(requireContext(),R.color.text_active))
+            } else {
+                button.setBackgroundResource(R.color.text_dark)
+                button.setTextColor(ContextCompat.getColor(requireContext(),R.color.unplayed_video_text_color))
+            }
+        }
+        button.layoutParams = ViewGroup.LayoutParams(
+            128.dp(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        button.setOnClickListener {
             val resultData = Bundle()
-            resultData.putInt("quality", 0)
+            resultData.putInt("quality", if (isAuto) -1 else quality)
             setFragmentResult("result", resultData)
             dismiss()
         }
+        return button
     }
-
     companion object {
         fun newInstance(
             qualityList: MutableList<Int>,
-            location: IntArray,
             currentResolution: Int,
         ): QualitySettingsFragment {
             return QualitySettingsFragment().apply {
                 arguments = Bundle().apply {
                     putIntegerArrayList("qualityList", ArrayList(qualityList))
-                    putIntArray("locationSettings", location)
                     putInt("currentResolution", currentResolution)
                 }
             }
         }
+    }
+    private fun Int.dp(): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            this.toFloat(),
+            Resources.getSystem().displayMetrics
+        ).toInt()
     }
 }

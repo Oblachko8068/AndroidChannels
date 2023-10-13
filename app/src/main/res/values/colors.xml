@@ -36,4 +36,5 @@
 
     <color name="unplayed_video">#80FFFFFF</color>
     <color name="played_video">#0077FF</color>
+    <color name="unplayed_video_text_color">#75767B</color>
 </resources>

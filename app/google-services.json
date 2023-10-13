@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "272775250621",
+    "project_id": "channels-41585",
+    "storage_bucket": "channels-41585.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:272775250621:android:880f2a7796ff9753fcedd4",
+        "android_client_info": {
+          "package_name": "com.example.channels"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_V-WFEmH8ezUhozGI7izRAIm3B9sxBUo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

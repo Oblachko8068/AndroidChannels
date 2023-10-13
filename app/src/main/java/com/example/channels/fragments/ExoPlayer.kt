@@ -2,7 +2,6 @@ package com.example.channels.fragments
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +12,11 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.hls.HlsManifest
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.bumptech.glide.Glide
@@ -32,7 +31,6 @@ import kotlinx.coroutines.launch
 
 const val channel_data = "channel_exo_data"
 const val epg_data = "epg_exo_data"
-//https://cdn-cache01.voka.tv/live/5117.m3u8
 const val hlsUri = "https://linear-143.frequency.stream/dist/localnow/143/hls/master/playlist.m3u8"
 
 class ExoPlayerFragment : Fragment(), Player.Listener {
@@ -43,10 +41,9 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private lateinit var player: ExoPlayer
     private var playbackPosition: Long = 0
     private var playbackState: Int = Player.STATE_IDLE
-    private val qualityList = mutableListOf<Int>()
-    private val urlList = mutableListOf<Uri>()
-    private var currentResolution = 0
-    private var tracksList = mutableListOf<Tracks.Group>()
+    private lateinit var videoTrackGroup: Tracks.Group
+    private var currentResolution = -1
+    private var tracksList = mutableListOf<Int>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -101,43 +98,46 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             }
         }
 
-
         binding.settings.setOnClickListener {
-            val location = IntArray(2)
-            binding.settings.getLocationInWindow(location)
             val dialogFragment =
-                QualitySettingsFragment.newInstance(qualityList, location, currentResolution)
+                QualitySettingsFragment.newInstance(tracksList, currentResolution)
             dialogFragment.show(parentFragmentManager, "setting")
         }
         if (savedInstanceState != null) {
             playbackPosition = savedInstanceState.getLong("playbackPosition")
             playbackState = savedInstanceState.getInt("playbackState")
             if (playbackState == Player.STATE_READY) {
-                player.seekTo(playbackPosition)
                 player.play()
             }
         }
         parentFragmentManager.setFragmentResultListener("result", viewLifecycleOwner) { _, res ->
             val result = res.getInt("quality")
-            if (result == 0) {
-                currentResolution = 0
-                initializePlayer()
+            if (result == -1) {
+                currentResolution = -1
+                autoQuality()
             } else {
                 currentResolution = result
-                val urlToSet = urlList[qualityList.indexOf(result)]
-                updatePlayer(urlToSet)
+                updatePlayer(tracksList.indexOf(result))
             }
         }
         initializePlayer()
     }
 
+    private fun autoQuality() {
+        player.trackSelectionParameters = player.trackSelectionParameters
+            .buildUpon()
+            .clearOverride(videoTrackGroup.mediaTrackGroup)
+            .build()
+    }
+
     @SuppressLint("UnsafeOptInUsageError")
-    private fun updatePlayer(urlToSet: Uri) {
-        player.stop()
-        player.setMediaItem(MediaItem.fromUri(urlToSet))
-        player.prepare()
-        binding.exoplayerView.player = player
-        player.play()
+    private fun updatePlayer(index: Int) {
+        player.trackSelectionParameters = player.trackSelectionParameters
+            .buildUpon()
+            .setOverrideForType(
+                TrackSelectionOverride(
+                    videoTrackGroup.mediaTrackGroup, index))
+            .build()
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -147,77 +147,32 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             HlsMediaSource.Factory(dataSourceFactory)
                 .setAllowChunklessPreparation(false)
                 .createMediaSource(MediaItem.fromUri(hlsUri))
-
         val trackSelector = DefaultTrackSelector(requireContext())
         player = ExoPlayer.Builder(requireContext())
             .setTrackSelector(trackSelector)
             .build()
-        player.stop()
         player.setMediaSource(hlsMediaSource)
         player.prepare()
         binding.exoplayerView.player = player
         player.play()
-
-        val p = player.currentTracks
         player.addListener(
             object : Player.Listener {
                 override fun onTracksChanged(tracks: Tracks) {
                     super.onTracksChanged(tracks)
-                    val mappedTrackInfo = trackSelector.currentMappedTrackInfo
-                    val trackGroups = mappedTrackInfo?.getTrackGroups(0)
-                    tracksAdd(tracks)
-                }
-            }
-        )
-        player.addListener(
-            object : Player.Listener {
-                override fun onEvents(player: Player, events: Player.Events) {
-                    super.onEvents(player, events)
-                    val manifest = player.currentManifest
-                    if (manifest is HlsManifest) {
-                        for (i in 0 until manifest.multivariantPlaylist.variants.size) {
-                            if (manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D0029"
-                                || manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D001E"
-                            ) {
-                                val height = manifest.multivariantPlaylist.variants[i].format.height
-                                val url = manifest.multivariantPlaylist.variants[i].url
-                                qualityAdd(height, url)
+                    for (trackGroup in tracks.groups) {
+                        if (trackGroup.type == 2){
+                            videoTrackGroup = trackGroup
+                            for (i in 0 until trackGroup.length) {
+                                if (!tracksList.contains(trackGroup.getTrackFormat(i).width)){
+                                    tracksList.add(trackGroup.getTrackFormat(i).width)
+                                }
                             }
                         }
                     }
                 }
-                /*override fun onEvents(player: Player, events: Player.Events) {
-                    val manifest = player.currentManifest
-                    if (manifest is HlsManifest) {
-                        for (i in 0 until manifest.multivariantPlaylist.variants.size) {
-                            if (manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D0029"
-                                || manifest.multivariantPlaylist.variants[i].format.codecs == "mp4a.40.2,avc1.4D001E"
-                            ) {
-                                val height = manifest.multivariantPlaylist.variants[i].format.height
-                                val url = manifest.multivariantPlaylist.variants[i].url
-                                qualityAdd(height, url)
-                            }
-                        }
-                    }
-                }*/
             }
         )
     }
-
-    @SuppressLint("UnsafeOptInUsageError")
-    private fun tracksAdd(tracks: Tracks) {
-        tracks.groups.forEach {
-            tracksList.add(it)
-        }
-    }
-
-    private fun qualityAdd(height: Int, url: Uri) {
-        if (!qualityList.contains(height) && !urlList.contains(url)) {
-            qualityList.add(height)
-            urlList.add(url)
-        }
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putLong("playbackPosition", playbackPosition)
@@ -227,19 +182,14 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     override fun onPause() {
         super.onPause()
         coroutineScope.cancel()
-        if (player.isPlaying) {
-            playbackPosition = player.currentPosition
-            playbackState = player.playbackState
-            player.pause()
-        }
+        playbackPosition = player.currentPosition
+        playbackState = player.playbackState
+        player.pause()
     }
 
     override fun onResume() {
         super.onResume()
-        if (playbackState == Player.STATE_READY) {
-            player.seekTo(playbackPosition)
-            player.play()
-        }
+        player.play()
     }
 
     private fun hideSystemUi() {
@@ -264,27 +214,11 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private fun showOtherViews() {
         binding.layoutTop.visibility = View.VISIBLE
         binding.layoutBottom.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.VISIBLE
-        binding.unplayedBar.visibility = View.VISIBLE
-        binding.textViewTimeToTheEnd.visibility = View.VISIBLE
-        binding.settings.visibility = View.VISIBLE
-        binding.backToMain.visibility = View.VISIBLE
-        binding.activeChannelIcon.visibility = View.VISIBLE
-        binding.activeChannelDesc.visibility = View.VISIBLE
-        binding.activeChannelName.visibility = View.VISIBLE
     }
 
     private fun hideOtherViews() {
         binding.layoutTop.visibility = View.INVISIBLE
         binding.layoutBottom.visibility = View.INVISIBLE
-        binding.unplayedBar.visibility = View.INVISIBLE
-        binding.progressBar.visibility = View.INVISIBLE
-        binding.textViewTimeToTheEnd.visibility = View.INVISIBLE
-        binding.settings.visibility = View.INVISIBLE
-        binding.backToMain.visibility = View.INVISIBLE
-        binding.activeChannelIcon.visibility = View.INVISIBLE
-        binding.activeChannelDesc.visibility = View.INVISIBLE
-        binding.activeChannelName.visibility = View.INVISIBLE
     }
 
     override fun onStop() {
@@ -308,28 +242,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             return fragment
         }
     }
-
-    /*private fun updateProgressBar(totalTime: Int, channelTimestart1: Long) {
-        val interval = 1000L // Интервал обновления прогресса в миллисекундах (1 секунда)
-
-        coroutineScope.launch(Dispatchers.Main) {
-            while (true) {
-                val currentTime = System.currentTimeMillis() / 1000 // Текущее время в секундах
-                val elapsedTime =
-                    currentTime - channelTimestart1 // Время, которое пользователь уже смотрит передачу
-
-                // Вычисляем прогресс в процентах
-                val progress = (elapsedTime.toFloat() / totalTime.toFloat()) * 100
-
-                // Устанавливаем ширину полоски в процентах
-                binding.progressBar.layoutParams.width =
-                    (progress * resources.displayMetrics.density).toInt()
-                binding.progressBar.requestLayout()
-
-                delay(interval)
-            }
-        }
-    }*/
 }
 
 
