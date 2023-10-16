@@ -74,11 +74,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                     .load(channelIconResource)
                     .into(binding.activeChannelIcon)
             }
-            val totalTime = 60
-            val channelTimestart1 = System.currentTimeMillis() / 1000
-            //updateProgressBar(totalTime, channelTimestart1)
-
-            binding.textViewTimeToTheEnd.text = totalTime.toString()
         }
         binding.backToMain.setOnClickListener {
             navigator().goBack()
@@ -181,7 +176,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
 
     override fun onPause() {
         super.onPause()
-        coroutineScope.cancel()
         playbackPosition = player.currentPosition
         playbackState = player.playbackState
         player.pause()
@@ -221,14 +215,11 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         binding.layoutBottom.visibility = View.INVISIBLE
     }
 
-    override fun onStop() {
-        super.onStop()
-        player.stop()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         coroutineScope.cancel()
+        player.stop()
         showSystemUi()
     }
 

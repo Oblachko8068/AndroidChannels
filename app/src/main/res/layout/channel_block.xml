@@ -23,17 +23,19 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_toEndOf="@id/divider1"
+            android:layout_toStartOf="@+id/divider2"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/channelName"
-                android:layout_width="269dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="roboto"
                 android:gravity="start"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:textColor="@color/text_active"
+                android:ellipsize="end"
                 android:textSize="18sp" />
             <TextView
                 android:id="@+id/channelDesc"
@@ -44,11 +46,12 @@
                 android:textSize="15sp"
                 android:fontFamily="roboto"
                 android:textColor="@color/text_active"
+                android:ellipsize="end"
                 android:maxLines="2"/>
         </LinearLayout>
         <View
             android:id="@+id/divider2"
-            android:layout_width="16dp"
+            android:layout_width="15dp"
             android:layout_height="60dp"
             android:layout_toStartOf="@id/icon_fav"/>
         <ImageView

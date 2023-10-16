@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ArrayAdapter
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -40,7 +41,11 @@ class QualitySettingsFragment : DialogFragment() {
         val qualityList = arguments?.getIntegerArrayList("qualityList")
 
         val currentResolution = arguments?.getInt("currentResolution")
-
+        /*val countryList =
+            arrayOf("India", "China", "australia", "Portugle", "America", "NewZealand")
+        val arrayAdapter =  ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, qualityList)
+        val simpleList = binding.qualityListView
+        simpleList.adapter = arrayAdapter*/
         //качества
         qualityList?.forEach { quality ->
             val button = createButton(false, quality, currentResolution)
