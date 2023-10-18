@@ -47,6 +47,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.yandex.android:mobileads:6.0.1'
     implementation "com.google.firebase:firebase-messaging:23.2.1"
     implementation "com.google.android.gms:play-services-base:18.2.0"
 

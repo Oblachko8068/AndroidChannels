@@ -40,7 +40,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private lateinit var binding: FragmentExoplayerBinding
     private lateinit var player: ExoPlayer
-    private var playbackPosition: Long = 0
     private var playbackState: Int = Player.STATE_IDLE
     private lateinit var videoTrackGroup: Tracks.Group
     private var currentResolution = -1
@@ -64,12 +63,10 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             val channelName = channel.name
             val channelDescription = epg?.title
             val channelIconResource = channel.image
-            //val channelStream = extras.getString("channel_stream")
             val channelTimestart = epg?.timestart
             val channelTimestop = epg?.timestop
             binding.activeChannelName.text = channelName
             binding.activeChannelDesc.text = "$channelDescription"
-            //запись иконки
             context?.let {
                 Glide.with(it)
                     .load(channelIconResource)
@@ -175,7 +172,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
 
     override fun onPause() {
         super.onPause()
-        playbackPosition = player.currentPosition
         playbackState = player.playbackState
         player.pause()
     }
