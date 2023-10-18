@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 
 const val channel_data = "channel_exo_data"
 const val epg_data = "epg_exo_data"
+const val set_Result = "setResult"
 const val hlsUri = "https://linear-143.frequency.stream/dist/localnow/143/hls/master/playlist.m3u8"
 
 class ExoPlayerFragment : Fragment(), Player.Listener {
@@ -57,8 +58,8 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val channel = arguments?.getSerializable("channel_exo_data") as? Channel
-        val epg = arguments?.getSerializable("epg_exo_data") as? Epg
+        val channel = arguments?.getSerializable(channel_data) as? Channel
+        val epg = arguments?.getSerializable(epg_data) as? Epg
         if (channel != null) {
             val channelName = channel.name
             val channelDescription = epg?.title
@@ -99,13 +100,12 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             dialogFragment.show(parentFragmentManager, "setting")
         }
         if (savedInstanceState != null) {
-            playbackPosition = savedInstanceState.getLong("playbackPosition")
             playbackState = savedInstanceState.getInt("playbackState")
             if (playbackState == Player.STATE_READY) {
                 player.play()
             }
         }
-        parentFragmentManager.setFragmentResultListener("result", viewLifecycleOwner) { _, res ->
+        parentFragmentManager.setFragmentResultListener(set_Result, viewLifecycleOwner) { _, res ->
             val result = res.getInt("quality")
             if (result == -1) {
                 currentResolution = -1
@@ -170,7 +170,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putLong("playbackPosition", playbackPosition)
         outState.putInt("playbackState", playbackState)
     }
 
@@ -195,7 +194,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             it?.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
-
     }
 
     private fun showSystemUi() {
@@ -214,7 +212,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         binding.layoutTop.visibility = View.INVISIBLE
         binding.layoutBottom.visibility = View.INVISIBLE
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

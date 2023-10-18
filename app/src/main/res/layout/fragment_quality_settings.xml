@@ -10,8 +10,9 @@
 
     <ListView
         android:id="@+id/qualityListView"
-        android:layout_width="match_parent"
+        android:layout_width="128dp"
         android:layout_height="match_parent"
-        android:divider="@color/unplayed_video_text_color"
-        android:dividerHeight="1dp"/>
+        android:divider="@color/list_view_divider"
+        android:dividerHeight="1dp"
+        android:textAlignment="center"/>
 </LinearLayout>
