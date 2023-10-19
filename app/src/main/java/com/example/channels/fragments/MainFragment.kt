@@ -70,6 +70,9 @@ class MainFragment : Fragment() {
         binding.tabs.setupWithViewPager(binding.viewpagerForTabs)
 
         //Реклама
+        bannerAd()
+    }
+    private fun bannerAd(){
         binding.bannerAdView.setAdUnitId("demo-banner-yandex")
         binding.bannerAdView.setAdSize(BannerAdSize.inlineSize(requireContext(), 600, 50))
 
@@ -101,5 +104,4 @@ class MainFragment : Fragment() {
         })*/
         binding.bannerAdView.loadAd(adRequest)
     }
-
 }
