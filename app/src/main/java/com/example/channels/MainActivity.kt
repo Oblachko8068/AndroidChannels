@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.media3.common.MediaItem
 import androidx.media3.common.util.Util
 import androidx.media3.datasource.DefaultDataSourceFactory
 import androidx.media3.exoplayer.ExoPlayer
@@ -21,7 +22,6 @@ import com.yandex.mobile.ads.instream.InstreamAdRequestConfiguration
 import com.yandex.mobile.ads.instream.exoplayer.YandexAdsLoader
 import dagger.hilt.android.AndroidEntryPoint
 
-const val adUnitId = "demo-banner-yandex"
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {
 
@@ -68,8 +68,8 @@ class MainActivity : AppCompatActivity(), Navigator {
     //видео реклама
     /*@SuppressLint("UnsafeOptInUsageError")
     private fun videoAd(){
-        val instreamAdRequestConfiguration = InstreamAdRequestConfiguration.Builder(adUnitId).build()
-        val yandexAdsLoader : YandexAdsLoader = YandexAdsLoader(this, instreamAdRequestConfiguration)
+        val instreamAdRequestConfiguration = InstreamAdRequestConfiguration.Builder("demo").build()
+        val yandexAdsLoader: YandexAdsLoader = YandexAdsLoader(this, instreamAdRequestConfiguration)
         val userAgent = Util.getUserAgent(this, getString(R.string.app_name))
         val dataSourceFactory = DefaultDataSourceFactory(this, userAgent)
         val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
@@ -78,7 +78,11 @@ class MainActivity : AppCompatActivity(), Navigator {
             .setMediaSourceFactory(mediaSourceFactory)
             .build()
         binding.playerView.player = player
-        yandexAdsLoader.setPlayer(player)
+        //yandexAdsLoader.setPlayer(player)
+        val contentVideoUrl = getString(R.string.content_url_for_instream_ad)
+        val mediaItem = MediaItem.Builder()
+            .setUri(contentVideoUrl)
+            .setAdTagUri(YandexAdsLoader.AD_TAG_URI)
     }*/
 }
 
