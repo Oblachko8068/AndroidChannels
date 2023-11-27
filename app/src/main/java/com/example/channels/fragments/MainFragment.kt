@@ -77,6 +77,7 @@ class MainFragment : Fragment() {
         binding.bannerAdView.setAdSize(BannerAdSize.inlineSize(requireContext(), 600, 50))
 
         val adRequest = AdRequest.Builder().build()
+
         /*binding.bannerAdView.setBannerAdEventListener(object : BannerAdEventListener {
             override fun onAdLoaded() {
 

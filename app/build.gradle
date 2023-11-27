@@ -47,9 +47,13 @@ android {
 }
 
 dependencies {
-    implementation 'com.yandex.ads.mediation:mobileads-mytarget:5.18.0.1'
-    implementation 'com.yandex.android:mobileads:6.1.0'
-    implementation 'com.google.firebase:firebase-messaging:23.3.0'
+    //реклама
+    implementation 'com.yandex.android:mobileads:6.2.0'
+    implementation 'com.yandex.ads.mediation:mobileads-mytarget:5.19.0.0'
+    implementation 'com.yandex.ads.mediation:mobileads-applovin:11.11.3.1'
+
+
+    implementation 'com.google.firebase:firebase-messaging:23.3.1'
     implementation "com.google.android.gms:play-services-base:18.2.0"
 
     implementation 'com.yandex.android:mobmetricapushlib:2.3.2'
@@ -65,11 +69,11 @@ dependencies {
     implementation 'com.google.dagger:hilt-android:2.48.1'
     kapt 'com.google.dagger:hilt-compiler:2.48.1'
 
-    implementation "androidx.fragment:fragment-ktx:1.6.1"
-    implementation "androidx.media3:media3-exoplayer-hls:1.1.1"
-    implementation "androidx.media3:media3-exoplayer:1.1.1"
-    implementation "androidx.media3:media3-ui:1.1.1"
-    implementation "androidx.media3:media3-common:1.1.1"
+    implementation "androidx.fragment:fragment-ktx:1.6.2"
+    implementation "androidx.media3:media3-exoplayer-hls:1.2.0"
+    implementation "androidx.media3:media3-exoplayer:1.2.0"
+    implementation "androidx.media3:media3-ui:1.2.0"
+    implementation "androidx.media3:media3-common:1.2.0"
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'

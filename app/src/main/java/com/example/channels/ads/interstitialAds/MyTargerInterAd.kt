@@ -1,6 +1,7 @@
-package com.example.channels.ads
+package com.example.channels.ads.interstitialAds
 
 import android.content.Context
+import com.example.channels.ads.AdLoadListener
 import com.yandex.mobile.ads.common.AdError
 import com.yandex.mobile.ads.common.AdRequestConfiguration
 import com.yandex.mobile.ads.common.AdRequestError
@@ -10,28 +11,27 @@ import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 
-const val adInterstitialId = "demo-interstitial-yandex"
 const val adInterstitialIdMyTarget = "demo-interstitial-mytarget"
 
-class InterstitialAd(private val context: Context) {
+class MyTargerInterAd(val context: Context) {
 
-    private var interstitialAd: InterstitialAd? = null
-    fun loadInterAd() {
+    //private var interstitialAd: InterstitialAd? = null
+
+    fun loadInterAd(listener: AdLoadListener) {
         val adRequest = AdRequestConfiguration.Builder(adInterstitialIdMyTarget).build()
         InterstitialAdLoader(context).apply {
             setAdLoadListener(object : InterstitialAdLoadListener {
                 override fun onAdLoaded(ad: InterstitialAd) {
-                    interstitialAd = ad
+                    listener.onAdLoaded(ad)
                 }
 
                 override fun onAdFailedToLoad(adRequestError: AdRequestError) {
-                    interstitialAd = null
+
                 }
             })
         }.loadAd(adRequest)
     }
-
-    fun showInterAd(): InterstitialAd? {
+    /*fun showInterAd(): InterstitialAd? {
         interstitialAd?.apply {
             setAdEventListener(object : InterstitialAdEventListener {
                 override fun onAdShown() {
@@ -52,11 +52,10 @@ class InterstitialAd(private val context: Context) {
                 }
 
                 override fun onAdImpression(impressionData: ImpressionData?) {
-                    // Called when an impression is recorded for an ad.
+
                 }
             })
         }
         return interstitialAd
-    }
-
+    }*/
 }
