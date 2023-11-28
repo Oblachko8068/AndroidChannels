@@ -2,9 +2,11 @@ package com.example.channels
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.media3.exoplayer.ExoPlayer
+import com.example.channels.ViewModel.AdsViewModel
 import com.example.channels.ads.AdShownListener
 import com.example.channels.ads.AdsManager
 import com.example.channels.databinding.ActivityMainBinding
@@ -21,13 +23,15 @@ class MainActivity : AppCompatActivity(), Navigator {
     private lateinit var binding: ActivityMainBinding
     private lateinit var player: ExoPlayer
     private lateinit var adsManager: AdsManager
+    private val adsViewModel: AdsViewModel by viewModels()
 
     @SuppressLint("CommitTransaction")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        adsManager = AdsManager(this)
+        adsViewModel.initializeAdsManager(this)
+        //adsManager = AdsManager(this)
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()
@@ -37,7 +41,7 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?) {
-        adsManager.showInterAd(object : AdShownListener {
+        adsViewModel.getAdsManager().showInterAd(object : AdShownListener {
             override fun onAdLoadedAndShown() {
                 launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
             }
@@ -48,17 +52,13 @@ class MainActivity : AppCompatActivity(), Navigator {
         onBackPressed()
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     @SuppressLint("CommitTransaction")
     private fun launchFragment(fragment: Fragment) {
         supportFragmentManager
             .beginTransaction()
             .addToBackStack(null)
             .replace(R.id.fragmentContainer, fragment)
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     //видео реклама

@@ -3,6 +3,7 @@ package com.example.channels.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import com.example.channels.ads.AdsManager
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import com.example.domain.repository.ChannelRepository

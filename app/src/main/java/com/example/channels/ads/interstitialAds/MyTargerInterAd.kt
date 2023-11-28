@@ -1,7 +1,8 @@
 package com.example.channels.ads.interstitialAds
 
+import android.app.Activity
 import android.content.Context
-import com.example.channels.ads.AdLoadListener
+import com.example.channels.ads.AdShownListener
 import com.yandex.mobile.ads.common.AdError
 import com.yandex.mobile.ads.common.AdRequestConfiguration
 import com.yandex.mobile.ads.common.AdRequestError
@@ -12,50 +13,49 @@ import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 
 const val adInterstitialIdMyTarget = "demo-interstitial-mytarget"
-
 class MyTargerInterAd(val context: Context) {
 
-    //private var interstitialAd: InterstitialAd? = null
-
-    fun loadInterAd(listener: AdLoadListener) {
+    var interstitialAd : InterstitialAd? = null
+    fun loadInterAd() {
         val adRequest = AdRequestConfiguration.Builder(adInterstitialIdMyTarget).build()
         InterstitialAdLoader(context).apply {
             setAdLoadListener(object : InterstitialAdLoadListener {
                 override fun onAdLoaded(ad: InterstitialAd) {
-                    listener.onAdLoaded(ad)
+                    interstitialAd = ad
                 }
 
                 override fun onAdFailedToLoad(adRequestError: AdRequestError) {
-
+                    interstitialAd = null
                 }
             })
         }.loadAd(adRequest)
     }
-    /*fun showInterAd(): InterstitialAd? {
+    fun isAdLoaded(): Boolean {
+        return interstitialAd != null
+    }
+    fun showInterAd(listener: AdShownListener) {
         interstitialAd?.apply {
             setAdEventListener(object : InterstitialAdEventListener {
                 override fun onAdShown() {
-                    interstitialAd = null
+                    interstitialAd?.setAdEventListener(null)
+                    listener.onAdLoadedAndShown()
                 }
 
                 override fun onAdFailedToShow(adError: AdError) {
-
+                    interstitialAd?.setAdEventListener(null)
+                    listener.onAdLoadedAndShown()
                 }
 
                 override fun onAdDismissed() {
                     interstitialAd?.setAdEventListener(null)
-                    interstitialAd = null
-                    loadInterAd()
                 }
 
                 override fun onAdClicked() {
                 }
 
                 override fun onAdImpression(impressionData: ImpressionData?) {
-
                 }
             })
-        }
-        return interstitialAd
-    }*/
+        }?.show(context as Activity)
+    }
 }
