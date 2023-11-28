@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.example.channels.R
+import com.example.channels.ViewModel.AdsViewModel
 import com.example.channels.databinding.FragmentMainBinding
 import com.example.channels.fragments.listFragments.AllFragment
 import com.example.channels.fragments.listFragments.FavoritesFragment
@@ -24,19 +25,19 @@ class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+    private val adsViewModel = AdsViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        adsViewModel.initializeAdsManager(requireContext())
         binding.CrashButton.setOnClickListener {
             throw RuntimeException("Test Crash") // Force a crash
         }
@@ -70,39 +71,9 @@ class MainFragment : Fragment() {
         binding.tabs.setupWithViewPager(binding.viewpagerForTabs)
 
         //Реклама
-        bannerAd()
-    }
-    private fun bannerAd(){
-        binding.bannerAdView.setAdUnitId("demo-banner-yandex")
-        binding.bannerAdView.setAdSize(BannerAdSize.inlineSize(requireContext(), 600, 50))
-
-        val adRequest = AdRequest.Builder().build()
-
-        /*binding.bannerAdView.setBannerAdEventListener(object : BannerAdEventListener {
-            override fun onAdLoaded() {
-
-            }
-
-            override fun onAdFailedToLoad(p0: AdRequestError) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onAdClicked() {
-                TODO("Not yet implemented")
-            }
-
-            override fun onLeftApplication() {
-                TODO("Not yet implemented")
-            }
-
-            override fun onReturnedToApplication() {
-                TODO("Not yet implemented")
-            }
-
-            override fun onImpression(p0: ImpressionData?) {
-                TODO("Not yet implemented")
-            }
-        })*/
-        binding.bannerAdView.loadAd(adRequest)
+        val banner : BannerAdView? = adsViewModel.getAdsManager().showBannerAd()
+        if (banner != null){
+            binding.bannerAdView.addView(banner)
+        }
     }
 }

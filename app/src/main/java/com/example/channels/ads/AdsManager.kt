@@ -1,9 +1,12 @@
 package com.example.channels.ads
 
 import android.content.Context
+import com.example.channels.ads.bannerAds.MyTargetBannerAd
+import com.example.channels.ads.bannerAds.YandexBannerAd
 import com.example.channels.ads.interstitialAds.AppLovinInterAd
 import com.example.channels.ads.interstitialAds.MyTargerInterAd
 import com.example.channels.ads.interstitialAds.YandexInterAd
+import com.yandex.mobile.ads.banner.BannerAdView
 
 interface AdShownListener {
     fun onAdLoadedAndShown()
@@ -23,8 +26,32 @@ class AdsManager(val context: Context) {
         val appLovinAd = AppLovinInterAd(context)
         appLovinAd.loadInterAd()
         interstitialAdInstanceList.add(appLovinAd)
+
+
+        val yandexBannerAd = YandexBannerAd(context)
+        yandexBannerAd.loadBannerAd()
+        interstitialAdInstanceList.add(yandexBannerAd)
+        val myTargetBannerAd = MyTargetBannerAd(context)
+        myTargetBannerAd.loadBannerAd()
+        interstitialAdInstanceList.add(myTargetBannerAd)
     }
 
+    fun showBannerAd(): BannerAdView? {
+        for (ad in interstitialAdInstanceList) {
+            if (ad is YandexBannerAd && ad.isAdLoaded()) {
+                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
+                val bannerAd = ad.showBannerAd()
+                ad.loadBannerAd()
+                return bannerAd
+            } else if (ad is MyTargetBannerAd && ad.isAdLoaded()) {
+                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
+                val bannerAd = ad.showBannerAd()
+                ad.loadBannerAd()
+                return bannerAd
+            }
+        }
+        return null
+    }
     fun showInterAd(listener: AdShownListener) {
         for (ad in interstitialAdInstanceList) {
             if (ad is YandexInterAd && ad.isAdLoaded()) {
