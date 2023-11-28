@@ -1,6 +1,7 @@
 package com.example.channels.ads
 
 import android.content.Context
+import com.example.channels.ads.bannerAds.AppLovinBannerAd
 import com.example.channels.ads.bannerAds.MyTargetBannerAd
 import com.example.channels.ads.bannerAds.YandexBannerAd
 import com.example.channels.ads.interstitialAds.AppLovinInterAd
@@ -34,6 +35,9 @@ class AdsManager(val context: Context) {
         val myTargetBannerAd = MyTargetBannerAd(context)
         myTargetBannerAd.loadBannerAd()
         interstitialAdInstanceList.add(myTargetBannerAd)
+        val appLovinBannerAd = AppLovinBannerAd(context)
+        appLovinBannerAd.loadBannerAd()
+        interstitialAdInstanceList.add(appLovinBannerAd)
     }
 
     fun showBannerAd(): BannerAdView? {
@@ -44,6 +48,11 @@ class AdsManager(val context: Context) {
                 ad.loadBannerAd()
                 return bannerAd
             } else if (ad is MyTargetBannerAd && ad.isAdLoaded()) {
+                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
+                val bannerAd = ad.showBannerAd()
+                ad.loadBannerAd()
+                return bannerAd
+            } else if (ad is AppLovinBannerAd && ad.isAdLoaded()) {
                 interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
                 val bannerAd = ad.showBannerAd()
                 ad.loadBannerAd()

@@ -6,26 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.channels.R
 import com.example.channels.ViewModel.AdsViewModel
 import com.example.channels.databinding.FragmentMainBinding
 import com.example.channels.fragments.listFragments.AllFragment
 import com.example.channels.fragments.listFragments.FavoritesFragment
 import com.example.channels.fragments.listFragments.FragmentAdapter
-import com.yandex.mobile.ads.banner.BannerAdEventListener
-import com.yandex.mobile.ads.banner.BannerAdSize
 import com.yandex.mobile.ads.banner.BannerAdView
-import com.yandex.mobile.ads.common.AdRequest
-import com.yandex.mobile.ads.common.AdRequestError
-import com.yandex.mobile.ads.common.AdSize
-import com.yandex.mobile.ads.common.ImpressionData
 
 
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    private val adsViewModel = AdsViewModel()
+    //private val adsViewModel = AdsViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,7 +32,10 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adsViewModel.initializeAdsManager(requireContext())
+        //adsViewModel.initializeAdsManager(requireActivity().applicationContext)
+        val viewModel: AdsViewModel by activityViewModels()
+        viewModel.initializeAdsManager(requireActivity().applicationContext)
+
         binding.CrashButton.setOnClickListener {
             throw RuntimeException("Test Crash") // Force a crash
         }
@@ -71,8 +69,10 @@ class MainFragment : Fragment() {
         binding.tabs.setupWithViewPager(binding.viewpagerForTabs)
 
         //Реклама
-        val banner : BannerAdView? = adsViewModel.getAdsManager().showBannerAd()
-        if (banner != null){
+        binding.bannerAdView.removeAllViews()
+        binding.bannerAdView.removeAllViewsInLayout()
+        val banner: BannerAdView? = viewModel.getAdsManager().showBannerAd()
+        if (banner != null) {
             binding.bannerAdView.addView(banner)
         }
     }
