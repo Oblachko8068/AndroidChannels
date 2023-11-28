@@ -30,23 +30,17 @@ class AdsManager(val context: Context) {
             if (ad is YandexInterAd && ad.isAdLoaded()) {
                 ad.showInterAd(listener)
                 ad.loadInterAd()
-                val currentAd =
-                    interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad))
-                interstitialAdInstanceList.add(currentAd)
+                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
                 break
             } else if (ad is MyTargerInterAd && ad.isAdLoaded()) {
                 ad.showInterAd(listener)
                 ad.loadInterAd()
-                val currentAd =
-                    interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad))
-                interstitialAdInstanceList.add(currentAd)
+                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
                 break
             } else if (ad is AppLovinInterAd && ad.isAdLoaded()) {
                 ad.showInterAd(listener)
                 ad.loadInterAd()
-                val currentAd =
-                    interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad))
-                interstitialAdInstanceList.add(currentAd)
+                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
                 break
             }
         }
