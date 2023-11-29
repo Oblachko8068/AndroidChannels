@@ -2,111 +2,83 @@ package com.example.channels
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.media3.exoplayer.ExoPlayer
+import com.example.channels.ViewModel.AdsViewModel
+import com.example.channels.ads.AdShownListener
+import com.example.channels.ads.AdsManager
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.fragments.ExoPlayerFragment
 import com.example.channels.fragments.MainFragment
 import com.example.channels.fragments.Navigator
-import com.example.di.di.Di
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
-import com.yandex.mobile.ads.common.AdError
-import com.yandex.mobile.ads.common.AdRequest
-import com.yandex.mobile.ads.common.AdRequestConfiguration
-import com.yandex.mobile.ads.common.AdRequestError
-import com.yandex.mobile.ads.common.ImpressionData
-import com.yandex.mobile.ads.interstitial.InterstitialAd
-import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
-import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
-import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {
 
-    private var interstitialAd : InterstitialAd? = null
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var player: ExoPlayer
+    private lateinit var adsManager: AdsManager
+    private val adsViewModel: AdsViewModel by viewModels()
+
     @SuppressLint("CommitTransaction")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        adsViewModel.initializeAdsManager(this)
+        //adsManager = AdsManager(this)
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()
                 .add(R.id.fragmentContainer, MainFragment())
                 .commit()
         }
-
     }
 
-    private fun loadInterAd(){
-        val adRequest = AdRequestConfiguration.Builder("demo-banner-yandex").build()
-        InterstitialAdLoader(this).apply {
-            setAdLoadListener(object : InterstitialAdLoadListener {
-                override fun onAdLoaded(ad: InterstitialAd) {
-                    interstitialAd = ad
-                }
-
-                override fun onAdFailedToLoad(adRequestError: AdRequestError) {
-                    interstitialAd = null
-                }
-            })
-        }.loadAd(adRequest)
-    }
-    private fun showInterAd(){
-        if (interstitialAd != null){
-            interstitialAd?.apply {
-                setAdEventListener(object : InterstitialAdEventListener {
-                    override fun onAdShown() {
-                        interstitialAd = null
-                        loadInterAd()
-                        return
-                    }
-                    override fun onAdFailedToShow(adError: AdError) {
-                        interstitialAd = null
-                        loadInterAd()
-                        return
-                    }
-                    override fun onAdDismissed() {
-                        interstitialAd = null
-                        loadInterAd()
-                        return
-                    }
-                    override fun onAdClicked() {
-                        // Called when a click is recorded for an ad.
-                    }
-                    override fun onAdImpression(impressionData: ImpressionData?) {
-                        // Called when an impression is recorded for an ad.
-                    }
-                })
-                show(this@MainActivity)
-            }
-        } else {
-            return
-        }
-    }
     override fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?) {
-        showInterAd()
-        launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
+        adsViewModel.getAdsManager().showInterAd(object : AdShownListener {
+            override fun onAdLoadedAndShown() {
+                launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
+            }
+        })
     }
 
     override fun goBack() {
         onBackPressed()
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadInterAd()
-    }
     @SuppressLint("CommitTransaction")
     private fun launchFragment(fragment: Fragment) {
         supportFragmentManager
             .beginTransaction()
             .addToBackStack(null)
             .replace(R.id.fragmentContainer, fragment)
-            .commit()
+            .commitAllowingStateLoss()
     }
 
+    //видео реклама
+    /*@SuppressLint("UnsafeOptInUsageError")
+    private fun videoAd(){
+        val instreamAdRequestConfiguration = InstreamAdRequestConfiguration.Builder("demo").build()
+        val yandexAdsLoader: YandexAdsLoader = YandexAdsLoader(this, instreamAdRequestConfiguration)
+        val userAgent = Util.getUserAgent(this, getString(R.string.app_name))
+        val dataSourceFactory = DefaultDataSourceFactory(this, userAgent)
+        val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
+            .setAdViewProvider(binding.playerView)
+        val player = ExoPlayer.Builder(this)
+            .setMediaSourceFactory(mediaSourceFactory)
+            .build()
+        binding.playerView.player = player
+        yandexAdsLoader.setPlayer(player)
+        val contentVideoUrl = getString(R.string.content_url_for_instream_ad)
+        val mediaItem = MediaItem.Builder()
+            .setUri(contentVideoUrl)
+            .setAdTagUri(YandexAdsLoader.AD_TAG_URI)
+    }*/
 }
+

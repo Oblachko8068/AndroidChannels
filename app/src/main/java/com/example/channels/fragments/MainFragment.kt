@@ -70,10 +70,14 @@ class MainFragment : Fragment() {
         binding.tabs.setupWithViewPager(binding.viewpagerForTabs)
 
         //Реклама
+        bannerAd()
+    }
+    private fun bannerAd(){
         binding.bannerAdView.setAdUnitId("demo-banner-yandex")
         binding.bannerAdView.setAdSize(BannerAdSize.inlineSize(requireContext(), 600, 50))
 
         val adRequest = AdRequest.Builder().build()
+
         /*binding.bannerAdView.setBannerAdEventListener(object : BannerAdEventListener {
             override fun onAdLoaded() {
 
@@ -101,5 +105,4 @@ class MainFragment : Fragment() {
         })*/
         binding.bannerAdView.loadAd(adRequest)
     }
-
 }

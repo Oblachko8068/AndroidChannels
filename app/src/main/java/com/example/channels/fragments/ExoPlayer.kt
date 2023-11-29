@@ -1,11 +1,15 @@
 package com.example.channels.fragments
 
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.PendingIntent
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -19,7 +23,11 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.ui.PlayerNotificationManager
+import androidx.media3.ui.PlayerNotificationManager.BitmapCallback
+import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import com.bumptech.glide.Glide
+import com.example.channels.R
 import com.example.channels.databinding.FragmentExoplayerBinding
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
@@ -29,9 +37,10 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-const val channel_data = "channel_exo_data"
-const val epg_data = "epg_exo_data"
-const val set_Result = "setResult"
+//TODO 1. сделать открытие приложения
+const val CHANNEL_EXO_DATA = "CHANNEL_EXO_DATA"
+const val EPG_DATA = "EPG_DATA"
+const val SET_RESULT = "SET_RESULT"
 const val hlsUri = "https://linear-143.frequency.stream/dist/localnow/143/hls/master/playlist.m3u8"
 
 class ExoPlayerFragment : Fragment(), Player.Listener {
@@ -44,6 +53,8 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private lateinit var videoTrackGroup: Tracks.Group
     private var currentResolution = -1
     private var tracksList = mutableListOf<Int>()
+    private var playerNotificationManager: PlayerNotificationManager? = null
+    private var notificationsAllowed = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,10 +66,11 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         return binding.root
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val channel = arguments?.getSerializable(channel_data) as? Channel
-        val epg = arguments?.getSerializable(epg_data) as? Epg
+        val channel = arguments?.getSerializable(CHANNEL_EXO_DATA) as? Channel
+        val epg = arguments?.getSerializable(EPG_DATA) as? Epg
         if (channel != null) {
             val channelName = channel.name
             val channelDescription = epg?.title
@@ -71,6 +83,19 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 Glide.with(it)
                     .load(channelIconResource)
                     .into(binding.activeChannelIcon)
+            }
+        }
+        binding.notificationOnOffButton.setOnClickListener {
+            if (notificationsAllowed) {
+                binding.notificationOnOffButton.setColorFilter(
+                    ContextCompat.getColor(requireContext(), R.color.icon_disable)
+                )
+                notificationsAllowed = false
+            } else {
+                binding.notificationOnOffButton.setColorFilter(
+                    ContextCompat.getColor(requireContext(), R.color.icon_enable)
+                )
+                notificationsAllowed = true
             }
         }
         binding.backToMain.setOnClickListener {
@@ -102,7 +127,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 player.play()
             }
         }
-        parentFragmentManager.setFragmentResultListener(set_Result, viewLifecycleOwner) { _, res ->
+        parentFragmentManager.setFragmentResultListener(SET_RESULT, viewLifecycleOwner) { _, res ->
             val result = res.getInt("quality")
             if (result == -1) {
                 currentResolution = -1
@@ -113,23 +138,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             }
         }
         initializePlayer()
-    }
-
-    private fun autoQuality() {
-        player.trackSelectionParameters = player.trackSelectionParameters
-            .buildUpon()
-            .clearOverride(videoTrackGroup.mediaTrackGroup)
-            .build()
-    }
-
-    @SuppressLint("UnsafeOptInUsageError")
-    private fun updatePlayer(index: Int) {
-        player.trackSelectionParameters = player.trackSelectionParameters
-            .buildUpon()
-            .setOverrideForType(
-                TrackSelectionOverride(
-                    videoTrackGroup.mediaTrackGroup, index))
-            .build()
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -152,10 +160,10 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 override fun onTracksChanged(tracks: Tracks) {
                     super.onTracksChanged(tracks)
                     for (trackGroup in tracks.groups) {
-                        if (trackGroup.type == 2){
+                        if (trackGroup.type == 2) {
                             videoTrackGroup = trackGroup
                             for (i in 0 until trackGroup.length) {
-                                if (!tracksList.contains(trackGroup.getTrackFormat(i).width)){
+                                if (!tracksList.contains(trackGroup.getTrackFormat(i).width)) {
                                     tracksList.add(trackGroup.getTrackFormat(i).width)
                                 }
                             }
@@ -165,20 +173,130 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             }
         )
     }
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("playbackState", playbackState)
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setupPlayerNotificationManager() {
+        val channelId = "your_notification_channel_id"
+
+        @SuppressLint("UnsafeOptInUsageError")
+        val mediaDescriptionAdapter = object : MediaDescriptionAdapter {
+            override fun getCurrentContentTitle(player: Player): CharSequence {
+                if (player.currentMediaItem?.mediaMetadata != null) {
+                    val title = player.currentMediaItem!!.mediaMetadata.title
+                    if (title != null) {
+                        return title
+                    }
+                }
+                return "Лучший канал"
+            }
+
+            override fun createCurrentContentIntent(player: Player): PendingIntent? {
+
+                return null
+            }
+
+            override fun getCurrentContentText(player: Player): CharSequence {
+                if (player.currentMediaItem?.mediaMetadata != null) {
+                    val description = player.currentMediaItem!!.mediaMetadata.description
+                    if (description != null) {
+                        return description
+                    }
+                }
+                return "Лучшее описание"
+            }
+
+            override fun getCurrentLargeIcon(player: Player, callback: BitmapCallback): Bitmap? {
+                return null
+            }
+        }
+
+        @SuppressLint("UnsafeOptInUsageError")
+        playerNotificationManager = PlayerNotificationManager.Builder(
+            requireContext(),
+            1,
+            channelId
+        )
+            .setMediaDescriptionAdapter(mediaDescriptionAdapter)
+            .setNotificationListener(object : PlayerNotificationManager.NotificationListener {
+                override fun onNotificationPosted(
+                    notificationId: Int,
+                    notification: Notification,
+                    ongoing: Boolean
+                ) {
+                }
+
+                override fun onNotificationCancelled(
+                    notificationId: Int,
+                    dismissedByUser: Boolean
+                ) {
+                    if (dismissedByUser) {
+                        onDestroy()
+                    }
+                }
+            })
+            .setSmallIconResourceId(R.mipmap.ic_icon)
+            .build()
+        if (playerNotificationManager != null) {
+            playerNotificationManager!!.setUseStopAction(false)
+            playerNotificationManager!!.setPlayer(player)
+            playerNotificationManager!!.setUsePlayPauseActions(true)
+            playerNotificationManager!!.setUseNextAction(false)
+            playerNotificationManager!!.setUsePreviousAction(false)
+            playerNotificationManager!!.setUseFastForwardAction(false)
+            playerNotificationManager!!.setUseRewindAction(false)
+        }
+        binding.exoplayerView.player = player
+    }
+
+    private fun autoQuality() {
+        player.trackSelectionParameters = player.trackSelectionParameters
+            .buildUpon()
+            .clearOverride(videoTrackGroup.mediaTrackGroup)
+            .build()
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun updatePlayer(index: Int) {
+        player.trackSelectionParameters = player.trackSelectionParameters
+            .buildUpon()
+            .setOverrideForType(
+                TrackSelectionOverride(
+                    videoTrackGroup.mediaTrackGroup, index
+                )
+            )
+            .build()
     }
 
     override fun onPause() {
         super.onPause()
+        if (notificationsAllowed) {
+            setupPlayerNotificationManager()
+        } else {
+            player.pause()
+        }
         playbackState = player.playbackState
-        player.pause()
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     override fun onResume() {
         super.onResume()
         player.play()
+        playerNotificationManager?.setPlayer(null)
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineScope.cancel()
+        player.release()
+        player.stop()
+        showSystemUi()
+        playerNotificationManager?.setPlayer(null)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
     }
 
     private fun hideSystemUi() {
@@ -209,23 +327,22 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         binding.layoutBottom.visibility = View.INVISIBLE
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        coroutineScope.cancel()
-        player.stop()
-        showSystemUi()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("playbackState", playbackState)
     }
 
     companion object {
         fun newInstance(channel: Channel, selectedEpgDb: Epg?): ExoPlayerFragment {
             val args = Bundle()
-            args.putSerializable(channel_data, channel)
-            args.putSerializable(epg_data, selectedEpgDb)
+            args.putSerializable(CHANNEL_EXO_DATA, channel)
+            args.putSerializable(EPG_DATA, selectedEpgDb)
             val fragment = ExoPlayerFragment()
             fragment.arguments = args
             return fragment
         }
     }
 }
+
 
 

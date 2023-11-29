@@ -12,8 +12,8 @@ import androidx.fragment.app.setFragmentResult
 import com.example.channels.R
 import com.example.channels.databinding.FragmentQualitySettingsBinding
 
-const val quality_List_Key = "qualityList"
-const val current_Resolution_Key = "currentResolution"
+const val QUALITY_LIST_KEY = "QUALITY_LIST_KEY"
+const val CURRENT_RESOLUTION_KEY = "CURRENT_RESOLUTION_KEY"
 class QualitySettingsFragment : DialogFragment() {
     override fun getTheme() = R.style.RoundedCornersDialog
 
@@ -34,18 +34,18 @@ class QualitySettingsFragment : DialogFragment() {
     @SuppressLint("ResourceAsColor", "ResourceType")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val qualityList = arguments?.getIntegerArrayList(quality_List_Key)
-        val currentResolution = arguments?.getInt(current_Resolution_Key)
+        val qualityList = arguments?.getIntegerArrayList(QUALITY_LIST_KEY)
+        val currentResolution = arguments?.getInt(CURRENT_RESOLUTION_KEY)
         var qualityArray = qualityList?.toTypedArray()
         qualityArray = qualityArray?.plus(-1)
 
         binding.qualityListView.adapter =
             qualityArray?.let { ListViewAdapter(requireContext(), it, currentResolution) }
 
-        binding.qualityListView.setOnItemClickListener { adapterView, view, i, l ->
+        binding.qualityListView.setOnItemClickListener { _, view, i, _ ->
             val resultData = Bundle()
             qualityArray?.get(i)?.let { resultData.putInt("quality", it) }
-            setFragmentResult(set_Result, resultData)
+            setFragmentResult(SET_RESULT, resultData)
             dismiss()
         }
     }
@@ -57,8 +57,8 @@ class QualitySettingsFragment : DialogFragment() {
         ): QualitySettingsFragment {
             return QualitySettingsFragment().apply {
                 arguments = Bundle().apply {
-                    putIntegerArrayList(quality_List_Key, ArrayList(qualityList))
-                    putInt(current_Resolution_Key, currentResolution)
+                    putIntegerArrayList(QUALITY_LIST_KEY, ArrayList(qualityList))
+                    putInt(CURRENT_RESOLUTION_KEY, currentResolution)
                 }
             }
         }

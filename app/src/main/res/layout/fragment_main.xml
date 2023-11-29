@@ -62,6 +62,7 @@
         app:layout_constraintBottom_toTopOf="@+id/banner_ad_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
     <com.yandex.mobile.ads.banner.BannerAdView
         android:id="@+id/banner_ad_view"
         android:layout_width="match_parent"
