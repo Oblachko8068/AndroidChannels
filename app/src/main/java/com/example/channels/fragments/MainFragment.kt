@@ -20,7 +20,6 @@ class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    //private val adsViewModel = AdsViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,9 +31,8 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //adsViewModel.initializeAdsManager(requireActivity().applicationContext)
-        val viewModel: AdsViewModel by activityViewModels()
-        viewModel.initializeAdsManager(requireActivity().applicationContext)
+        val adsViewModel: AdsViewModel by activityViewModels()
+        adsViewModel.initializeAdsManager(requireActivity().applicationContext)
 
         binding.CrashButton.setOnClickListener {
             throw RuntimeException("Test Crash") // Force a crash
@@ -69,10 +67,11 @@ class MainFragment : Fragment() {
         binding.tabs.setupWithViewPager(binding.viewpagerForTabs)
 
         //Реклама
-        binding.bannerAdView.removeAllViews()
         binding.bannerAdView.removeAllViewsInLayout()
-        val banner: BannerAdView? = viewModel.getAdsManager().showBannerAd()
+        val banner: BannerAdView? = adsViewModel.getAdsManager().showBannerAd()
         if (banner != null) {
+            val parent = banner.parent as? ViewGroup
+            parent?.removeView(banner)
             binding.bannerAdView.addView(banner)
         }
     }

@@ -30,7 +30,12 @@ class ListViewAdapter(
             binding.listItemText.setTextColor(ContextCompat.getColor(context, R.color.text_active))
         } else {
             binding.listItemText.setBackgroundResource(R.color.text_dark)
-            binding.listItemText.setTextColor(ContextCompat.getColor(context, R.color.unplayed_video_text_color))
+            binding.listItemText.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.unplayed_video_text_color
+                )
+            )
         }
 
         return binding.root

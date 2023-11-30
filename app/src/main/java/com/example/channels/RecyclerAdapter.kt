@@ -99,11 +99,10 @@ class RecyclerAdapter(
                     IntArray(0)
                 }
             } catch (e: Exception) {
-                IntArray(0)  // Возвращаем пустой (нулевой) массив в случае ошибки
+                IntArray(0)
             }
         }
 
-        // Добавляем функцию для сохранения массива целочисленных значений в SharedPreferences
         private fun saveNewIntArray(context: Context, intArray: IntArray) {
             val sharedPref =
                 context.getSharedPreferences("new_array_preferences", Context.MODE_PRIVATE)
@@ -119,9 +118,6 @@ class RecyclerAdapter(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val channel = channel[position]
         val epg = epg.find { it.channelID == channel.id }
-
-        //val epgUseCase = Di.EpgUseCase(Di.epgRepository)
-        //val epg = epgUseCase.getCurrentEpgByChannelId(channel.id).value
         if (epg != null) {
             holder.bind(channel, epg, context)
         }

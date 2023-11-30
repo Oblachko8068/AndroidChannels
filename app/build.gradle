@@ -53,7 +53,7 @@ dependencies {
     implementation 'com.yandex.ads.mediation:mobileads-mytarget:5.19.0.0'
     implementation 'com.yandex.ads.mediation:mobileads-applovin:11.11.3.1'
     //медиация
-    //implementation 'com.yandex.android:mobileads-mediation:6.2.0.0'
+    implementation 'com.yandex.android:mobileads-mediation:6.2.0.0'
 
     implementation 'com.google.firebase:firebase-messaging:23.3.1'
     implementation "com.google.android.gms:play-services-base:18.2.0"

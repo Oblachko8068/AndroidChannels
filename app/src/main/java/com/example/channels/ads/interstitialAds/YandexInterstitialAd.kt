@@ -12,12 +12,13 @@ import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 
-const val adInterstitialIdMyTarget = "demo-interstitial-mytarget"
-class MyTargerInterAd(val context: Context) {
+const val adInterstitialId = "demo-interstitial-yandex"
 
-    var interstitialAd : InterstitialAd? = null
+class YandexInterstitialAd(val context: Context) {
+
+    var interstitialAd: InterstitialAd? = null
     fun loadInterAd() {
-        val adRequest = AdRequestConfiguration.Builder(adInterstitialIdMyTarget).build()
+        val adRequest = AdRequestConfiguration.Builder(adInterstitialId).build()
         InterstitialAdLoader(context).apply {
             setAdLoadListener(object : InterstitialAdLoadListener {
                 override fun onAdLoaded(ad: InterstitialAd) {
@@ -30,9 +31,11 @@ class MyTargerInterAd(val context: Context) {
             })
         }.loadAd(adRequest)
     }
+
     fun isAdLoaded(): Boolean {
         return interstitialAd != null
     }
+
     fun showInterAd(listener: AdShownListener) {
         interstitialAd?.apply {
             setAdEventListener(object : InterstitialAdEventListener {

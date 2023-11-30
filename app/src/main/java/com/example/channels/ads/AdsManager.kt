@@ -4,9 +4,9 @@ import android.content.Context
 import com.example.channels.ads.bannerAds.AppLovinBannerAd
 import com.example.channels.ads.bannerAds.MyTargetBannerAd
 import com.example.channels.ads.bannerAds.YandexBannerAd
-import com.example.channels.ads.interstitialAds.AppLovinInterAd
-import com.example.channels.ads.interstitialAds.MyTargerInterAd
-import com.example.channels.ads.interstitialAds.YandexInterAd
+import com.example.channels.ads.interstitialAds.AppLovinInterstitialAd
+import com.example.channels.ads.interstitialAds.MyTargerInterstitialAd
+import com.example.channels.ads.interstitialAds.YandexInterstitialAd
 import com.yandex.mobile.ads.banner.BannerAdView
 
 interface AdShownListener {
@@ -15,68 +15,99 @@ interface AdShownListener {
 
 class AdsManager(val context: Context) {
 
-    private var interstitialAdInstanceList = mutableListOf<Any>()
+    private var adInstancesList = mutableListOf<Any>()
 
     init {
-        val yandexAd = YandexInterAd(context)
-        yandexAd.loadInterAd()
-        interstitialAdInstanceList.add(yandexAd)
-        val myTargetAd = MyTargerInterAd(context)
-        myTargetAd.loadInterAd()
-        interstitialAdInstanceList.add(myTargetAd)
-        val appLovinAd = AppLovinInterAd(context)
-        appLovinAd.loadInterAd()
-        interstitialAdInstanceList.add(appLovinAd)
+        initializeInterstitialAdInstances()
+        initializeBannerAdInstances()
+    }
 
-
+    private fun initializeBannerAdInstances() {
         val yandexBannerAd = YandexBannerAd(context)
         yandexBannerAd.loadBannerAd()
-        interstitialAdInstanceList.add(yandexBannerAd)
+        adInstancesList.add(yandexBannerAd)
         val myTargetBannerAd = MyTargetBannerAd(context)
         myTargetBannerAd.loadBannerAd()
-        interstitialAdInstanceList.add(myTargetBannerAd)
+        adInstancesList.add(myTargetBannerAd)
         val appLovinBannerAd = AppLovinBannerAd(context)
         appLovinBannerAd.loadBannerAd()
-        interstitialAdInstanceList.add(appLovinBannerAd)
+        adInstancesList.add(appLovinBannerAd)
+    }
+
+    private fun initializeInterstitialAdInstances() {
+        val yandexInterstitialAd = YandexInterstitialAd(context)
+        yandexInterstitialAd.loadInterAd()
+        adInstancesList.add(yandexInterstitialAd)
+        val myTargetInterstitialAd = MyTargerInterstitialAd(context)
+        myTargetInterstitialAd.loadInterAd()
+        adInstancesList.add(myTargetInterstitialAd)
+        val appLovinInterstitialAd = AppLovinInterstitialAd(context)
+        appLovinInterstitialAd.loadInterAd()
+        adInstancesList.add(appLovinInterstitialAd)
     }
 
     fun showBannerAd(): BannerAdView? {
-        for (ad in interstitialAdInstanceList) {
+        for (ad in adInstancesList) {
             if (ad is YandexBannerAd && ad.isAdLoaded()) {
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
                 val bannerAd = ad.showBannerAd()
-                ad.loadBannerAd()
+                //ad.loadBannerAd()
                 return bannerAd
             } else if (ad is MyTargetBannerAd && ad.isAdLoaded()) {
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
                 val bannerAd = ad.showBannerAd()
-                ad.loadBannerAd()
+                //ad.loadBannerAd()
                 return bannerAd
             } else if (ad is AppLovinBannerAd && ad.isAdLoaded()) {
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
                 val bannerAd = ad.showBannerAd()
-                ad.loadBannerAd()
+                //ad.loadBannerAd()
                 return bannerAd
             }
         }
         return null
     }
+
     fun showInterAd(listener: AdShownListener) {
-        for (ad in interstitialAdInstanceList) {
-            if (ad is YandexInterAd && ad.isAdLoaded()) {
+        for (ad in adInstancesList) {
+            if (ad is YandexInterstitialAd && ad.isAdLoaded()) {
                 ad.showInterAd(listener)
                 ad.loadInterAd()
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
                 break
-            } else if (ad is MyTargerInterAd && ad.isAdLoaded()) {
+            } else if (ad is MyTargerInterstitialAd && ad.isAdLoaded()) {
                 ad.showInterAd(listener)
                 ad.loadInterAd()
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
                 break
-            } else if (ad is AppLovinInterAd && ad.isAdLoaded()) {
+            } else if (ad is AppLovinInterstitialAd && ad.isAdLoaded()) {
                 ad.showInterAd(listener)
                 ad.loadInterAd()
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
                 break
             }
         }

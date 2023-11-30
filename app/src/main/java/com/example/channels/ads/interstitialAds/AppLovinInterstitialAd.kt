@@ -13,9 +13,10 @@ import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 
 const val adInterstitialIdAppLovin = "demo-interstitial-applovin"
-class AppLovinInterAd(private val context: Context) {
 
-    var interstitialAd : InterstitialAd? = null
+class AppLovinInterstitialAd(private val context: Context) {
+
+    var interstitialAd: InterstitialAd? = null
     fun loadInterAd() {
         val adRequest = AdRequestConfiguration.Builder(adInterstitialIdAppLovin).build()
         InterstitialAdLoader(context).apply {
@@ -30,9 +31,11 @@ class AppLovinInterAd(private val context: Context) {
             })
         }.loadAd(adRequest)
     }
+
     fun isAdLoaded(): Boolean {
         return interstitialAd != null
     }
+
     fun showInterAd(listener: AdShownListener) {
         interstitialAd?.apply {
             setAdEventListener(object : InterstitialAdEventListener {

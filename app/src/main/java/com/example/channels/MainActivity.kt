@@ -5,10 +5,8 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.media3.exoplayer.ExoPlayer
 import com.example.channels.ViewModel.AdsViewModel
 import com.example.channels.ads.AdShownListener
-import com.example.channels.ads.AdsManager
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.fragments.ExoPlayerFragment
 import com.example.channels.fragments.MainFragment
@@ -21,8 +19,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var player: ExoPlayer
-    private lateinit var adsManager: AdsManager
     private val adsViewModel: AdsViewModel by viewModels()
 
     @SuppressLint("CommitTransaction")
@@ -30,11 +26,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //adsViewModel.initializeAdsManager(this)
-        val viewModel: AdsViewModel by viewModels()
-        viewModel.initializeAdsManager(this)
-        adsManager = viewModel.getAdsManager()
-
+        adsViewModel.initializeAdsManager(this)
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()
@@ -52,7 +44,7 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun goBack() {
-        onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     @SuppressLint("CommitTransaction")
@@ -63,25 +55,5 @@ class MainActivity : AppCompatActivity(), Navigator {
             .replace(R.id.fragmentContainer, fragment)
             .commitAllowingStateLoss()
     }
-
-    //видео реклама
-    /*@SuppressLint("UnsafeOptInUsageError")
-    private fun videoAd(){
-        val instreamAdRequestConfiguration = InstreamAdRequestConfiguration.Builder("demo").build()
-        val yandexAdsLoader: YandexAdsLoader = YandexAdsLoader(this, instreamAdRequestConfiguration)
-        val userAgent = Util.getUserAgent(this, getString(R.string.app_name))
-        val dataSourceFactory = DefaultDataSourceFactory(this, userAgent)
-        val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
-            .setAdViewProvider(binding.playerView)
-        val player = ExoPlayer.Builder(this)
-            .setMediaSourceFactory(mediaSourceFactory)
-            .build()
-        binding.playerView.player = player
-        yandexAdsLoader.setPlayer(player)
-        val contentVideoUrl = getString(R.string.content_url_for_instream_ad)
-        val mediaItem = MediaItem.Builder()
-            .setUri(contentVideoUrl)
-            .setAdTagUri(YandexAdsLoader.AD_TAG_URI)
-    }*/
 }
 
