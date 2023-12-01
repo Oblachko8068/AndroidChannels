@@ -30,8 +30,11 @@ class MainActivity : AppCompatActivity(), Navigator {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        adsViewModel.initializeAdsManager(this)
-        //adsManager = AdsManager(this)
+        //adsViewModel.initializeAdsManager(this)
+        val viewModel: AdsViewModel by viewModels()
+        viewModel.initializeAdsManager(this)
+        adsManager = viewModel.getAdsManager()
+
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()

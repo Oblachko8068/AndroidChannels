@@ -14,6 +14,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.TrackSelectionOverride
@@ -28,9 +29,18 @@ import androidx.media3.ui.PlayerNotificationManager.BitmapCallback
 import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import com.bumptech.glide.Glide
 import com.example.channels.R
+import com.example.channels.ViewModel.AdsViewModel
+import com.example.channels.ads.videoAds.CustomInstreamAdPlayer
+import com.example.channels.ads.videoAds.CustomVideoPlayer
 import com.example.channels.databinding.FragmentExoplayerBinding
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
+import com.yandex.mobile.ads.banner.BannerAdView
+import com.yandex.mobile.ads.instream.InstreamAd
+import com.yandex.mobile.ads.instream.InstreamAdBinder
+import com.yandex.mobile.ads.instream.InstreamAdListener
+import com.yandex.mobile.ads.instream.player.ad.InstreamAdPlayer
+import com.yandex.mobile.ads.instream.player.content.VideoPlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -56,6 +66,9 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private var playerNotificationManager: PlayerNotificationManager? = null
     private var notificationsAllowed = false
 
+    val viewModel: AdsViewModel by activityViewModels()
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -69,6 +82,9 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     @SuppressLint("UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.initializeAdsManager(requireActivity().applicationContext)
+
         val channel = arguments?.getSerializable(CHANNEL_EXO_DATA) as? Channel
         val epg = arguments?.getSerializable(EPG_DATA) as? Epg
         if (channel != null) {
@@ -138,6 +154,43 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             }
         }
         initializePlayer()
+
+        //////////////////////////////
+        val instreamAd: InstreamAd? = viewModel.getAdsManager().showInstreamAd()
+        val instreamAdPlayer: InstreamAdPlayer = CustomInstreamAdPlayer()
+        val contentVideoPlayer: VideoPlayer = CustomVideoPlayer()
+
+        // Создайте объект InstreamAdBinder
+        var instreamAdBinder = instreamAd?.let {
+            InstreamAdBinder(
+                requireContext(), // Передайте контекст
+                it,
+                checkNotNull(instreamAdPlayer),
+                checkNotNull(contentVideoPlayer)
+            )
+        }
+
+        // Создайте экземпляр InstreamAdListener и установите его в InstreamAdBinder
+        val instreamAdListener = object : InstreamAdListener {
+            override fun onInstreamAdCompleted() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onInstreamAdPrepared() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onError(p0: String) {
+                TODO("Not yet implemented")
+            }
+        }
+
+        if (instreamAdBinder != null) {
+            instreamAdBinder.setInstreamAdListener(instreamAdListener)
+            instreamAdBinder.bind(binding.instreamAdView)
+        }
+
+
     }
 
     @SuppressLint("UnsafeOptInUsageError")

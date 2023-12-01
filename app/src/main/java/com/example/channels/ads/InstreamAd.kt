@@ -74,6 +74,7 @@ import com.yandex.mobile.ads.video.playback.model.VideoAd
         TODO("Not yet implemented")
     }
 }
+
 class CustomVideoPlayer : VideoPlayer {
     override fun getVolume(): Float {
         TODO("Not yet implemented")

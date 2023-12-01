@@ -6,6 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.yandex.mobile.ads.instream.player.ad.InstreamAdView
+        android:id="@+id/instream_ad_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <androidx.media3.ui.PlayerView
         android:id="@+id/exoplayerView"
         android:layout_width="match_parent"
@@ -13,6 +18,8 @@
         android:background="@color/dark_primary"
         app:use_controller="false">
     </androidx.media3.ui.PlayerView>
+
+    </com.yandex.mobile.ads.instream.player.ad.InstreamAdView>
 
     <LinearLayout
         android:id="@+id/layoutTop"
@@ -137,4 +144,24 @@
             />
 
     </RelativeLayout>
+
+    <!--LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingConstraints">
+
+        <com.yandex.mobile.ads.instream.player.ad.InstreamAdView
+            android:id="@+id/instream_ad_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.exoplayer2.ui.PlayerView
+                android:id="@+id/player_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </com.yandex.mobile.ads.instream.player.ad.InstreamAdView>
+
+    </LinearLayout-->
+
 </androidx.constraintlayout.widget.ConstraintLayout>
