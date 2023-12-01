@@ -44,11 +44,12 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?) {
-        adsViewModel.getAdsManager().showInterAd(object : AdShownListener {
+        launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
+        /*adsViewModel.getAdsManager().showInterAd(object : AdShownListener {
             override fun onAdLoadedAndShown() {
                 launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
             }
-        })
+        })*/
     }
 
     override fun goBack() {

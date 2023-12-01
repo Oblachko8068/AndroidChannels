@@ -12,7 +12,6 @@ const val pageId = "demo-instream-vmap-yandex"
 class InstreamAdManager(
     private val context: Context,
 ) {
-    //private val instreamAdLoader = InstreamAdLoader(context)
     private var videoAd : InstreamAd? = null
 
     fun loadInstreamAd() {

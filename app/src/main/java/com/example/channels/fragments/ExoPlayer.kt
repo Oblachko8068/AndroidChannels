@@ -31,16 +31,16 @@ import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.ViewModel.AdsViewModel
 import com.example.channels.ads.videoAds.CustomInstreamAdPlayer
-import com.example.channels.ads.videoAds.CustomVideoPlayer
+import com.example.channels.ads.videoAds.SamplePlayer
 import com.example.channels.databinding.FragmentExoplayerBinding
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
-import com.yandex.mobile.ads.banner.BannerAdView
 import com.yandex.mobile.ads.instream.InstreamAd
 import com.yandex.mobile.ads.instream.InstreamAdBinder
 import com.yandex.mobile.ads.instream.InstreamAdListener
 import com.yandex.mobile.ads.instream.player.ad.InstreamAdPlayer
 import com.yandex.mobile.ads.instream.player.content.VideoPlayer
+import com.yandex.mobile.ads.instream.player.content.VideoPlayerListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -53,7 +53,7 @@ const val EPG_DATA = "EPG_DATA"
 const val SET_RESULT = "SET_RESULT"
 const val hlsUri = "https://linear-143.frequency.stream/dist/localnow/143/hls/master/playlist.m3u8"
 
-class ExoPlayerFragment : Fragment(), Player.Listener {
+class ExoPlayerFragment : Fragment(), VideoPlayer, SamplePlayer, Player.Listener {
 
     private var visibilityView: Boolean = true
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -65,6 +65,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private var tracksList = mutableListOf<Int>()
     private var playerNotificationManager: PlayerNotificationManager? = null
     private var notificationsAllowed = false
+    private var videoPlayerListener: VideoPlayerListener? = null
 
     val viewModel: AdsViewModel by activityViewModels()
 
@@ -157,42 +158,71 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
 
         //////////////////////////////
         val instreamAd: InstreamAd? = viewModel.getAdsManager().showInstreamAd()
-        val instreamAdPlayer: InstreamAdPlayer = CustomInstreamAdPlayer()
-        val contentVideoPlayer: VideoPlayer = CustomVideoPlayer()
+        if (instreamAd != null){
+            val instreamAdPlayer: InstreamAdPlayer = CustomInstreamAdPlayer(binding.adPlayerView)
+            val contentVideoPlayer: VideoPlayer = ExoPlayerFragment()
 
-        // Создайте объект InstreamAdBinder
-        var instreamAdBinder = instreamAd?.let {
-            InstreamAdBinder(
-                requireContext(), // Передайте контекст
-                it,
-                checkNotNull(instreamAdPlayer),
-                checkNotNull(contentVideoPlayer)
+            // Создайте объект InstreamAdBinder
+            val instreamAdBinder = InstreamAdBinder(
+                requireContext(),
+                instreamAd,
+                instreamAdPlayer,
+                contentVideoPlayer
             )
-        }
 
-        // Создайте экземпляр InstreamAdListener и установите его в InstreamAdBinder
-        val instreamAdListener = object : InstreamAdListener {
-            override fun onInstreamAdCompleted() {
-                TODO("Not yet implemented")
+            // Создайте экземпляр InstreamAdListener и установите его в InstreamAdBinder
+            val instreamAdListener = object : InstreamAdListener {
+
+                override fun onInstreamAdCompleted() {
+                    instreamAdBinder.unbind()
+                    instreamAdBinder.invalidateAdPlayer()
+                    instreamAdBinder.invalidateVideoPlayer()
+                }
+
+                override fun onInstreamAdPrepared() {
+
+                }
+
+                override fun onError(p0: String) {
+                    instreamAdBinder.unbind()
+                    instreamAdBinder.invalidateAdPlayer()
+                    instreamAdBinder.invalidateVideoPlayer()
+                }
+
             }
 
-            override fun onInstreamAdPrepared() {
-                TODO("Not yet implemented")
-            }
-
-            override fun onError(p0: String) {
-                TODO("Not yet implemented")
-            }
-        }
-
-        if (instreamAdBinder != null) {
             instreamAdBinder.setInstreamAdListener(instreamAdListener)
             instreamAdBinder.bind(binding.instreamAdView)
         }
 
-
+    }
+    override fun getVolume(): Float {
+        TODO("Not yet implemented")
     }
 
+    override fun getVideoPosition(): Long {
+        TODO("Not yet implemented")
+    }
+
+    override fun getVideoDuration(): Long {
+        TODO("Not yet implemented")
+    }
+
+    override fun prepareVideo() {
+        val bb = 0
+    }
+
+    override fun pauseVideo() {
+        player.pause()
+    }
+
+    override fun resumeVideo() {
+        player.play()
+    }
+
+    override fun setVideoPlayerListener(p0: VideoPlayerListener?) {
+        videoPlayerListener = p0
+    }
     @SuppressLint("UnsafeOptInUsageError")
     private fun initializePlayer() {
         val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
@@ -208,7 +238,8 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         player.prepare()
         binding.exoplayerView.player = player
         player.play()
-        player.addListener(
+        player.addListener(ContentPlayerEventsListener())
+        /*player.addListener(
             object : Player.Listener {
                 override fun onTracksChanged(tracks: Tracks) {
                     super.onTracksChanged(tracks)
@@ -224,9 +255,40 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                     }
                 }
             }
-        )
+        )*/
     }
+    private inner class ContentPlayerEventsListener : Player.Listener {
+        override fun onTracksChanged(tracks: Tracks) {
+            super.onTracksChanged(tracks)
+            for (trackGroup in tracks.groups) {
+                if (trackGroup.type == 2) {
+                    videoTrackGroup = trackGroup
+                    for (i in 0 until trackGroup.length) {
+                        if (!tracksList.contains(trackGroup.getTrackFormat(i).width)) {
+                            tracksList.add(trackGroup.getTrackFormat(i).width)
+                        }
+                    }
+                }
+            }
+        }
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            if (isPlaying) {
+                videoPlayerListener?.onVideoResumed()
+            } else {
+                videoPlayerListener?.onVideoPaused()
+            }
+        }
 
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            if (playbackState == Player.STATE_ENDED) {
+                onVideoCompleted()
+            }
+        }
+
+        private fun onVideoCompleted() {
+            videoPlayerListener?.onVideoCompleted()
+        }
+    }
     @SuppressLint("UnsafeOptInUsageError")
     private fun setupPlayerNotificationManager() {
         val channelId = "your_notification_channel_id"
@@ -394,6 +456,16 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             fragment.arguments = args
             return fragment
         }
+    }
+
+    override fun isPlaying() = player.isPlaying
+
+    override fun resume() {
+        player.playWhenReady = true
+    }
+
+    override fun pause() {
+        player.playWhenReady = false
     }
 }
 
