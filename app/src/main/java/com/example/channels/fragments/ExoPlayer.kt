@@ -174,6 +174,8 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         )
     }
 
+
+    //Не работает, вынесите в радио, здесь не будем применять
     @SuppressLint("UnsafeOptInUsageError")
     private fun setupPlayerNotificationManager() {
         val channelId = "your_notification_channel_id"
@@ -288,12 +290,14 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     override fun onDestroy() {
         super.onDestroy()
         coroutineScope.cancel()
+        //можно метод объежинить с onDestoryView, добавить удалиение листенера плеера и плеер нужно занулить
         player.release()
         player.stop()
         showSystemUi()
         playerNotificationManager?.setPlayer(null)
     }
 
+    //binding Здесь на занулить иначе будет утечка памяти, подробнее https://developer.android.com/topic/libraries/view-binding
     override fun onDestroyView() {
         super.onDestroyView()
 
@@ -317,11 +321,13 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 
+    //Это контролы, не понятно что такое otherView, переименовать
     private fun showOtherViews() {
         binding.layoutTop.visibility = View.VISIBLE
         binding.layoutBottom.visibility = View.VISIBLE
     }
 
+    //Это контролы, не понятно что такое otherView, переименовать
     private fun hideOtherViews() {
         binding.layoutTop.visibility = View.INVISIBLE
         binding.layoutBottom.visibility = View.INVISIBLE

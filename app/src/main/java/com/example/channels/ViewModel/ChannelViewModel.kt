@@ -34,6 +34,8 @@ class ChannelViewModel @Inject constructor(
             val channels = channelLiveData.value ?: emptyList()
             mediatorLiveData.value = Pair(channels, epg)
         }
+
+        //вызыывать из viewModelScope с контекстом корутины Dispatcher.IO и CoroutineExceptionHandler
         downloadRepository.fetchChannels()
     }
 

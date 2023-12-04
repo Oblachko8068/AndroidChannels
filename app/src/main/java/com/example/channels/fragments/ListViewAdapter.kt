@@ -16,6 +16,7 @@ class ListViewAdapter(
     private val currentResolution: Int?
 ) :
     ArrayAdapter<Int>(context, R.layout.list_view_item, qualityArray) {
+    //а зачем здесь глобальная перменная?
     private lateinit var binding: ListViewItemBinding
 
     @SuppressLint("ViewHolder")

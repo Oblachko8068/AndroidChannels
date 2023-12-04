@@ -53,7 +53,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
         mediatorLiveData.observe(viewLifecycleOwner) { pair ->
             channel = pair.first
             epg = pair.second
-            updateChannelsAndEpg()
+            updateChannelsAndEpg()     //как-то слишком много где используется, по хорошему вы должны обсервить список каналов с vm и передавть в rv
         }
         updateChannelsAndEpg()
         recyclerView?.setHasFixedSize(true)
@@ -78,6 +78,8 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
 
     abstract fun onPageChanged(position: Int)
 
+
+    //как-то слишком много где используется, по хорошему вы должны обсервить список каналов с vm и передавть в rv
     fun updateChannelsAndEpg() {
         getAllChannelsList(channel, epg)
     }
@@ -89,8 +91,10 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
         }
     }
 
+    //вынести в channelViewModel
     abstract fun getAllChannelsList(channelList: List<Channel>, epg: List<Epg>)
 
+    //вынести в channelViewModel
     protected fun filterChannelsCommon(searchQuery: String?): List<Channel> {
         return if (!searchQuery.isNullOrEmpty()) {
             channel.filter { channel ->
@@ -101,6 +105,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
         }
     }
 
+    //вынести в channelViewModel
     abstract fun filterChannels(searchQuery: String?)
 
     override fun onChannelItemClicked(channel: Channel, epg: Epg) {

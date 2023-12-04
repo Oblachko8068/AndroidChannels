@@ -11,6 +11,7 @@ import com.yandex.mobile.ads.common.ImpressionData
 
 const val adYandexBannerId = "demo-banner-yandex"
 
+//Код везде повтоярется, отличие только в id баннера, оставить только этот класс, а в лист добавлять экземпляры с разным id
 class YandexBannerAd(val context: Context) {
 
     private var bannerAd: BannerAdView? = null

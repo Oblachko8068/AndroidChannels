@@ -23,7 +23,7 @@ class FavoritesFragment : BaseChannelFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
-        val rootView = binding.root
+        val rootView = binding.root //а смысл в этой перменной?
         recyclerView = binding.recyclerView4
         return rootView
     }
@@ -45,12 +45,15 @@ class FavoritesFragment : BaseChannelFragment() {
         }
     }
 
+
+    //вынести в ChannelViewModel
     override fun getAllChannelsList(channelList: List<Channel>, epg: List<Epg>) {
         val intArray = getSavedNewIntArray(requireContext())
         val favoriteChannels = channelList.filter { it.id in intArray }
         createAdapter(favoriteChannels, epg)
     }
 
+    //вынести в ChannelViewModel
     override fun filterChannels(searchQuery: String?) {
         val filteredList = filterChannelsCommon(searchQuery)
         val intArray = getSavedNewIntArray(requireContext())
@@ -59,6 +62,7 @@ class FavoritesFragment : BaseChannelFragment() {
         adapter?.setData(filteredChannels)
     }
 
+    //вынести в репозиторий, код дублируется. Если поменяете что-то в одном месте - во втором может быть краш, т.к. забыли поменять
     private fun getSavedNewIntArray(context: Context): IntArray {
         val sharedPref = context.getSharedPreferences("new_array_preferences", Context.MODE_PRIVATE)
         val jsonString = sharedPref.getString("new_int_array_data", null)

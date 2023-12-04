@@ -75,7 +75,7 @@ class RecyclerAdapter(
                 saveNewIntArray(context, intArray)
             }
         }
-
+        //Перенести всю логику избраныхх в FavoriteRepository, туда передававть только channelId, вся логика должна быть там
         private fun addElementToArray(array: IntArray, element: Int): IntArray {
             val newArray = IntArray(array.size + 1)
             array.copyInto(newArray)
@@ -83,15 +83,18 @@ class RecyclerAdapter(
             return newArray
         }
 
+        //Перенести всю логику избраныхх в FavoriteRepository, туда передававть только channelId, вся логика должна быть там
         private fun removeElementFromArray(array: IntArray, indexToRemove: Int): IntArray {
             return array.filterIndexed { index, _ -> index != indexToRemove }.toIntArray()
         }
 
+        //вынести в SharedPrefRepository, в который в параметрах будует передано sharedPref
         private fun getSavedNewIntArray(context: Context): IntArray {
             val sharedPref =
                 context.getSharedPreferences("new_array_preferences", Context.MODE_PRIVATE)
             val jsonString = sharedPref.getString("new_int_array_data", null)
 
+            //убрать, использовать default value
             return try {
                 if (jsonString != null) {
                     Gson().fromJson(jsonString, IntArray::class.java)
@@ -102,8 +105,9 @@ class RecyclerAdapter(
                 IntArray(0)
             }
         }
-
+        //вынести в SharedPrefRepository, в который в параметрах будует передано sharedPref
         private fun saveNewIntArray(context: Context, intArray: IntArray) {
+            //убрать sharedPref
             val sharedPref =
                 context.getSharedPreferences("new_array_preferences", Context.MODE_PRIVATE)
             val editor = sharedPref.edit()

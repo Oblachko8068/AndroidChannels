@@ -23,6 +23,9 @@ class DownloadRepositoryRetrofit @Inject constructor (
     private val retrofit: Retrofit
 ) : DownloadRepository {
 
+    //сделать suspend
+    //переписать на result api coroutine https://medium.com/10ms-technology-blog/android-kotlin-coroutine-with-retrofit-beginner-a34e6d3d4244
+    //узнать что такое CoroutineExceptionHandler https://habr.com/ru/articles/689256/ и добавить его в контекст корутины(), вынести
     override fun fetchChannels() {
         retrofit
             .create(ChannelsApi::class.java)

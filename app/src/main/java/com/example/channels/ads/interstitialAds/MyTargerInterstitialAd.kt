@@ -14,6 +14,7 @@ import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 
 const val adInterstitialIdMyTarget = "demo-interstitial-mytarget"
 
+//Код везде повтоярется, отличие только в id межстранички, оставить только этот класс, а в лист добавлять экземпляры с разным id
 class MyTargerInterstitialAd(val context: Context) {
 
     var interstitialAd: InterstitialAd? = null

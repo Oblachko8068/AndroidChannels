@@ -21,7 +21,7 @@ class AllFragment : BaseChannelFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAllBinding.inflate(inflater, container, false)
-        val rootView = binding.root
+        val rootView = binding.root //а смысл в этой переменной?
         recyclerView = binding.recyclerView3
         return rootView
     }
@@ -42,12 +42,14 @@ class AllFragment : BaseChannelFragment() {
             }
         }
     }
+    //Вынести в ChannelViewModel
     override fun filterChannels(searchQuery: String?) {
         val filteredList = filterChannelsCommon(searchQuery)
         val adapter = recyclerView?.adapter as? RecyclerAdapter
         adapter?.setData(filteredList)
     }
 
+    //Вынести в ChannelViewModel
     override fun getAllChannelsList(
         channelList: List<Channel>,
         epg: List<Epg>

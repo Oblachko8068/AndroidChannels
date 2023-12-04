@@ -6,6 +6,7 @@ import com.example.domain.model.Epg
 
 @Entity(
     tableName = "epgs",
+    //убрать лишнее
     /*primaryKeys = [
         "channelID",
         "id"

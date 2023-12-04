@@ -22,6 +22,7 @@ class AdsManager(val context: Context) {
         initializeBannerAdInstances()
     }
 
+    //все баннеры отнаслодвать от интерфейса
     private fun initializeBannerAdInstances() {
         val yandexBannerAd = YandexBannerAd(context)
         yandexBannerAd.loadBannerAd()
@@ -34,6 +35,7 @@ class AdsManager(val context: Context) {
         adInstancesList.add(appLovinBannerAd)
     }
 
+    //все межстранички отнаслодвать от интерфейса
     private fun initializeInterstitialAdInstances() {
         val yandexInterstitialAd = YandexInterstitialAd(context)
         yandexInterstitialAd.loadInterAd()
