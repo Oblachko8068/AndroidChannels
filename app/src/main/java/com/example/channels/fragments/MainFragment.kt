@@ -68,7 +68,7 @@ class MainFragment : Fragment() {
 
         //Реклама
         binding.bannerAdView.removeAllViewsInLayout()
-        val banner: BannerAdView? = adsViewModel.getAdsManager().showBannerAd()
+        val banner: BannerAdView? = adsViewModel.showBannerAd()
         if (banner != null) {
             val parent = banner.parent as? ViewGroup
             parent?.removeView(banner)

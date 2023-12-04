@@ -16,12 +16,11 @@ class ListViewAdapter(
     private val currentResolution: Int?
 ) :
     ArrayAdapter<Int>(context, R.layout.list_view_item, qualityArray) {
-    private lateinit var binding: ListViewItemBinding
 
     @SuppressLint("ViewHolder")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val inflater: LayoutInflater = LayoutInflater.from(context)
-        binding = ListViewItemBinding.inflate(inflater)
+        val binding = ListViewItemBinding.inflate(inflater)
         binding.listItemText.text =
             if (qualityArray[position] == -1) "AUTO" else "${qualityArray[position]}p"
 

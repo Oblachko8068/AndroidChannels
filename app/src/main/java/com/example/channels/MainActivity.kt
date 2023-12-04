@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?) {
-        adsViewModel.getAdsManager().showInterAd(object : AdShownListener {
+        adsViewModel.showInterstitialAd(object : AdShownListener {
             override fun onAdLoadedAndShown() {
                 launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
             }

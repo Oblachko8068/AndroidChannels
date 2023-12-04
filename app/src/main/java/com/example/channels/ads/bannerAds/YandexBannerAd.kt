@@ -9,14 +9,12 @@ import com.yandex.mobile.ads.common.AdRequest
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 
-const val adYandexBannerId = "demo-banner-yandex"
-
-class YandexBannerAd(val context: Context) {
+class YandexBannerAd(private val context: Context, private val adUnitId: String) : BannerAdProvider {
 
     private var bannerAd: BannerAdView? = null
     private var bannerReady = false
 
-    fun loadBannerAd() {
+    override fun loadBannerAd() {
         bannerReady = false
         bannerAd?.destroy()
         bannerAd = BannerAdView(context)
@@ -48,17 +46,16 @@ class YandexBannerAd(val context: Context) {
 
             }
         })
-        bannerAd?.setAdUnitId(adYandexBannerId)
+        bannerAd?.setAdUnitId(adUnitId)
         bannerAd?.setAdSize(BannerAdSize.inlineSize(context, 600, 50))
         bannerAd?.loadAd(AdRequest.Builder().build())
 
     }
 
-    fun showBannerAd(): BannerAdView? {
+    override fun showBannerAd(): BannerAdView? {
         return bannerAd
     }
 
-    fun isAdLoaded(): Boolean {
-        return bannerReady
-    }
+    override fun isAdLoaded(): Boolean = bannerReady
+
 }

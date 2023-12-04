@@ -23,9 +23,8 @@ class FavoritesFragment : BaseChannelFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
-        val rootView = binding.root
         recyclerView = binding.recyclerView4
-        return rootView
+        return binding.root
     }
 
     override fun onCreateViewBinding(
@@ -70,7 +69,7 @@ class FavoritesFragment : BaseChannelFragment() {
                 IntArray(0)
             }
         } catch (e: Exception) {
-            IntArray(0)  // Возвращаем пустой (нулевой) массив в случае ошибки
+            IntArray(0)
         }
     }
 }

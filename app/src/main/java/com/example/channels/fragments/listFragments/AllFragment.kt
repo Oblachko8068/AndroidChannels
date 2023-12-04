@@ -21,9 +21,8 @@ class AllFragment : BaseChannelFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAllBinding.inflate(inflater, container, false)
-        val rootView = binding.root
         recyclerView = binding.recyclerView3
-        return rootView
+        return binding.root
     }
 
     override fun onCreateViewBinding(
