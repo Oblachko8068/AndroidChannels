@@ -10,15 +10,15 @@ import com.bumptech.glide.Glide
 import com.example.channels.databinding.ChannelBlockBinding
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
-import com.google.gson.Gson
+import com.example.domain.repository.FavoriteChannelsRepository
 
-
-class RecyclerAdapter(
+class RecyclerAdapter  (
     private val context: Context,
     private var channel: List<Channel>,
     private var epg: List<Epg>,
     private val itemClickListener: OnChannelItemClickListener,
-) : RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
+    private val favoriteChannelsRepository : FavoriteChannelsRepository
+) : RecyclerView.Adapter<RecyclerAdapter.ChannelViewHolder>() {
 
     interface OnChannelItemClickListener {
         fun onChannelItemClicked(channel: Channel, epg: Epg)
@@ -30,13 +30,15 @@ class RecyclerAdapter(
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
         val binding =
             ChannelBlockBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MyViewHolder(binding)
+        return ChannelViewHolder(binding, favoriteChannelsRepository)
     }
-
-    class MyViewHolder(private val binding: ChannelBlockBinding) :
+    class ChannelViewHolder(
+        private val binding: ChannelBlockBinding,
+        private val favoriteRepository: FavoriteChannelsRepository,
+    ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(channelItem: Channel, epgItem: Epg, context: Context) {
             Glide.with(context)
@@ -48,74 +50,29 @@ class RecyclerAdapter(
             binding.iconFav.setColorFilter(
                 ContextCompat.getColor(context, R.color.icon_disable)
             )
-            val intArray1 = getSavedNewIntArray(context)
-            if (channelItem.id in intArray1) {
+            val favoriteChannelsArray = favoriteRepository.getSavedNewFavChannelsArray()
+            if (channelItem.id in favoriteChannelsArray) {
                 binding.iconFav.setColorFilter(
                     ContextCompat.getColor(context, R.color.icon_enable)
                 )
             }
             binding.iconFav.setOnClickListener {
-                var intArray = getSavedNewIntArray(context)
-                if (channelItem.id in intArray) {
+                if (favoriteRepository.isChannelFavorite(channelItem.id)){
                     binding.iconFav.setColorFilter(
                         ContextCompat.getColor(context, R.color.icon_disable)
                     )
-                    for (i in intArray.indices) {
-                        if (intArray[i] == channelItem.id) {
-                            intArray = removeElementFromArray(intArray, i)
-                            break
-                        }
-                    }
                 } else {
-                    intArray = addElementToArray(intArray, channelItem.id)
                     binding.iconFav.setColorFilter(
                         ContextCompat.getColor(context, R.color.icon_enable)
                     )
                 }
-                saveNewIntArray(context, intArray)
             }
-        }
-
-        private fun addElementToArray(array: IntArray, element: Int): IntArray {
-            val newArray = IntArray(array.size + 1)
-            array.copyInto(newArray)
-            newArray[array.size] = element
-            return newArray
-        }
-
-        private fun removeElementFromArray(array: IntArray, indexToRemove: Int): IntArray {
-            return array.filterIndexed { index, _ -> index != indexToRemove }.toIntArray()
-        }
-
-        private fun getSavedNewIntArray(context: Context): IntArray {
-            val sharedPref =
-                context.getSharedPreferences("new_array_preferences", Context.MODE_PRIVATE)
-            val jsonString = sharedPref.getString("new_int_array_data", null)
-
-            return try {
-                if (jsonString != null) {
-                    Gson().fromJson(jsonString, IntArray::class.java)
-                } else {
-                    IntArray(0)
-                }
-            } catch (e: Exception) {
-                IntArray(0)
-            }
-        }
-
-        private fun saveNewIntArray(context: Context, intArray: IntArray) {
-            val sharedPref =
-                context.getSharedPreferences("new_array_preferences", Context.MODE_PRIVATE)
-            val editor = sharedPref.edit()
-            val jsonString = Gson().toJson(intArray)
-            editor.putString("new_int_array_data", jsonString)
-            editor.apply()
         }
     }
 
     override fun getItemCount() = channel.size
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
         val channel = channel[position]
         val epg = epg.find { it.channelID == channel.id }
         if (epg != null) {

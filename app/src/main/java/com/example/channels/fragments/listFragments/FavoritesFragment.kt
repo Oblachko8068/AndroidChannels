@@ -23,7 +23,7 @@ class FavoritesFragment : BaseChannelFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
-        recyclerView = binding.recyclerView4
+        recyclerView = binding.recyclerView2
         return binding.root
     }
 

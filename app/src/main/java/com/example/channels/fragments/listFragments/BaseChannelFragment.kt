@@ -16,20 +16,22 @@ import com.example.channels.ViewModel.ChannelViewModel
 import com.example.channels.fragments.navigator
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
+import com.example.domain.repository.FavoriteChannelsRepository
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
     private val channelViewModel: ChannelViewModel by viewModels()
-
     private var _binding: ViewBinding? = null
     open val binding get() = _binding!!
     protected var recyclerView: RecyclerView? = null
-
     var searchQuery: String? = null
     private var channel: List<Channel> = emptyList()
     private var epg: List<Epg> = emptyList()
+    @Inject
+    lateinit var favoriteChannelsRepository: FavoriteChannelsRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,7 +85,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     }
 
     protected fun createAdapter(channelList: List<Channel>, epgList: List<Epg>) {
-        recyclerView?.adapter = RecyclerAdapter(requireContext(), channelList, epgList, this)
+        recyclerView?.adapter = RecyclerAdapter(requireContext(), channelList, epgList, this, favoriteChannelsRepository)
         if (!searchQuery.isNullOrEmpty()) {
             filterChannels(searchQuery)
         }

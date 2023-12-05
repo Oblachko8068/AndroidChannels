@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.example.channels.RecyclerAdapter
 import com.example.channels.databinding.FragmentAllBinding
-import com.example.domain.model.Epg
 import com.example.domain.model.Channel
+import com.example.domain.model.Epg
 
 
 class AllFragment : BaseChannelFragment() {
@@ -21,7 +21,7 @@ class AllFragment : BaseChannelFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAllBinding.inflate(inflater, container, false)
-        recyclerView = binding.recyclerView3
+        recyclerView = binding.recyclerView1
         return binding.root
     }
 
@@ -41,6 +41,7 @@ class AllFragment : BaseChannelFragment() {
             }
         }
     }
+
     override fun filterChannels(searchQuery: String?) {
         val filteredList = filterChannelsCommon(searchQuery)
         val adapter = recyclerView?.adapter as? RecyclerAdapter

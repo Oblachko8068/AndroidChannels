@@ -12,7 +12,6 @@
         android:layout_height="match_parent"
         android:background="@color/dark_primary"
         app:use_controller="false"/>
-
     <LinearLayout
         android:id="@+id/layoutTop"
         android:layout_width="match_parent"
