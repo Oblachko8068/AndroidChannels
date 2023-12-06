@@ -16,9 +16,7 @@ import com.example.channels.ViewModel.ChannelViewModel
 import com.example.channels.fragments.navigator
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
-import com.example.domain.repository.FavoriteChannelsRepository
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
@@ -28,10 +26,6 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     open val binding get() = _binding!!
     protected var recyclerView: RecyclerView? = null
     var searchQuery: String? = null
-    private var channel: List<Channel> = emptyList()
-    private var epg: List<Epg> = emptyList()
-    @Inject
-    lateinit var favoriteChannelsRepository: FavoriteChannelsRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,12 +46,10 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
         super.onViewCreated(view, savedInstanceState)
         val mediatorLiveData = channelViewModel.getMediatorLiveData()
 
-        mediatorLiveData.observe(viewLifecycleOwner) { pair ->
-            channel = pair.first
-            epg = pair.second
-            updateChannelsAndEpg()
+        mediatorLiveData.observe(viewLifecycleOwner) {
+            createAdapter()
         }
-        updateChannelsAndEpg()
+
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
 
@@ -71,39 +63,27 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
             }
 
             override fun onPageSelected(position: Int) {
-                onPageChanged(position)
+                createAdapter()
             }
 
             override fun onPageScrollStateChanged(state: Int) {}
         })
     }
 
-    abstract fun onPageChanged(position: Int)
-
-    fun updateChannelsAndEpg() {
-        getAllChannelsList(channel, epg)
-    }
-
-    protected fun createAdapter(channelList: List<Channel>, epgList: List<Epg>) {
-        recyclerView?.adapter = RecyclerAdapter(requireContext(), channelList, epgList, this, favoriteChannelsRepository)
+    protected fun createAdapter() {
+        val channelList = channelViewModel.getChannelList(this is FavoritesFragment)
+        val epgList = channelViewModel.getEpgList()
+        recyclerView?.adapter = RecyclerAdapter(requireContext(), channelList, epgList, this, channelViewModel.getFavoriteChannelRepository())
         if (!searchQuery.isNullOrEmpty()) {
-            filterChannels(searchQuery)
+            filterChannelsBySearch(searchQuery)
         }
     }
 
-    abstract fun getAllChannelsList(channelList: List<Channel>, epg: List<Epg>)
-
-    protected fun filterChannelsCommon(searchQuery: String?): List<Channel> {
-        return if (!searchQuery.isNullOrEmpty()) {
-            channel.filter { channel ->
-                channel.name.contains(searchQuery, ignoreCase = true)
-            }
-        } else {
-            channel
-        }
+    fun filterChannelsBySearch(searchQuery: String?) {
+        val filteredList = channelViewModel.getFilteredChannels(searchQuery, this is FavoritesFragment)
+        val adapter = recyclerView?.adapter as? RecyclerAdapter
+        adapter?.setData(filteredList)
     }
-
-    abstract fun filterChannels(searchQuery: String?)
 
     override fun onChannelItemClicked(channel: Channel, epg: Epg) {
         navigator().showVideoPlayerFragment(channel, epg)

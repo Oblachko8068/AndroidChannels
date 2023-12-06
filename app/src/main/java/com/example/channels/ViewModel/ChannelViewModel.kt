@@ -5,25 +5,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.channels.ads.AdsManager
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import com.example.domain.repository.ChannelRepository
 import com.example.domain.repository.DownloadRepository
 import com.example.domain.repository.EpgRepository
+import com.example.domain.repository.FavoriteChannelsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @HiltViewModel
 class ChannelViewModel @Inject constructor(
     downloadRepository: DownloadRepository,
     channelRepository: ChannelRepository,
     epgRepository: EpgRepository,
+    private var favoriteChannelsRepository: FavoriteChannelsRepository
 ) : ViewModel() {
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -48,9 +48,29 @@ class ChannelViewModel @Inject constructor(
             downloadRepository.fetchChannels()
         }
     }
+    fun getFavoriteChannelRepository(): FavoriteChannelsRepository = favoriteChannelsRepository
+    fun getChannelList(isFavoriteFragment: Boolean): List<Channel> {
+        return if (isFavoriteFragment) {
+            val favChannelsArray = favoriteChannelsRepository.getSavedFavChannelsArray()
+            val channels = channelLiveData.value ?: emptyList()
+            channels.filter { it.id in favChannelsArray }
+        } else {
+            channelLiveData.value ?: emptyList()
+        }
+    }
 
-    fun getMediatorLiveData(): MediatorLiveData<Pair<List<Channel>, List<Epg>>> {
-        return mediatorLiveData
+    fun getEpgList(): List<Epg> = epgLiveData.value ?: emptyList()
+    fun getMediatorLiveData(): MediatorLiveData<Pair<List<Channel>, List<Epg>>> = mediatorLiveData
+    fun getFilteredChannels(searchQuery: String?, isFavoriteFragment: Boolean): List<Channel> {
+        val channels = getChannelList(isFavoriteFragment)
+
+        return if (!searchQuery.isNullOrEmpty()) {
+            channels.filter { channel ->
+                channel.name.contains(searchQuery, ignoreCase = true)
+            }
+        } else {
+            channels
+        }
     }
 }
 

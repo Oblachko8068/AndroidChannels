@@ -50,7 +50,7 @@ class RecyclerAdapter  (
             binding.iconFav.setColorFilter(
                 ContextCompat.getColor(context, R.color.icon_disable)
             )
-            val favoriteChannelsArray = favoriteRepository.getSavedNewFavChannelsArray()
+            val favoriteChannelsArray = favoriteRepository.getSavedFavChannelsArray()
             if (channelItem.id in favoriteChannelsArray) {
                 binding.iconFav.setColorFilter(
                     ContextCompat.getColor(context, R.color.icon_enable)

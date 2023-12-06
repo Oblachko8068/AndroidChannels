@@ -1,7 +1,5 @@
 package com.example.di.di.HiltModules
 
-import android.content.Context
-import androidx.fragment.app.Fragment
 import com.example.data.repository.ChannelRepositoryImpl
 import com.example.data.repository.DownloadRepositoryRetrofit
 import com.example.data.repository.EpgRepositoryImpl
@@ -12,10 +10,7 @@ import com.example.domain.repository.EpgRepository
 import com.example.domain.repository.FavoriteChannelsRepository
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.FragmentComponent
-import dagger.hilt.android.scopes.FragmentScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -41,4 +36,9 @@ abstract class RepositorysModule {
         epgRepository: EpgRepositoryImpl
     ): EpgRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindFavoriteChannelRepository(
+        favoriteChannelsRepository: FavoriteChannelsRepositoryImpl
+    ): FavoriteChannelsRepository
 }

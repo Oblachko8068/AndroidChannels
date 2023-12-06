@@ -54,8 +54,8 @@ class MainFragment : Fragment() {
                 allFragment?.searchQuery = newText
                 favoritesFragment?.searchQuery = newText
 
-                allFragment?.filterChannels(newText)
-                favoritesFragment?.filterChannels(newText)
+                allFragment?.filterChannelsBySearch(newText)
+                favoritesFragment?.filterChannelsBySearch(newText)
 
                 return true
             }

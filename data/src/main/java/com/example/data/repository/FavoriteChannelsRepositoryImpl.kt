@@ -14,7 +14,7 @@ class FavoriteChannelsRepositoryImpl @Inject constructor(
         context.getSharedPreferences("fav_channels_preferences", Context.MODE_PRIVATE)
 
     override fun isChannelFavorite(channelId: Int): Boolean {
-        var favChannelsArray = getSavedNewFavChannelsArray()
+        var favChannelsArray = getSavedFavChannelsArray()
         if (channelId in favChannelsArray) {
             for (i in favChannelsArray.indices) {
                 if (favChannelsArray[i] == channelId) {
@@ -42,7 +42,7 @@ class FavoriteChannelsRepositoryImpl @Inject constructor(
         return array.filterIndexed { index, _ -> index != indexToRemove }.toIntArray()
     }
 
-    override fun getSavedNewFavChannelsArray(): IntArray =
+    override fun getSavedFavChannelsArray(): IntArray =
         sharedPrefRepository.getSavedNewIntArray(sharedPref)
 
     private fun saveNewFavChannelsArray(intArray: IntArray) {
