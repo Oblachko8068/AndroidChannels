@@ -34,7 +34,7 @@ class NetworkModule {
             .build()
     }
 
-    fun createInterceptor(): Interceptor {
+    private fun createInterceptor(): Interceptor {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         return interceptor

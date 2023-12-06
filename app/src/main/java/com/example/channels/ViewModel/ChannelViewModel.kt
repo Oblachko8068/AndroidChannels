@@ -26,9 +26,8 @@ class ChannelViewModel @Inject constructor(
     private var favoriteChannelsRepository: FavoriteChannelsRepository
 ) : ViewModel() {
 
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.e("ChannelViewModel", "Error fetching channels: ${throwable.message}")
+        Log.e("ChannelViewModel", "Ошибочка пацаны: ${throwable.message}")
     }
     private var channelLiveData: LiveData<List<Channel>> =
         channelRepository.getChannelListLiveData()
@@ -44,7 +43,7 @@ class ChannelViewModel @Inject constructor(
             val channels = channelLiveData.value ?: emptyList()
             mediatorLiveData.value = Pair(channels, epg)
         }
-        viewModelScope.launch(ioDispatcher + coroutineExceptionHandler) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             downloadRepository.fetchChannels()
         }
     }
