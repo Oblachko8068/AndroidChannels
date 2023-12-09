@@ -47,6 +47,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
         val mediatorLiveData = channelViewModel.getMediatorLiveData()
 
         mediatorLiveData.observe(viewLifecycleOwner) {
+            //а что нам тут даст it? переделать createAdapter с учетом новых знаний
             createAdapter()
         }
 
@@ -73,12 +74,15 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     protected fun createAdapter() {
         val channelList = channelViewModel.getChannelList(this is FavoritesFragment)
         val epgList = channelViewModel.getEpgList()
+        //не создавать новые адаптеры, а изменять старый при помощи diffutil
         recyclerView?.adapter = RecyclerAdapter(requireContext(), channelList, epgList, this, channelViewModel.getFavoriteChannelRepository())
         if (!searchQuery.isNullOrEmpty()) {
             filterChannelsBySearch(searchQuery)
         }
     }
 
+
+    //вынести в channelViewModel
     fun filterChannelsBySearch(searchQuery: String?) {
         val filteredList = channelViewModel.getFilteredChannels(searchQuery, this is FavoritesFragment)
         val adapter = recyclerView?.adapter as? RecyclerAdapter

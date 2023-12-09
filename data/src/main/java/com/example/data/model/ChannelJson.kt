@@ -1,5 +1,5 @@
 package com.example.data.model
-
+//Каждый класс в отдельный файл
 data class ChannelsJson(
     val channels: List<ChannelJson>
 )

@@ -6,14 +6,16 @@ import javax.inject.Inject
 
 class FavoriteChannelsRepositoryImpl @Inject constructor(
     context: Context
-) :
+) : //на строчку выше
     FavoriteChannelsRepository {
 
+        //убрать отсюда, репозиторий перенести в конструктор
     private val sharedPrefRepository = SharedPrefRepositoryImpl()
     private val sharedPref =
         context.getSharedPreferences("fav_channels_preferences", Context.MODE_PRIVATE)
 
     override fun isChannelFavorite(channelId: Int): Boolean {
+        //лучше разделить методы, т.к.  метод называется - является ли канал избранным, а он еще и сам добавляет\удаляет из избранного
         var favChannelsArray = getSavedFavChannelsArray()
         if (channelId in favChannelsArray) {
             for (i in favChannelsArray.indices) {

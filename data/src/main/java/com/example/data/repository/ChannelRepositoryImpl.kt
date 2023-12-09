@@ -14,7 +14,7 @@ import javax.inject.Inject
 class ChannelRepositoryImpl @Inject constructor(
     private val channelDao: ChannelDao
 ) : ChannelRepository {
-
+    //два it - может привести к ерунде при компиляции, да и не особо понятно
     override fun getChannelListLiveData(): LiveData<List<Channel>> {
         return channelDao.getChannelListAll().map { it.map{ it.toChannelDb()} }
     }

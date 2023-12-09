@@ -14,7 +14,7 @@ class ListViewAdapter(
     private val context: Context,
     private val qualityArray: Array<Int>,
     private val currentResolution: Int?
-) :
+) : //на строчку выше
     ArrayAdapter<Int>(context, R.layout.list_view_item, qualityArray) {
 
     @SuppressLint("ViewHolder")

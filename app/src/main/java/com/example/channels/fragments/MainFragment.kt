@@ -46,6 +46,9 @@ class MainFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                //создать searchTextliveData в companionObject, при изменени текста - передавать данные туда.
+                // Подписаться на эти данные в фрагментах, код ниже убрать
+                //Здесь вы связываете один фрагмент с другими, что плохо
                 val allFragment =
                     childFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 0) as? AllFragment
                 val favoritesFragment =

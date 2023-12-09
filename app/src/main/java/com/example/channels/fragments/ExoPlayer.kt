@@ -144,7 +144,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         player.prepare()
         binding.exoplayerView.player = player
         player.play()
-        player.addListener(playerListener)
+        player.addListener(playerListener) //перенести до prepare на случай если потребуется отслеживать состояние плеера
     }
 
     private fun autoQuality() {
@@ -181,7 +181,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     @SuppressLint("UnsafeOptInUsageError")
     override fun onDestroy() {
         super.onDestroy()
-        coroutineScope.cancel()
+        coroutineScope.cancel()        //перенсти с onDestoryView, метод убрать
     }
 
     override fun onDestroyView() {

@@ -17,11 +17,15 @@ class RecyclerAdapter  (
     private var channel: List<Channel>,
     private var epg: List<Epg>,
     private val itemClickListener: OnChannelItemClickListener,
-    private val favoriteChannelsRepository : FavoriteChannelsRepository
+    private val favoriteChannelsRepository : FavoriteChannelsRepository //удалить
 ) : RecyclerView.Adapter<RecyclerAdapter.ChannelViewHolder>() {
+//передалать на DiffUtil
+
 
     interface OnChannelItemClickListener {
         fun onChannelItemClicked(channel: Channel, epg: Epg)
+
+        //добавить метод onFavoriteClicked() при нажатии на который - канал будет добавляться и исключаться из избранного
     }
 
     @SuppressLint("NotifyDataSetChanged")
