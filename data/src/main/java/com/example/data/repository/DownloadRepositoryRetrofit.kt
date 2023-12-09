@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
+import java.lang.NullPointerException
 import javax.inject.Inject
 
 class DownloadRepositoryRetrofit @Inject constructor(
@@ -27,11 +28,13 @@ class DownloadRepositoryRetrofit @Inject constructor(
     }
 
     override suspend fun fetchChannels() {
+        //никаких корутин здесь не создаем, из-за suspend подразумевается что код уже выполняется в корутине
         CoroutineScope(Dispatchers.IO).launch {
             val response = retrofit
                 .create(ChannelsApi::class.java)
                 .getChannelList()
             if (response.execute().isSuccessful) {
+                //никаких корутин здесь не создаем, из-за suspend подразумевается что код уже выполняется в корутине
                 launch(Dispatchers.Main + coroutineExceptionHandler) {
                     Log.d(
                         "DownloadRepository",
@@ -44,6 +47,8 @@ class DownloadRepositoryRetrofit @Inject constructor(
                         val channelList = response.execute().body()?.channels ?: emptyList()
                         val channelDbEntityList =
                             channelList.map { it.fromChannelJsonToChannelDbEntity() }
+//                        проверить что будет если сделать здесь? крашнется?
+//                            throw NullPointerException("test")
                         val epgDBEntityList: ArrayList<EpgDbEntity> = arrayListOf()
                         channelList.forEach { epgDBEntityList.addAll(it.fromChannelJsonToEpgDbEntity()) }
                         CoroutineScope(Dispatchers.IO).launch {

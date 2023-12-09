@@ -11,6 +11,7 @@ class EpgRepositoryImpl @Inject constructor(
 ) : com.example.domain.repository.EpgRepository {
 
     override fun getEpgListLiveData(): LiveData<List<Epg>> {
+        //два it - может привести к ерунде при компиляции, да и не особо понятно
         return epgDao.getEpgListAll().map { it.map { it.toEpgDb() } }
     }
 

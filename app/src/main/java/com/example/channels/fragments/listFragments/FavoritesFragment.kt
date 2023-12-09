@@ -13,11 +13,13 @@ class FavoritesFragment : BaseChannelFragment() {
     private var _binding: FragmentFavoritesBinding? = null
     override val binding get() = _binding!!
 
+    //перенести код в нижнюю фунцию, этот метод удалить
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        //Название переменной более понятное
         recyclerView = binding.recyclerView2
         return binding.root
     }

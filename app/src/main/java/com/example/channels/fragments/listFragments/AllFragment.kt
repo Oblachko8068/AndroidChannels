@@ -13,11 +13,13 @@ class AllFragment : BaseChannelFragment() {
     private var _binding: FragmentAllBinding? = null
     override val binding get() = _binding!!
 
+    //перенести код в нижнюю фунцию, этот метод удалить
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAllBinding.inflate(inflater, container, false)
+        //Название переменной более понятное
         recyclerView = binding.recyclerView1
         return binding.root
     }

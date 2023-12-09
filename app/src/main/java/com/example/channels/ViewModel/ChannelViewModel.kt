@@ -47,6 +47,8 @@ class ChannelViewModel @Inject constructor(
             downloadRepository.fetchChannels()
         }
     }
+
+    //новые строки между фунцкиями
     fun getFavoriteChannelRepository(): FavoriteChannelsRepository = favoriteChannelsRepository
     fun getChannelList(isFavoriteFragment: Boolean): List<Channel> {
         return if (isFavoriteFragment) {

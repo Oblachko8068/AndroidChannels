@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 
 const val FAV_CHANNELS_SHARED_PREF_KEY = "new_int_array_data"
-
+//Добавить интерфейс, вынести sharedPref в конструктор
 class SharedPrefRepositoryImpl {
 
     fun getSavedNewIntArray(sharedPref: SharedPreferences): IntArray {
