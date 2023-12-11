@@ -59,6 +59,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             }
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -141,10 +142,10 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             .setTrackSelector(trackSelector)
             .build()
         player.setMediaSource(hlsMediaSource)
+        player.addListener(playerListener)
         player.prepare()
         binding.exoplayerView.player = player
         player.play()
-        player.addListener(playerListener)
     }
 
     private fun autoQuality() {
@@ -178,18 +179,13 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         player.play()
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
-    override fun onDestroy() {
-        super.onDestroy()
-        coroutineScope.cancel()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         player.stop()
         player.removeListener(playerListener)
         player.release()
         showSystemUi()
+        coroutineScope.cancel()
         _binding = null
     }
 

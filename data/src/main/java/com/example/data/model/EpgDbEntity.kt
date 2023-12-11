@@ -7,6 +7,7 @@ import com.example.domain.model.Epg
 @Entity(
     tableName = "epgs",
 )
+
 data class EpgDbEntity(
     val channelID: Int,
     @PrimaryKey val id: Long,
@@ -14,7 +15,6 @@ data class EpgDbEntity(
     val timestop: Long,
     val title: String
 ) {
-
     fun toEpgDb(): Epg {
         return Epg(
             channelID = channelID,

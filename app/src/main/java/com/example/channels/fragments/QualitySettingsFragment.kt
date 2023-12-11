@@ -16,8 +16,10 @@ const val QUALITY_LIST_KEY = "QUALITY_LIST_KEY"
 const val CURRENT_RESOLUTION_KEY = "CURRENT_RESOLUTION_KEY"
 
 class QualitySettingsFragment : DialogFragment() {
+
     override fun getTheme() = R.style.RoundedCornersDialog
     private lateinit var binding: FragmentQualitySettingsBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

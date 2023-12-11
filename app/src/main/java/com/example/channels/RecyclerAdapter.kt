@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.channels.databinding.ChannelBlockBinding
@@ -22,8 +23,29 @@ class RecyclerAdapter  (
 
     interface OnChannelItemClickListener {
         fun onChannelItemClicked(channel: Channel, epg: Epg)
+        fun onFavoriteClicked(channel: Channel)
     }
 
+    /*class DiffUtilCallBack() : DiffUtil.Callback(){
+        override fun getOldListSize(): Int {
+            TODO("Not yet implemented")
+        }
+
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldList[oldItemPosition]
+            val newItem = newList[newItemPosition]
+            return oldItem.javaClass == newItem.javaClass
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldList[oldItemPosition]
+            val newItem = newList[newItemPosition]
+            return oldItem.hashCode() == newItem.hashCode()
+        }
+
+    }*/
     @SuppressLint("NotifyDataSetChanged")
     fun setData(newChannel: List<Channel>) {
         channel = newChannel
@@ -33,13 +55,14 @@ class RecyclerAdapter  (
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
         val binding =
             ChannelBlockBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ChannelViewHolder(binding, favoriteChannelsRepository)
+        return ChannelViewHolder(binding, itemClickListener, favoriteChannelsRepository)
     }
+
     class ChannelViewHolder(
         private val binding: ChannelBlockBinding,
+        private val itemClickListener: OnChannelItemClickListener,
         private val favoriteRepository: FavoriteChannelsRepository,
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(channelItem: Channel, epgItem: Epg, context: Context) {
             Glide.with(context)
                 .load(channelItem.image)
@@ -66,6 +89,7 @@ class RecyclerAdapter  (
                         ContextCompat.getColor(context, R.color.icon_enable)
                     )
                 }
+                itemClickListener.onFavoriteClicked(channelItem)
             }
         }
     }

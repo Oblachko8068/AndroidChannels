@@ -7,14 +7,15 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.example.channels.R
 import com.example.channels.ViewModel.AdsViewModel
+import com.example.channels.ViewModel.ChannelViewModel
 import com.example.channels.databinding.FragmentMainBinding
 import com.example.channels.fragments.listFragments.AllFragment
 import com.example.channels.fragments.listFragments.FavoritesFragment
 import com.example.channels.fragments.listFragments.FragmentAdapter
 import com.yandex.mobile.ads.banner.BannerAdView
-
 
 class MainFragment : Fragment() {
 
@@ -46,17 +47,7 @@ class MainFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val allFragment =
-                    childFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 0) as? AllFragment
-                val favoritesFragment =
-                    childFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpagerForTabs + ":" + 1) as? FavoritesFragment
-
-                allFragment?.searchQuery = newText
-                favoritesFragment?.searchQuery = newText
-
-                allFragment?.filterChannelsBySearch(newText)
-                favoritesFragment?.filterChannelsBySearch(newText)
-
+                ChannelViewModel.setSearchText(newText.orEmpty())
                 return true
             }
         })

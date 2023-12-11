@@ -8,6 +8,7 @@ import com.yandex.mobile.ads.banner.BannerAdView
 interface AdShownListener {
     fun onAdLoadedAndShown()
 }
+
 class AdsManager(val context: Context) {
 
     private var adInstancesList = mutableListOf<Any>()

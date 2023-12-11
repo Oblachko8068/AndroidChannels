@@ -1,33 +1,37 @@
 package com.example.data.repository
 
 import android.content.Context
+import com.example.domain.model.Channel
 import com.example.domain.repository.FavoriteChannelsRepository
+import com.example.domain.repository.SharedPrefRepository
 import javax.inject.Inject
 
 class FavoriteChannelsRepositoryImpl @Inject constructor(
-    context: Context
-) :
-    FavoriteChannelsRepository {
+    context: Context,
+    private val sharedPrefRepository : SharedPrefRepository
+) : FavoriteChannelsRepository {
 
-    private val sharedPrefRepository = SharedPrefRepositoryImpl()
     private val sharedPref =
         context.getSharedPreferences("fav_channels_preferences", Context.MODE_PRIVATE)
 
     override fun isChannelFavorite(channelId: Int): Boolean {
+        val favChannelsArray = getSavedFavChannelsArray()
+        return channelId in favChannelsArray
+    }
+
+    override fun addOrRemoveChannelFromFavoriteChannels(channel: Channel) {
         var favChannelsArray = getSavedFavChannelsArray()
-        if (channelId in favChannelsArray) {
+        if (isChannelFavorite(channel.id)) {
             for (i in favChannelsArray.indices) {
-                if (favChannelsArray[i] == channelId) {
+                if (favChannelsArray[i] == channel.id) {
                     favChannelsArray = removeElementFromArray(favChannelsArray, i)
                     break
                 }
             }
             saveNewFavChannelsArray(favChannelsArray)
-            return true
         } else {
-            favChannelsArray = addElementToArray(favChannelsArray, channelId)
+            favChannelsArray = addElementToArray(favChannelsArray, channel.id)
             saveNewFavChannelsArray(favChannelsArray)
-            return false
         }
     }
 
@@ -43,7 +47,7 @@ class FavoriteChannelsRepositoryImpl @Inject constructor(
     }
 
     override fun getSavedFavChannelsArray(): IntArray =
-        sharedPrefRepository.getSavedNewIntArray(sharedPref)
+        sharedPrefRepository.getSavedIntArray(sharedPref)
 
     private fun saveNewFavChannelsArray(intArray: IntArray) {
         sharedPrefRepository.saveNewIntArray(sharedPref, intArray)

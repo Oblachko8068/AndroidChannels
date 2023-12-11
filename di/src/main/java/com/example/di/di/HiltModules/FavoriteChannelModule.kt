@@ -2,6 +2,8 @@ package com.example.di.di.HiltModules
 
 import android.app.Application
 import android.content.Context
+import com.example.data.repository.SharedPrefRepositoryImpl
+import com.example.domain.repository.SharedPrefRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

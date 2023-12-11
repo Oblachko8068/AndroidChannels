@@ -14,8 +14,7 @@ class ListViewAdapter(
     private val context: Context,
     private val qualityArray: Array<Int>,
     private val currentResolution: Int?
-) :
-    ArrayAdapter<Int>(context, R.layout.list_view_item, qualityArray) {
+) : ArrayAdapter<Int>(context, R.layout.list_view_item, qualityArray) {
 
     @SuppressLint("ViewHolder")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

@@ -13,5 +13,4 @@ interface Navigator {
     fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?)
 
     fun goBack()
-
 }

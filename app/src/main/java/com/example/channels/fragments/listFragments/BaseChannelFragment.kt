@@ -9,10 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import androidx.viewpager.widget.ViewPager
-import com.example.channels.R
 import com.example.channels.RecyclerAdapter
 import com.example.channels.ViewModel.ChannelViewModel
+import com.example.channels.ViewModel.ChannelViewModel.Companion.searchTextLiveData
 import com.example.channels.fragments.navigator
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
@@ -25,7 +24,6 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
     private var _binding: ViewBinding? = null
     open val binding get() = _binding!!
     protected var recyclerView: RecyclerView? = null
-    var searchQuery: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,48 +42,35 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        recyclerView?.setHasFixedSize(true)
+        recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         val mediatorLiveData = channelViewModel.getMediatorLiveData()
 
         mediatorLiveData.observe(viewLifecycleOwner) {
-            createAdapter()
+            createAdapter(it.first, it.second)
         }
 
-        recyclerView?.setHasFixedSize(true)
-        recyclerView?.layoutManager = LinearLayoutManager(requireContext())
-
-        val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpagerForTabs)
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-            }
-
-            override fun onPageSelected(position: Int) {
-                createAdapter()
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {}
-        })
-    }
-
-    protected fun createAdapter() {
-        val channelList = channelViewModel.getChannelList(this is FavoritesFragment)
-        val epgList = channelViewModel.getEpgList()
-        recyclerView?.adapter = RecyclerAdapter(requireContext(), channelList, epgList, this, channelViewModel.getFavoriteChannelRepository())
-        if (!searchQuery.isNullOrEmpty()) {
-            filterChannelsBySearch(searchQuery)
+        searchTextLiveData.observe(viewLifecycleOwner){
+            val adapter = recyclerView?.adapter as? RecyclerAdapter
+            adapter?.setData(channelViewModel.getFilteredChannels(this is FavoritesFragment))
         }
     }
 
-    fun filterChannelsBySearch(searchQuery: String?) {
-        val filteredList = channelViewModel.getFilteredChannels(searchQuery, this is FavoritesFragment)
-        val adapter = recyclerView?.adapter as? RecyclerAdapter
-        adapter?.setData(filteredList)
+    private fun createAdapter(channelList: List<Channel>, epgList: List<Epg>) {
+        recyclerView?.adapter = RecyclerAdapter(
+            requireContext(),
+            channelViewModel.getChannelList(channelList, this is FavoritesFragment),
+            epgList,
+            this,
+            channelViewModel.getFavoriteChannelRepository()
+        )
     }
 
     override fun onChannelItemClicked(channel: Channel, epg: Epg) {
         navigator().showVideoPlayerFragment(channel, epg)
+    }
+
+    override fun onFavoriteClicked(channel: Channel) {
+        channelViewModel.favoriteChannelClicked(channel)
     }
 }
