@@ -16,6 +16,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+data class ChannelItem(
+    val channel: Channel,
+    var isFavorite: Boolean,
+)
+
 @HiltViewModel
 class ChannelViewModel @Inject constructor(
     downloadRepository: DownloadRepository,
@@ -28,50 +33,56 @@ class ChannelViewModel @Inject constructor(
     private var channelLiveData: LiveData<List<Channel>> =
         channelRepository.getChannelListLiveData()
     private var epgLiveData: LiveData<List<Epg>> = epgRepository.getEpgListLiveData()
-    private var mediatorLiveData = MediatorLiveData<Pair<List<Channel>, List<Epg>>>()
+    private var mediatorLiveData = MediatorLiveData<Pair<List<ChannelItem>, List<Epg>>>()
 
     init {
         mediatorLiveData.addSource(channelLiveData) { channels ->
             val epg = epgLiveData.value ?: emptyList()
-            mediatorLiveData.value = Pair(channels, epg)
+            val favChannels = favoriteChannelsRepository.getSavedFavChannelsArray()
+            val channelItems = channels.map { ChannelItem(it, it.id in favChannels) }
+            mediatorLiveData.value = Pair(channelItems, epg)
         }
         mediatorLiveData.addSource(epgLiveData) { epg ->
-            val channels = channelLiveData.value ?: emptyList()
-            mediatorLiveData.value = Pair(channels, epg)
+            val channelItems = mediatorLiveData.value?.first ?: emptyList()
+            mediatorLiveData.value = Pair(channelItems, epg)
         }
         viewModelScope.launch(coroutineContext) {
             downloadRepository.fetchChannels()
         }
     }
 
-    fun getFavoriteChannelRepository(): FavoriteChannelsRepository = favoriteChannelsRepository
-
-    fun getChannelList(isFavoriteFragment: Boolean): List<Channel> {
-        val channels = channelLiveData.value ?: emptyList()
+    fun getChannelList(isFavoriteFragment: Boolean): List<ChannelItem> {
+        val channels = mediatorLiveData.value?.first ?: emptyList()
         return if (isFavoriteFragment) {
-            val favChannelsArray = favoriteChannelsRepository.getSavedFavChannelsArray()
-            channels.filter { it.id in favChannelsArray }
+            channels.filter { it.isFavorite }
         } else {
             channels
         }
     }
 
-    fun getMediatorLiveData(): MediatorLiveData<Pair<List<Channel>, List<Epg>>> = mediatorLiveData
+    fun getMediatorLiveData(): MediatorLiveData<Pair<List<ChannelItem>, List<Epg>>> = mediatorLiveData
 
-    fun getFilteredChannels(isFavoriteFragment: Boolean): List<Channel> {
+    fun getFilteredChannels(isFavoriteFragment: Boolean): List<ChannelItem> {
         val channels = getChannelList(isFavoriteFragment)
         val searchQuery = _searchTextLiveData.value
         return if (!searchQuery.isNullOrEmpty()) {
-            channels.filter { channel ->
-                channel.name.contains(searchQuery, ignoreCase = true)
+            channels.filter {
+                it.channel.name.contains(searchQuery, ignoreCase = true)
             }
         } else {
             channels
         }
     }
 
-    fun favoriteChannelClicked(channel: Channel) {
-        favoriteChannelsRepository.addOrRemoveChannelFromFavoriteChannels(channel)
+    fun favoriteChannelClicked(channel: ChannelItem) {
+        favoriteChannelsRepository.addOrRemoveChannelFromFavoriteChannels(channel.channel)
+        channel.isFavorite = !channel.isFavorite
+        val updatedList = mediatorLiveData.value?.first?.toMutableList() ?: mutableListOf()
+        val index = updatedList.indexOfFirst { it.channel.id == channel.channel.id }
+        if (index != -1) {
+            updatedList[index] = channel
+            mediatorLiveData.value = Pair(updatedList, mediatorLiveData.value?.second ?: emptyList())
+        }
     }
 
     companion object {
@@ -83,4 +94,3 @@ class ChannelViewModel @Inject constructor(
         }
     }
 }
-

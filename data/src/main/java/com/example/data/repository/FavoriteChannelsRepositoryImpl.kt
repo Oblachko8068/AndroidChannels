@@ -14,11 +14,6 @@ class FavoriteChannelsRepositoryImpl @Inject constructor(
     private val sharedPref =
         context.getSharedPreferences("fav_channels_preferences", Context.MODE_PRIVATE)
 
-    override fun isChannelFavorite(channelId: Int): Boolean {
-        val favChannelsArray = getSavedFavChannelsArray()
-        return channelId in favChannelsArray
-    }
-
     override fun addOrRemoveChannelFromFavoriteChannels(channel: Channel) {
         var favChannelsArray = getSavedFavChannelsArray()
         if (channel.id in favChannelsArray) {

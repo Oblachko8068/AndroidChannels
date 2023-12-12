@@ -8,26 +8,25 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.channels.databinding.ChannelBlockBinding
+import com.example.channels.viewModel.ChannelItem
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
-import com.example.domain.repository.FavoriteChannelsRepository
 
 class RecyclerAdapter(
     private val context: Context,
-    private var channel: List<Channel>,
+    private var channelItems: List<ChannelItem>,
     private var epg: List<Epg>,
     private val itemClickListener: OnChannelItemClickListener,
-    private val favoriteChannelsRepository: FavoriteChannelsRepository
 ) : RecyclerView.Adapter<RecyclerAdapter.ChannelViewHolder>() {
 
     interface OnChannelItemClickListener {
         fun onChannelItemClicked(channel: Channel, epg: Epg)
-        fun onFavoriteClicked(channel: Channel)
+        fun onFavoriteClicked(channel: ChannelItem)
     }
 
     private class DiffUtilCallback(
-        private val oldList: List<Channel>,
-        private val newList: List<Channel>
+        private val oldList: List<ChannelItem>,
+        private val newList: List<ChannelItem>
     ) : DiffUtil.Callback() {
 
         override fun getOldListSize(): Int = oldList.size
@@ -47,50 +46,49 @@ class RecyclerAdapter(
         }
     }
 
-    fun setNewData(newChannelList: List<Channel>, newEpgList: List<Epg>) {
-        val diffCallback = DiffUtilCallback(channel, newChannelList)
+    fun setNewData(newChannelItemList: List<ChannelItem>, newEpgList: List<Epg>) {
+        val diffCallback = DiffUtilCallback(channelItems, newChannelItemList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        channel = newChannelList
+        channelItems = newChannelItemList
         epg = newEpgList
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun filterChannels(filteredChannelList: List<Channel>) {
-        val diffCallback = DiffUtilCallback(channel, filteredChannelList)
+    fun filterChannels(filteredChannelList: List<ChannelItem>) {
+        val diffCallback = DiffUtilCallback(channelItems, filteredChannelList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        channel = filteredChannelList
+        channelItems = filteredChannelList
         diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
         val binding =
             ChannelBlockBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ChannelViewHolder(binding, itemClickListener, favoriteChannelsRepository)
+        return ChannelViewHolder(binding, itemClickListener)
     }
 
     class ChannelViewHolder(
         private val binding: ChannelBlockBinding,
         private val itemClickListener: OnChannelItemClickListener,
-        private val favoriteRepository: FavoriteChannelsRepository,
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(channelItem: Channel, epgItem: Epg, context: Context) {
+        fun bind(channelItem: ChannelItem, epgItem: Epg, context: Context) {
             Glide.with(context)
-                .load(channelItem.image)
+                .load(channelItem.channel.image)
                 .into(binding.channelIcon)
-            binding.channelName.text = channelItem.name
+            binding.channelName.text = channelItem.channel.name
             binding.channelDesc.text = epgItem.title
             binding.iconFav.setImageResource(R.drawable.baseline_star_24)
-            binding.iconFav.setColorFilter(
-                ContextCompat.getColor(context, R.color.icon_disable)
-            )
-            val favoriteChannelsArray = favoriteRepository.getSavedFavChannelsArray()
-            if (channelItem.id in favoriteChannelsArray) {
+            if (channelItem.isFavorite) {
                 binding.iconFav.setColorFilter(
                     ContextCompat.getColor(context, R.color.icon_enable)
                 )
+            } else {
+                binding.iconFav.setColorFilter(
+                    ContextCompat.getColor(context, R.color.icon_disable)
+                )
             }
             binding.iconFav.setOnClickListener {
-                if (favoriteRepository.isChannelFavorite(channelItem.id)) {
+                if (channelItem.isFavorite) {
                     binding.iconFav.setColorFilter(
                         ContextCompat.getColor(context, R.color.icon_disable)
                     )
@@ -104,18 +102,18 @@ class RecyclerAdapter(
         }
     }
 
-    override fun getItemCount() = channel.size
+    override fun getItemCount() = channelItems.size
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
-        val channel = channel[position]
-        val epg = epg.find { it.channelID == channel.id }
+        val channelItem = channelItems[position]
+        val epg = epg.find { it.channelID == channelItem.channel.id }
         if (epg != null) {
-            holder.bind(channel, epg, context)
+            holder.bind(channelItem, epg, context)
         }
 
         holder.itemView.setOnClickListener {
             if (epg != null) {
-                itemClickListener.onChannelItemClicked(channel, epg)
+                itemClickListener.onChannelItemClicked(channelItem.channel, epg)
             }
         }
     }

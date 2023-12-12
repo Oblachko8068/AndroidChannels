@@ -5,16 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import androidx.viewpager.widget.ViewPager
-import com.example.channels.R
 import com.example.channels.RecyclerAdapter
+import com.example.channels.fragments.navigator
+import com.example.channels.viewModel.ChannelItem
 import com.example.channels.viewModel.ChannelViewModel
 import com.example.channels.viewModel.ChannelViewModel.Companion.searchTextLiveData
-import com.example.channels.fragments.navigator
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemClickListener {
 
-    private val channelViewModel: ChannelViewModel by viewModels()
+    private val channelViewModel: ChannelViewModel by activityViewModels()
     private var _binding: ViewBinding? = null
     open val binding get() = _binding!!
     protected var recyclerView: RecyclerView? = null
@@ -50,16 +49,18 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
             requireContext(),
             emptyList(),
             emptyList(),
-            this,
-            channelViewModel.getFavoriteChannelRepository()
+            this
         )
         val adapter = recyclerView?.adapter as? RecyclerAdapter
         val mediatorLiveData = channelViewModel.getMediatorLiveData()
         mediatorLiveData.observe(viewLifecycleOwner) {
-            adapter?.setNewData(channelViewModel.getChannelList(this is FavoritesFragment), it.second)
+            adapter?.setNewData(
+                channelViewModel.getChannelList(this is FavoritesFragment),
+                it.second
+            )
         }
 
-        searchTextLiveData.observe(viewLifecycleOwner){
+        searchTextLiveData.observe(viewLifecycleOwner) {
             adapter?.filterChannels(channelViewModel.getFilteredChannels(this is FavoritesFragment))
         }
     }
@@ -68,9 +69,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
         navigator().showVideoPlayerFragment(channel, epg)
     }
 
-    override fun onFavoriteClicked(channel: Channel) {
+    override fun onFavoriteClicked(channel: ChannelItem) {
         channelViewModel.favoriteChannelClicked(channel)
-        val adapter = recyclerView?.adapter as? RecyclerAdapter
-        adapter?.filterChannels(channelViewModel.getChannelList(this is FavoritesFragment))
     }
 }

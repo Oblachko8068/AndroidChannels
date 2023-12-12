@@ -7,6 +7,4 @@ interface FavoriteChannelsRepository {
     fun getSavedFavChannelsArray(): IntArray
 
     fun addOrRemoveChannelFromFavoriteChannels(channel: Channel)
-
-    fun isChannelFavorite(channelId: Int): Boolean
 }
