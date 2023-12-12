@@ -21,7 +21,7 @@ class FavoriteChannelsRepositoryImpl @Inject constructor(
 
     override fun addOrRemoveChannelFromFavoriteChannels(channel: Channel) {
         var favChannelsArray = getSavedFavChannelsArray()
-        if (isChannelFavorite(channel.id)) {
+        if (channel.id in favChannelsArray) {
             for (i in favChannelsArray.indices) {
                 if (favChannelsArray[i] == channel.id) {
                     favChannelsArray = removeElementFromArray(favChannelsArray, i)

@@ -1,6 +1,5 @@
 package com.example.data.repository
 
-import android.util.Log
 import com.example.data.model.EpgDbEntity
 import com.example.data.model.fromChannelJsonToChannelDbEntity
 import com.example.data.model.fromChannelJsonToEpgDbEntity
@@ -8,7 +7,6 @@ import com.example.data.network.ChannelsApi
 import com.example.data.room.ChannelDao
 import com.example.data.room.EpgDao
 import com.example.domain.repository.DownloadRepository
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,10 +18,6 @@ class DownloadRepositoryRetrofit @Inject constructor(
     private val epgDao: EpgDao,
     private val retrofit: Retrofit
 ) : DownloadRepository {
-
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.e("ChannelViewModel", "Быстрей исправляем: ${throwable.message}")
-    }
 
     override suspend fun fetchChannels() {
         val response = retrofit

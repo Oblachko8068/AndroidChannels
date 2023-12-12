@@ -1,6 +1,5 @@
-package com.example.channels.ViewModel
+package com.example.channels.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,22 +12,19 @@ import com.example.domain.repository.DownloadRepository
 import com.example.domain.repository.EpgRepository
 import com.example.domain.repository.FavoriteChannelsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class ChannelViewModel @Inject constructor(
     downloadRepository: DownloadRepository,
     channelRepository: ChannelRepository,
     epgRepository: EpgRepository,
-    private var favoriteChannelsRepository: FavoriteChannelsRepository
+    private var favoriteChannelsRepository: FavoriteChannelsRepository,
+    coroutineContext: CoroutineContext,
 ) : ViewModel() {
 
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.e("ChannelViewModel", "Ошибочка в загрузке пацаны: ${throwable.message}")
-    }
     private var channelLiveData: LiveData<List<Channel>> =
         channelRepository.getChannelListLiveData()
     private var epgLiveData: LiveData<List<Epg>> = epgRepository.getEpgListLiveData()
@@ -43,14 +39,15 @@ class ChannelViewModel @Inject constructor(
             val channels = channelLiveData.value ?: emptyList()
             mediatorLiveData.value = Pair(channels, epg)
         }
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+        viewModelScope.launch(coroutineContext) {
             downloadRepository.fetchChannels()
         }
     }
 
     fun getFavoriteChannelRepository(): FavoriteChannelsRepository = favoriteChannelsRepository
 
-    fun getChannelList(channels: List<Channel>, isFavoriteFragment: Boolean): List<Channel> {
+    fun getChannelList(isFavoriteFragment: Boolean): List<Channel> {
+        val channels = channelLiveData.value ?: emptyList()
         return if (isFavoriteFragment) {
             val favChannelsArray = favoriteChannelsRepository.getSavedFavChannelsArray()
             channels.filter { it.id in favChannelsArray }
@@ -62,7 +59,7 @@ class ChannelViewModel @Inject constructor(
     fun getMediatorLiveData(): MediatorLiveData<Pair<List<Channel>, List<Epg>>> = mediatorLiveData
 
     fun getFilteredChannels(isFavoriteFragment: Boolean): List<Channel> {
-        val channels = getChannelList(channelLiveData.value!!,isFavoriteFragment)
+        val channels = getChannelList(isFavoriteFragment)
         val searchQuery = _searchTextLiveData.value
         return if (!searchQuery.isNullOrEmpty()) {
             channels.filter { channel ->
@@ -78,7 +75,6 @@ class ChannelViewModel @Inject constructor(
     }
 
     companion object {
-
         private val _searchTextLiveData = MutableLiveData<String>()
         val searchTextLiveData: LiveData<String> = _searchTextLiveData
 

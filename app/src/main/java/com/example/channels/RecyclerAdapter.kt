@@ -1,6 +1,5 @@
 package com.example.channels
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,12 +12,12 @@ import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import com.example.domain.repository.FavoriteChannelsRepository
 
-class RecyclerAdapter  (
+class RecyclerAdapter(
     private val context: Context,
     private var channel: List<Channel>,
     private var epg: List<Epg>,
     private val itemClickListener: OnChannelItemClickListener,
-    private val favoriteChannelsRepository : FavoriteChannelsRepository
+    private val favoriteChannelsRepository: FavoriteChannelsRepository
 ) : RecyclerView.Adapter<RecyclerAdapter.ChannelViewHolder>() {
 
     interface OnChannelItemClickListener {
@@ -26,10 +25,12 @@ class RecyclerAdapter  (
         fun onFavoriteClicked(channel: Channel)
     }
 
-    /*class DiffUtilCallBack() : DiffUtil.Callback(){
-        override fun getOldListSize(): Int {
-            TODO("Not yet implemented")
-        }
+    private class DiffUtilCallback(
+        private val oldList: List<Channel>,
+        private val newList: List<Channel>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize(): Int = oldList.size
 
         override fun getNewListSize(): Int = newList.size
 
@@ -44,12 +45,21 @@ class RecyclerAdapter  (
             val newItem = newList[newItemPosition]
             return oldItem.hashCode() == newItem.hashCode()
         }
+    }
 
-    }*/
-    @SuppressLint("NotifyDataSetChanged")
-    fun setData(newChannel: List<Channel>) {
-        channel = newChannel
-        notifyDataSetChanged()
+    fun setNewData(newChannelList: List<Channel>, newEpgList: List<Epg>) {
+        val diffCallback = DiffUtilCallback(channel, newChannelList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        channel = newChannelList
+        epg = newEpgList
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun filterChannels(filteredChannelList: List<Channel>) {
+        val diffCallback = DiffUtilCallback(channel, filteredChannelList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        channel = filteredChannelList
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
@@ -80,7 +90,7 @@ class RecyclerAdapter  (
                 )
             }
             binding.iconFav.setOnClickListener {
-                if (favoriteRepository.isChannelFavorite(channelItem.id)){
+                if (favoriteRepository.isChannelFavorite(channelItem.id)) {
                     binding.iconFav.setColorFilter(
                         ContextCompat.getColor(context, R.color.icon_disable)
                     )

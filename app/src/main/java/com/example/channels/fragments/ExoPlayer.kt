@@ -233,6 +233,3 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         }
     }
 }
-
-
-

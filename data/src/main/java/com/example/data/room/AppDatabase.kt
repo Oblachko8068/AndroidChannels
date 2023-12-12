@@ -12,10 +12,10 @@ import com.example.data.model.EpgDbEntity
         EpgDbEntity::class
     ]
 )
+
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun getChannelDao() : ChannelDao
 
     abstract fun getEpgDao() : EpgDao
-
 }

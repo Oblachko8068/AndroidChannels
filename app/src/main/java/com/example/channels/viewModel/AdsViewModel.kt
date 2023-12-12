@@ -1,4 +1,4 @@
-package com.example.channels.ViewModel
+package com.example.channels.viewModel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

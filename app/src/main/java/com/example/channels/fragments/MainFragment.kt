@@ -7,12 +7,9 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import com.example.channels.R
-import com.example.channels.ViewModel.AdsViewModel
-import com.example.channels.ViewModel.ChannelViewModel
+import com.example.channels.viewModel.AdsViewModel
+import com.example.channels.viewModel.ChannelViewModel
 import com.example.channels.databinding.FragmentMainBinding
-import com.example.channels.fragments.listFragments.AllFragment
 import com.example.channels.fragments.listFragments.FavoritesFragment
 import com.example.channels.fragments.listFragments.FragmentAdapter
 import com.yandex.mobile.ads.banner.BannerAdView

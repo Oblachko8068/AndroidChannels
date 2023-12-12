@@ -39,5 +39,4 @@ class NetworkModule {
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         return interceptor
     }
-
 }
