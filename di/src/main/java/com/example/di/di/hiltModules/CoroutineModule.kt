@@ -1,4 +1,4 @@
-package com.example.di.di.HiltModules
+package com.example.di.di.hiltModules
 
 import android.util.Log
 import dagger.Module
@@ -19,7 +19,7 @@ class CoroutineModule {
     @Singleton
     fun provideCoroutineExceptionHandler(): CoroutineExceptionHandler {
         return CoroutineExceptionHandler { _, throwable ->
-            Log.e("CoroutineExceptionHandler", "Coroutine exception: ${throwable.message}")
+            Log.e("Ошибка в загрузке", "Coroutine exception: ${throwable.message}")
         }
     }
 

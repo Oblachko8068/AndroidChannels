@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.example.channels.RecyclerAdapter
 import com.example.channels.fragments.navigator
-import com.example.channels.viewModel.ChannelItem
 import com.example.channels.viewModel.ChannelViewModel
 import com.example.channels.viewModel.ChannelViewModel.Companion.searchTextLiveData
 import com.example.domain.model.Channel
@@ -49,6 +48,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
             requireContext(),
             emptyList(),
             emptyList(),
+            emptyList(),
             this
         )
         val adapter = recyclerView?.adapter as? RecyclerAdapter
@@ -60,6 +60,11 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
             )
         }
 
+        val favoriteChannelLiveData = channelViewModel.getFavoriteChannelLiveData()
+        favoriteChannelLiveData.observe(viewLifecycleOwner) {
+            adapter?.updateFavoriteChannelList(channelViewModel.getChannelList(this is FavoritesFragment), it)
+        }
+
         searchTextLiveData.observe(viewLifecycleOwner) {
             adapter?.filterChannels(channelViewModel.getFilteredChannels(this is FavoritesFragment))
         }
@@ -69,7 +74,7 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
         navigator().showVideoPlayerFragment(channel, epg)
     }
 
-    override fun onFavoriteClicked(channel: ChannelItem) {
+    override fun onFavoriteClicked(channel: Channel) {
         channelViewModel.favoriteChannelClicked(channel)
     }
 }

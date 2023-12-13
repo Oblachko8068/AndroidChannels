@@ -8,56 +8,69 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.channels.databinding.ChannelBlockBinding
-import com.example.channels.viewModel.ChannelItem
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
+import com.example.domain.model.FavoriteChannel
 
 class RecyclerAdapter(
     private val context: Context,
-    private var channelItems: List<ChannelItem>,
+    private var channels: List<Channel>,
     private var epg: List<Epg>,
+    private var favoriteChannel: List<FavoriteChannel>,
     private val itemClickListener: OnChannelItemClickListener,
 ) : RecyclerView.Adapter<RecyclerAdapter.ChannelViewHolder>() {
 
     interface OnChannelItemClickListener {
         fun onChannelItemClicked(channel: Channel, epg: Epg)
-        fun onFavoriteClicked(channel: ChannelItem)
+        fun onFavoriteClicked(channel: Channel)
     }
 
     private class DiffUtilCallback(
-        private val oldList: List<ChannelItem>,
-        private val newList: List<ChannelItem>
+        private val oldChannelList: List<Channel>,
+        private val newChannelList: List<Channel>,
+        private val oldFavoriteChannelList: List<FavoriteChannel>,
+        private val newFavoriteChannelList: List<FavoriteChannel>
     ) : DiffUtil.Callback() {
 
-        override fun getOldListSize(): Int = oldList.size
+        override fun getOldListSize(): Int = oldChannelList.size
 
-        override fun getNewListSize(): Int = newList.size
+        override fun getNewListSize(): Int = newChannelList.size
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldItem = oldList[oldItemPosition]
-            val newItem = newList[newItemPosition]
+            val oldItem = oldChannelList[oldItemPosition]
+            val newItem = newChannelList[newItemPosition]
             return oldItem.javaClass == newItem.javaClass
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldItem = oldList[oldItemPosition]
-            val newItem = newList[newItemPosition]
-            return oldItem.hashCode() == newItem.hashCode()
+            val oldItem = oldChannelList[oldItemPosition]
+            val newItem = newChannelList[newItemPosition]
+            val oldFavorite = oldFavoriteChannelList.find { it.channelId == oldItem.id }?.isFavorite ?: false
+            val newFavorite = newFavoriteChannelList.find { it.channelId == newItem.id }?.isFavorite ?: false
+            return oldItem.hashCode() == newItem.hashCode() && oldFavorite == newFavorite
         }
     }
 
-    fun setNewData(newChannelItemList: List<ChannelItem>, newEpgList: List<Epg>) {
-        val diffCallback = DiffUtilCallback(channelItems, newChannelItemList)
+    fun setNewData(newChannelItemList: List<Channel>, newEpgList: List<Epg>) {
+        val diffCallback = DiffUtilCallback(channels, newChannelItemList, favoriteChannel, favoriteChannel)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        channelItems = newChannelItemList
+        channels = newChannelItemList
         epg = newEpgList
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun filterChannels(filteredChannelList: List<ChannelItem>) {
-        val diffCallback = DiffUtilCallback(channelItems, filteredChannelList)
+    fun filterChannels(filteredChannelList: List<Channel>) {
+        val diffCallback = DiffUtilCallback(channels, filteredChannelList, favoriteChannel, favoriteChannel)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        channelItems = filteredChannelList
+        channels = filteredChannelList
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun updateFavoriteChannelList(newChannelItemList: List<Channel>, favChannels: List<FavoriteChannel>) {
+        val diffCallback = DiffUtilCallback(channels, newChannelItemList, favoriteChannel, favChannels)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        channels = newChannelItemList
+        favoriteChannel = favChannels
         diffResult.dispatchUpdatesTo(this)
     }
 
@@ -71,14 +84,14 @@ class RecyclerAdapter(
         private val binding: ChannelBlockBinding,
         private val itemClickListener: OnChannelItemClickListener,
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(channelItem: ChannelItem, epgItem: Epg, context: Context) {
+        fun bind(channelItem: Channel, epgItem: Epg, isFavorite: Boolean, context: Context) {
             Glide.with(context)
-                .load(channelItem.channel.image)
+                .load(channelItem.image)
                 .into(binding.channelIcon)
-            binding.channelName.text = channelItem.channel.name
+            binding.channelName.text = channelItem.name
             binding.channelDesc.text = epgItem.title
             binding.iconFav.setImageResource(R.drawable.baseline_star_24)
-            if (channelItem.isFavorite) {
+            if (isFavorite) {
                 binding.iconFav.setColorFilter(
                     ContextCompat.getColor(context, R.color.icon_enable)
                 )
@@ -88,7 +101,7 @@ class RecyclerAdapter(
                 )
             }
             binding.iconFav.setOnClickListener {
-                if (channelItem.isFavorite) {
+                if (isFavorite) {
                     binding.iconFav.setColorFilter(
                         ContextCompat.getColor(context, R.color.icon_disable)
                     )
@@ -102,18 +115,19 @@ class RecyclerAdapter(
         }
     }
 
-    override fun getItemCount() = channelItems.size
+    override fun getItemCount() = channels.size
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
-        val channelItem = channelItems[position]
-        val epg = epg.find { it.channelID == channelItem.channel.id }
+        val channelItem = channels[position]
+        val epg = epg.find { it.channelID == channelItem.id }
+        val channelExistsInFavList = favoriteChannel.any { it.channelId == channelItem.id }
         if (epg != null) {
-            holder.bind(channelItem, epg, context)
+            holder.bind(channelItem, epg, channelExistsInFavList, context)
         }
 
         holder.itemView.setOnClickListener {
             if (epg != null) {
-                itemClickListener.onChannelItemClicked(channelItem.channel, epg)
+                itemClickListener.onChannelItemClicked(channelItem, epg)
             }
         }
     }

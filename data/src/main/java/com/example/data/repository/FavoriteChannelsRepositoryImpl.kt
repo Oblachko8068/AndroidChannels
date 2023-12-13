@@ -1,50 +1,36 @@
 package com.example.data.repository
 
-import android.content.Context
-import com.example.domain.model.Channel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
+import com.example.data.model.FavoriteChannelDbEntity
+import com.example.data.room.FavoriteChannelDao
+import com.example.domain.model.FavoriteChannel
 import com.example.domain.repository.FavoriteChannelsRepository
-import com.example.domain.repository.SharedPrefRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FavoriteChannelsRepositoryImpl @Inject constructor(
-    context: Context,
-    private val sharedPrefRepository : SharedPrefRepository
+    private val favoriteChannelDao: FavoriteChannelDao
 ) : FavoriteChannelsRepository {
 
-    private val sharedPref =
-        context.getSharedPreferences("fav_channels_preferences", Context.MODE_PRIVATE)
+    override fun getFavoriteChannelListLiveData(): LiveData<List<FavoriteChannel>> {
+        return favoriteChannelDao.getAllFavoriteChannelList()
+            .map { favoriteChannelDbEntities -> favoriteChannelDbEntities.map { it.toFavoriteChannelDb() } }
+    }
 
-    override fun addOrRemoveChannelFromFavoriteChannels(channel: Channel) {
-        var favChannelsArray = getSavedFavChannelsArray()
-        if (channel.id in favChannelsArray) {
-            for (i in favChannelsArray.indices) {
-                if (favChannelsArray[i] == channel.id) {
-                    favChannelsArray = removeElementFromArray(favChannelsArray, i)
-                    break
-                }
-            }
-            saveNewFavChannelsArray(favChannelsArray)
-        } else {
-            favChannelsArray = addElementToArray(favChannelsArray, channel.id)
-            saveNewFavChannelsArray(favChannelsArray)
+    override fun addChannelFromFavoriteChannels(channelId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val favoriteChannelDbEntity = FavoriteChannelDbEntity(channelId, true)
+            favoriteChannelDao.createFavoriteChannels(favoriteChannelDbEntity)
         }
     }
 
-    private fun addElementToArray(array: IntArray, element: Int): IntArray {
-        val newFavChannelsArray = IntArray(array.size + 1)
-        array.copyInto(newFavChannelsArray)
-        newFavChannelsArray[array.size] = element
-        return newFavChannelsArray
-    }
-
-    private fun removeElementFromArray(array: IntArray, indexToRemove: Int): IntArray {
-        return array.filterIndexed { index, _ -> index != indexToRemove }.toIntArray()
-    }
-
-    override fun getSavedFavChannelsArray(): IntArray =
-        sharedPrefRepository.getSavedIntArray(sharedPref)
-
-    private fun saveNewFavChannelsArray(intArray: IntArray) {
-        sharedPrefRepository.saveNewIntArray(sharedPref, intArray)
+    override fun removeChannelFromFavoriteChannels(channelId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val favoriteChannelDbEntity = FavoriteChannelDbEntity(channelId, true)
+            favoriteChannelDao.deleteFavoriteChannel(favoriteChannelDbEntity)
+        }
     }
 }

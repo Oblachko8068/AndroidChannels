@@ -1,4 +1,4 @@
-package com.example.di.di.HiltModules
+package com.example.di.di.hiltModules
 
 import dagger.Module
 import dagger.Provides

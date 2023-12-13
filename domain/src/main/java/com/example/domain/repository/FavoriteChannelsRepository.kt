@@ -1,10 +1,13 @@
 package com.example.domain.repository
 
-import com.example.domain.model.Channel
+import androidx.lifecycle.LiveData
+import com.example.domain.model.FavoriteChannel
 
 interface FavoriteChannelsRepository {
 
-    fun getSavedFavChannelsArray(): IntArray
+    fun getFavoriteChannelListLiveData(): LiveData<List<FavoriteChannel>>
 
-    fun addOrRemoveChannelFromFavoriteChannels(channel: Channel)
+    fun addChannelFromFavoriteChannels(channelId: Int)
+
+    fun removeChannelFromFavoriteChannels(channelId: Int)
 }
