@@ -45,8 +45,8 @@ class RecyclerAdapter(
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldChannelList[oldItemPosition]
             val newItem = newChannelList[newItemPosition]
-            val oldFavorite = oldFavoriteChannelList.find { it.channelId == oldItem.id }?.isFavorite ?: false
-            val newFavorite = newFavoriteChannelList.find { it.channelId == newItem.id }?.isFavorite ?: false
+            val oldFavorite = oldFavoriteChannelList.any { it.channelId == oldItem.id }
+            val newFavorite = newFavoriteChannelList.any { it.channelId == newItem.id }
             return oldItem.hashCode() == newItem.hashCode() && oldFavorite == newFavorite
         }
     }

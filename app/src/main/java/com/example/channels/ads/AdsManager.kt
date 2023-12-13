@@ -6,6 +6,7 @@ import com.example.channels.ads.interstitialAds.YandexInterstitialAd
 import com.yandex.mobile.ads.banner.BannerAdView
 
 interface AdShownListener {
+
     fun onAdLoadedAndShown()
 }
 

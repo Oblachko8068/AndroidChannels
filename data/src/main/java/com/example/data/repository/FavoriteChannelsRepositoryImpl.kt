@@ -22,14 +22,14 @@ class FavoriteChannelsRepositoryImpl @Inject constructor(
 
     override fun addChannelFromFavoriteChannels(channelId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            val favoriteChannelDbEntity = FavoriteChannelDbEntity(channelId, true)
+            val favoriteChannelDbEntity = FavoriteChannelDbEntity(channelId)
             favoriteChannelDao.createFavoriteChannels(favoriteChannelDbEntity)
         }
     }
 
     override fun removeChannelFromFavoriteChannels(channelId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            val favoriteChannelDbEntity = FavoriteChannelDbEntity(channelId, true)
+            val favoriteChannelDbEntity = FavoriteChannelDbEntity(channelId)
             favoriteChannelDao.deleteFavoriteChannel(favoriteChannelDbEntity)
         }
     }

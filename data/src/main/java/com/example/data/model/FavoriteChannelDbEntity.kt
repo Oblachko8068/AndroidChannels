@@ -10,12 +10,10 @@ import com.example.domain.model.FavoriteChannel
 
 data class FavoriteChannelDbEntity(
     @PrimaryKey val channelId: Int,
-    val isFavorite: Boolean
 ) {
     fun toFavoriteChannelDb(): FavoriteChannel {
         return FavoriteChannel(
             channelId = channelId,
-            isFavorite = isFavorite
         )
     }
 }

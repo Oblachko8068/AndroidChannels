@@ -181,12 +181,18 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        player.stop()
-        player.removeListener(playerListener)
-        player.release()
+        clearPlayer()
         showSystemUi()
         coroutineScope.cancel()
         _binding = null
+    }
+
+    private fun clearPlayer() {
+        player.stop()
+        player.removeListener(playerListener)
+        player.clearMediaItems()
+        player.clearVideoSurface()
+        player.release()
     }
 
     private fun hideSystemUi() {
