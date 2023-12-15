@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.channels.ads.AdShownListener
 import com.example.channels.ads.AdsManager
 import com.yandex.mobile.ads.banner.BannerAdView
+import com.yandex.mobile.ads.instream.InstreamAd
 
 class AdsViewModel : ViewModel() {
 
@@ -26,6 +27,10 @@ class AdsViewModel : ViewModel() {
         } else {
             listener.onAdLoadedAndShown()
         }
+    }
+
+    fun showInterOrInstreamAd(listener: AdShownListener) : InstreamAd? {
+        return adsManager.showInterOrInstreamAd(listener)
     }
 
     fun showBannerAd() : BannerAdView? = adsManager.showBannerAd()

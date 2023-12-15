@@ -6,7 +6,6 @@
 
     <!--Поиск-->
     <string name="searchView_tv_channels_hint">Напишите название телеканала</string>
-    <string name="content_url_for_instream_ad">https://linear-143.frequency.stream/dist/localnow/143/hls/master/playlist.m3u8</string>
 
     <!--Список-->
     <string-array name="channel_fav_selected">
@@ -30,4 +29,6 @@
         <item>0</item>
     </integer-array>
     <!---->
+
+    <string name="instream_content_url">https://www.youtube.com/watch?v=CBNGG1ozzPg</string>
 </resources>

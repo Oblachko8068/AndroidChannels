@@ -2,8 +2,10 @@ package com.example.channels.ads
 
 import android.content.Context
 import com.example.channels.ads.bannerAds.YandexBannerAd
+import com.example.channels.ads.instreamAds.YandexInstreamAd
 import com.example.channels.ads.interstitialAds.YandexInterstitialAd
 import com.yandex.mobile.ads.banner.BannerAdView
+import com.yandex.mobile.ads.instream.InstreamAd
 
 interface AdShownListener {
 
@@ -19,6 +21,16 @@ class AdsManager(val context: Context) {
     init {
         initializeInterstitialAdInstances()
         initializeBannerAdInstances()
+        initializeInstreamAdInstances()
+    }
+
+    private fun initializeInstreamAdInstances() {
+        adInstancesList.add(YandexInstreamAd(context))
+        adInstancesList.forEach {
+            if (it is YandexInstreamAd){
+                it.loadInstreamAd()
+            }
+        }
     }
 
     private fun initializeBannerAdInstances() {
@@ -70,5 +82,28 @@ class AdsManager(val context: Context) {
                 break
             }
         }
+    }
+
+    fun showInterOrInstreamAd(listener: AdShownListener): InstreamAd? {
+        adInstancesList.forEach {ad ->
+            if (ad is YandexInterstitialAd && ad.isAdLoaded()){
+                ad.showInterAd(listener)
+                ad.loadInterAd()
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
+                return null
+            } else if (ad is YandexInstreamAd && ad.isAdLoaded()){
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
+                return ad.getInstreamAd(listener)
+            }
+        }
+        return null
     }
 }
