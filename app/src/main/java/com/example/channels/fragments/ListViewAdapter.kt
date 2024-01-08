@@ -14,14 +14,12 @@ class ListViewAdapter(
     private val context: Context,
     private val qualityArray: Array<Int>,
     private val currentResolution: Int?
-) :
-    ArrayAdapter<Int>(context, R.layout.list_view_item, qualityArray) {
-    private lateinit var binding: ListViewItemBinding
+) : ArrayAdapter<Int>(context, R.layout.list_view_item, qualityArray) {
 
     @SuppressLint("ViewHolder")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val inflater: LayoutInflater = LayoutInflater.from(context)
-        binding = ListViewItemBinding.inflate(inflater)
+        val binding = ListViewItemBinding.inflate(inflater)
         binding.listItemText.text =
             if (qualityArray[position] == -1) "AUTO" else "${qualityArray[position]}p"
 
@@ -30,7 +28,12 @@ class ListViewAdapter(
             binding.listItemText.setTextColor(ContextCompat.getColor(context, R.color.text_active))
         } else {
             binding.listItemText.setBackgroundResource(R.color.text_dark)
-            binding.listItemText.setTextColor(ContextCompat.getColor(context, R.color.unplayed_video_text_color))
+            binding.listItemText.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.unplayed_video_text_color
+                )
+            )
         }
 
         return binding.root

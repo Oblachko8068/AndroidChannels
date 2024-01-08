@@ -7,7 +7,7 @@ import com.yandex.mobile.ads.instream.InstreamAdLoadListener
 import com.yandex.mobile.ads.instream.InstreamAdLoader
 import com.yandex.mobile.ads.instream.InstreamAdRequestConfiguration
 
-const val pageId = "demo-instream-vmap-yandex"
+/*const val pageId = "demo-instream-vmap-yandex"
 
 class InstreamAdManager(
     private val context: Context,
@@ -39,4 +39,4 @@ class InstreamAdManager(
     fun showVideoInstreamAd(): InstreamAd? {
         return videoAd
     }
-}
+}*/

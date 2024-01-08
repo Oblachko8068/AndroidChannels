@@ -14,10 +14,12 @@ import com.example.channels.databinding.FragmentQualitySettingsBinding
 
 const val QUALITY_LIST_KEY = "QUALITY_LIST_KEY"
 const val CURRENT_RESOLUTION_KEY = "CURRENT_RESOLUTION_KEY"
-class QualitySettingsFragment : DialogFragment() {
-    override fun getTheme() = R.style.RoundedCornersDialog
 
+class QualitySettingsFragment : DialogFragment() {
+
+    override fun getTheme() = R.style.RoundedCornersDialog
     private lateinit var binding: FragmentQualitySettingsBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,7 +44,7 @@ class QualitySettingsFragment : DialogFragment() {
         binding.qualityListView.adapter =
             qualityArray?.let { ListViewAdapter(requireContext(), it, currentResolution) }
 
-        binding.qualityListView.setOnItemClickListener { _, view, i, _ ->
+        binding.qualityListView.setOnItemClickListener { _, _, i, _ ->
             val resultData = Bundle()
             qualityArray?.get(i)?.let { resultData.putInt("quality", it) }
             setFragmentResult(SET_RESULT, resultData)

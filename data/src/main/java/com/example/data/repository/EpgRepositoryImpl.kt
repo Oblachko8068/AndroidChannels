@@ -11,11 +11,10 @@ class EpgRepositoryImpl @Inject constructor(
 ) : com.example.domain.repository.EpgRepository {
 
     override fun getEpgListLiveData(): LiveData<List<Epg>> {
-        return epgDao.getEpgListAll().map { it.map { it.toEpgDb() } }
+        return epgDao.getEpgListAll().map { epgDbEntityList -> epgDbEntityList.map { it.toEpgDb() } }
     }
 
     override fun getCurrentEpgByChannelId(channelID: Int): LiveData<Epg> {
         return epgDao.getEpgByChannelID(channelID).map { it.toEpgDb() }
     }
-
 }

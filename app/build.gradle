@@ -48,23 +48,17 @@ android {
 
 
 dependencies {
-    //видео реклама
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.19.1'
-    implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.19.1'
-
-
     //реклама
     implementation 'com.yandex.android:mobileads:6.2.0'
     implementation 'com.yandex.ads.mediation:mobileads-mytarget:5.19.0.0'
     implementation 'com.yandex.ads.mediation:mobileads-applovin:11.11.3.1'
     //медиация
-    //implementation 'com.yandex.android:mobileads-mediation:6.2.0.0'
+    implementation 'com.yandex.android:mobileads-mediation:6.2.0.0'
 
     implementation 'com.google.firebase:firebase-messaging:23.3.1'
     implementation "com.google.android.gms:play-services-base:18.2.0"
 
-    implementation 'com.yandex.android:mobmetricapushlib:2.3.3'
+    implementation 'com.yandex.android:mobmetricapushlib:2.3.2'
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
 
     //яндекс метрика

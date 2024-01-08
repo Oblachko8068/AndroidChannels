@@ -6,23 +6,8 @@ import com.example.domain.model.Epg
 
 @Entity(
     tableName = "epgs",
-    /*primaryKeys = [
-        "channelID",
-        "id"
-    ],
-    indices = [
-        Index("id")
-    ],
-    foreignKeys = [
-        ForeignKey (
-            entity = ChannelDbEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["channelID"],
-            onDelete = ForeignKey.CASCADE,
-            onUpdate = ForeignKey.CASCADE
-        )
-    ]*/
 )
+
 data class EpgDbEntity(
     val channelID: Int,
     @PrimaryKey val id: Long,
@@ -30,7 +15,6 @@ data class EpgDbEntity(
     val timestop: Long,
     val title: String
 ) {
-
     fun toEpgDb(): Epg {
         return Epg(
             channelID = channelID,

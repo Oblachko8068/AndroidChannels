@@ -1,107 +1,109 @@
 package com.example.channels.ads
 
 import android.content.Context
-import com.example.channels.ads.bannerAds.AppLovinBannerAd
-import com.example.channels.ads.bannerAds.MyTargetBannerAd
 import com.example.channels.ads.bannerAds.YandexBannerAd
-import com.example.channels.ads.interstitialAds.AppLovinInterAd
-import com.example.channels.ads.interstitialAds.MyTargerInterAd
-import com.example.channels.ads.interstitialAds.YandexInterAd
-import com.example.channels.ads.videoAds.InstreamAdManager
+import com.example.channels.ads.instreamAds.YandexInstreamAd
+import com.example.channels.ads.interstitialAds.YandexInterstitialAd
 import com.yandex.mobile.ads.banner.BannerAdView
 import com.yandex.mobile.ads.instream.InstreamAd
-import com.yandex.mobile.ads.instream.InstreamAdLoadListener
 
 interface AdShownListener {
+
     fun onAdLoadedAndShown()
 }
 
 class AdsManager(val context: Context) {
 
-    private var interstitialAdInstanceList = mutableListOf<Any>()
+    private var adInstancesList = mutableListOf<Any>()
+    private val adBannerIdList = listOf("demo-banner-yandex", "demo-banner-mytarget", "demo-banner-applovin")
+    private val adInterstitialIdList = listOf("demo-interstitial-yandex", "demo-interstitial-mytarget", "demo-interstitial-applovin")
 
     init {
-        val yandexAd = YandexInterAd(context)
-        yandexAd.loadInterAd()
-        interstitialAdInstanceList.add(yandexAd)
-        val myTargetAd = MyTargerInterAd(context)
-        myTargetAd.loadInterAd()
-        interstitialAdInstanceList.add(myTargetAd)
-        val appLovinAd = AppLovinInterAd(context)
-        appLovinAd.loadInterAd()
-        interstitialAdInstanceList.add(appLovinAd)
-
-
-        val yandexBannerAd = YandexBannerAd(context)
-        yandexBannerAd.loadBannerAd()
-        interstitialAdInstanceList.add(yandexBannerAd)
-        val myTargetBannerAd = MyTargetBannerAd(context)
-        myTargetBannerAd.loadBannerAd()
-        interstitialAdInstanceList.add(myTargetBannerAd)
-        val appLovinBannerAd = AppLovinBannerAd(context)
-        appLovinBannerAd.loadBannerAd()
-        interstitialAdInstanceList.add(appLovinBannerAd)
-
-        val yandexInstreamAd = InstreamAdManager(context)
-        yandexInstreamAd.loadInstreamAd()
-        interstitialAdInstanceList.add(yandexInstreamAd)
+        initializeInterstitialAdInstances()
+        initializeBannerAdInstances()
+        initializeInstreamAdInstances()
     }
 
-    fun showInstreamAd(): InstreamAd? {
-        for (ad in interstitialAdInstanceList) {
-            if (ad is InstreamAdManager && ad.isAdLoaded()) {
-                interstitialAdInstanceList.add(
-                    interstitialAdInstanceList.removeAt(
-                        interstitialAdInstanceList.indexOf(ad)
-                    )
-                )
-                val videoAd = ad.showVideoInstreamAd()
-               // ad.loadInstreamAd()
-                return videoAd
+    private fun initializeInstreamAdInstances() {
+        adInstancesList.add(YandexInstreamAd(context))
+        adInstancesList.forEach {
+            if (it is YandexInstreamAd){
+                it.loadInstreamAd()
             }
         }
-        return null
+    }
+
+    private fun initializeBannerAdInstances() {
+        adBannerIdList.forEach {
+            adInstancesList.add(YandexBannerAd(context, it))
+        }
+        adInstancesList.forEach {
+            if (it is YandexBannerAd){
+                it.loadBannerAd()
+            }
+        }
+    }
+
+    private fun initializeInterstitialAdInstances() {
+        adInterstitialIdList.forEach {
+            adInstancesList.add(YandexInterstitialAd(context, it))
+        }
+        adInstancesList.forEach {
+            if (it is YandexInterstitialAd){
+                it.loadInterAd()
+            }
+        }
     }
 
     fun showBannerAd(): BannerAdView? {
-        for (ad in interstitialAdInstanceList) {
-            if (ad is YandexBannerAd && ad.isAdLoaded()) {
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
-                val bannerAd = ad.showBannerAd()
-                ad.loadBannerAd()
-                return bannerAd
-            } else if (ad is MyTargetBannerAd && ad.isAdLoaded()) {
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
-                val bannerAd = ad.showBannerAd()
-                ad.loadBannerAd()
-                return bannerAd
-            } else if (ad is AppLovinBannerAd && ad.isAdLoaded()) {
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
-                val bannerAd = ad.showBannerAd()
-                ad.loadBannerAd()
-                return bannerAd
+        adInstancesList.forEach {
+            if (it is YandexBannerAd && it.isAdLoaded()){
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(it)
+                    )
+                )
+                return it.showBannerAd()
             }
         }
         return null
     }
+
     fun showInterAd(listener: AdShownListener) {
-        for (ad in interstitialAdInstanceList) {
-            if (ad is YandexInterAd && ad.isAdLoaded()) {
+        for (ad in adInstancesList) {
+            if (ad is YandexInterstitialAd && ad.isAdLoaded()){
                 ad.showInterAd(listener)
                 ad.loadInterAd()
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
-                break
-            } else if (ad is MyTargerInterAd && ad.isAdLoaded()) {
-                ad.showInterAd(listener)
-                ad.loadInterAd()
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
-                break
-            } else if (ad is AppLovinInterAd && ad.isAdLoaded()) {
-                ad.showInterAd(listener)
-                ad.loadInterAd()
-                interstitialAdInstanceList.add(interstitialAdInstanceList.removeAt(interstitialAdInstanceList.indexOf(ad)))
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
                 break
             }
         }
+    }
+
+    fun showInterOrInstreamAd(listener: AdShownListener): InstreamAd? {
+        adInstancesList.forEach {ad ->
+            if (ad is YandexInterstitialAd && ad.isAdLoaded()){
+                ad.showInterAd(listener)
+                ad.loadInterAd()
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
+                return null
+            } else if (ad is YandexInstreamAd && ad.isAdLoaded()){
+                adInstancesList.add(
+                    adInstancesList.removeAt(
+                        adInstancesList.indexOf(ad)
+                    )
+                )
+                return ad.getInstreamAd(listener)
+            }
+        }
+        return null
     }
 }

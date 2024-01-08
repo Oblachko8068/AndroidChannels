@@ -16,7 +16,7 @@ class ChannelRepositoryImpl @Inject constructor(
 ) : ChannelRepository {
 
     override fun getChannelListLiveData(): LiveData<List<Channel>> {
-        return channelDao.getChannelListAll().map { it.map{ it.toChannelDb()} }
+        return channelDao.getChannelListAll().map { channelDbEntityList -> channelDbEntityList.map{ it.toChannelDb()} }
     }
 }
 

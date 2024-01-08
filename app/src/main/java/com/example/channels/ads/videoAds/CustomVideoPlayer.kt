@@ -15,7 +15,7 @@ import com.yandex.mobile.ads.instream.player.ad.InstreamAdPlayer
 import com.yandex.mobile.ads.instream.player.ad.InstreamAdPlayerListener
 import com.yandex.mobile.ads.video.playback.model.VideoAd
 
-class MediaSourceCreator(
+/*class MediaSourceCreator(
     private val context: Context,
 ) {
     @SuppressLint("UnsafeOptInUsageError")
@@ -278,4 +278,4 @@ class CustomInstreamAdPlayer(
     private companion object {
         private const val DEFAULT_VOLUME = 0f
     }
-}
+}*/
