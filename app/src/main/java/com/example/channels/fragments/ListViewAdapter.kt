@@ -21,7 +21,7 @@ class ListViewAdapter(
         val inflater: LayoutInflater = LayoutInflater.from(context)
         val binding = ListViewItemBinding.inflate(inflater)
         binding.listItemText.text =
-            if (qualityArray[position] == -1) "AUTO" else "${qualityArray[position]}p"
+            if (qualityArray[position] == autoQualityId) "AUTO" else "${qualityArray[position]}p"
 
         if (qualityArray[position] == currentResolution) {
             binding.listItemText.setBackgroundResource(R.color.played_video)
@@ -29,10 +29,7 @@ class ListViewAdapter(
         } else {
             binding.listItemText.setBackgroundResource(R.color.text_dark)
             binding.listItemText.setTextColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.unplayed_video_text_color
-                )
+                ContextCompat.getColor(context, R.color.unplayed_video_text_color)
             )
         }
 

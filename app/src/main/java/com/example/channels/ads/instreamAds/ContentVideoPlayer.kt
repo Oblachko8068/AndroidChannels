@@ -10,14 +10,14 @@ import androidx.media3.datasource.DefaultDataSourceFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.PlayerView
-import com.example.channels.fragments.InsteamAdClose
+import com.example.channels.fragments.InstreamAdClose
 import com.yandex.mobile.ads.instream.player.content.VideoPlayer
 import com.yandex.mobile.ads.instream.player.content.VideoPlayerListener
 
 class ContentVideoPlayer(
     private val videoUrl: String,
     private val exoPlayerView: PlayerView,
-    private val param: InsteamAdClose,
+    private val param: InstreamAdClose,
 ) : VideoPlayer, SamplePlayer {
 
     private val context = exoPlayerView.context

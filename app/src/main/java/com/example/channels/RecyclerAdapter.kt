@@ -91,25 +91,13 @@ class RecyclerAdapter(
             binding.channelName.text = channelItem.name
             binding.channelDesc.text = epgItem.title
             binding.iconFav.setImageResource(R.drawable.baseline_star_24)
-            if (isFavorite) {
-                binding.iconFav.setColorFilter(
-                    ContextCompat.getColor(context, R.color.icon_enable)
-                )
-            } else {
-                binding.iconFav.setColorFilter(
-                    ContextCompat.getColor(context, R.color.icon_disable)
-                )
-            }
+            binding.iconFav.setColorFilter(
+                ContextCompat.getColor(context, if (isFavorite) R.color.icon_enable else R.color.icon_disable)
+            )
             binding.iconFav.setOnClickListener {
-                if (isFavorite) {
-                    binding.iconFav.setColorFilter(
-                        ContextCompat.getColor(context, R.color.icon_disable)
-                    )
-                } else {
-                    binding.iconFav.setColorFilter(
-                        ContextCompat.getColor(context, R.color.icon_enable)
-                    )
-                }
+                binding.iconFav.setColorFilter(
+                    ContextCompat.getColor(context, if (isFavorite) R.color.icon_disable else R.color.icon_enable)
+                )
                 itemClickListener.onFavoriteClicked(channelItem)
             }
         }
@@ -121,12 +109,9 @@ class RecyclerAdapter(
         val channelItem = channels[position]
         val epg = epg.find { it.channelID == channelItem.id }
         val channelExistsInFavList = favoriteChannel.any { it.channelId == channelItem.id }
-        if (epg != null) {
-            holder.bind(channelItem, epg, channelExistsInFavList, context)
-        }
-
+        epg?.let { holder.bind(channelItem, epg, channelExistsInFavList, context) }
         holder.itemView.setOnClickListener {
-            if (epg != null) {
+            epg?.let {
                 itemClickListener.onChannelItemClicked(channelItem, epg)
             }
         }

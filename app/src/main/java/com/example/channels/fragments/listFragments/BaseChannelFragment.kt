@@ -62,7 +62,10 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
 
         val favoriteChannelLiveData = channelViewModel.getFavoriteChannelLiveData()
         favoriteChannelLiveData.observe(viewLifecycleOwner) {
-            adapter?.updateFavoriteChannelList(channelViewModel.getChannelList(this is FavoritesFragment), it)
+            adapter?.updateFavoriteChannelList(
+                channelViewModel.getChannelList(this is FavoritesFragment),
+                it
+            )
         }
 
         searchTextLiveData.observe(viewLifecycleOwner) {

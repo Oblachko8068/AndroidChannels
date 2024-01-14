@@ -89,7 +89,6 @@ class ChannelViewModel @Inject constructor(
     companion object {
         private val _searchTextLiveData = MutableLiveData<String>()
         val searchTextLiveData: LiveData<String> = _searchTextLiveData
-
         fun setSearchText(searchText: String) {
             _searchTextLiveData.value = searchText
         }

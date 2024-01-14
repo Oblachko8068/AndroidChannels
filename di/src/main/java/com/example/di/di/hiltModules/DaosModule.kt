@@ -19,25 +19,19 @@ class DaosModule {
 
     @Provides
     @Singleton
-    fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase {
-        return Room.databaseBuilder(appContext, AppDatabase::class.java, "database.db").build()
-    }
+    fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase =
+        Room.databaseBuilder(appContext, AppDatabase::class.java, "database.db").build()
 
     @Provides
     @Singleton
-    fun provideEpgDao(appDatabase: AppDatabase): EpgDao {
-        return appDatabase.getEpgDao()
-    }
+    fun provideEpgDao(appDatabase: AppDatabase): EpgDao = appDatabase.getEpgDao()
 
     @Provides
     @Singleton
-    fun provideChannelDao(appDatabase: AppDatabase): ChannelDao {
-        return appDatabase.getChannelDao()
-    }
+    fun provideChannelDao(appDatabase: AppDatabase): ChannelDao = appDatabase.getChannelDao()
 
     @Provides
     @Singleton
-    fun provideFavoriteChannelDao(appDatabase: AppDatabase): FavoriteChannelDao {
-        return appDatabase.getFavoriteChannelDao()
-    }
+    fun provideFavoriteChannelDao(appDatabase: AppDatabase): FavoriteChannelDao =
+        appDatabase.getFavoriteChannelDao()
 }

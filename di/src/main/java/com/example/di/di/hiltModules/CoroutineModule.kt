@@ -17,11 +17,10 @@ class CoroutineModule {
 
     @Provides
     @Singleton
-    fun provideCoroutineExceptionHandler(): CoroutineExceptionHandler {
-        return CoroutineExceptionHandler { _, throwable ->
+    fun provideCoroutineExceptionHandler(): CoroutineExceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
             Log.e("Ошибка в загрузке", "Coroutine exception: ${throwable.message}")
         }
-    }
 
     @Provides
     @Singleton
@@ -29,7 +28,6 @@ class CoroutineModule {
 
     @Provides
     @Singleton
-    fun provideCoroutineContext(): CoroutineContext {
-        return provideCoroutineExceptionHandler() + provideIODispatcher()
-    }
+    fun provideCoroutineContext(): CoroutineContext =
+        provideCoroutineExceptionHandler() + provideIODispatcher()
 }

@@ -10,11 +10,9 @@ class EpgRepositoryImpl @Inject constructor(
     private val epgDao: EpgDao
 ) : com.example.domain.repository.EpgRepository {
 
-    override fun getEpgListLiveData(): LiveData<List<Epg>> {
-        return epgDao.getEpgListAll().map { epgDbEntityList -> epgDbEntityList.map { it.toEpgDb() } }
-    }
+    override fun getEpgListLiveData(): LiveData<List<Epg>> =
+        epgDao.getEpgListAll().map { epgDbEntityList -> epgDbEntityList.map { it.toEpgDb() } }
 
-    override fun getCurrentEpgByChannelId(channelID: Int): LiveData<Epg> {
-        return epgDao.getEpgByChannelID(channelID).map { it.toEpgDb() }
-    }
+    override fun getCurrentEpgByChannelId(channelID: Int): LiveData<Epg> =
+        epgDao.getEpgByChannelID(channelID).map { it.toEpgDb() }
 }
