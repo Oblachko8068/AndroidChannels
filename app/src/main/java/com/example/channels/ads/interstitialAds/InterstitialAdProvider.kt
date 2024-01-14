@@ -9,4 +9,5 @@ interface InterstitialAdProvider {
     fun isAdLoaded(): Boolean
 
     fun showInterAd(listener: AdShownListener)
+
 }

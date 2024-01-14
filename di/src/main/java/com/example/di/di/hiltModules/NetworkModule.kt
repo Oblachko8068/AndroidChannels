@@ -24,9 +24,9 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl("https://api.jsonserve.com/") // Базовый URL API
+        .baseUrl("https://api.jsonserve.com/")
         .client(client)
-        .addConverterFactory(GsonConverterFactory.create()) // Конвертер JSON
+        .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     private fun createInterceptor(): Interceptor {

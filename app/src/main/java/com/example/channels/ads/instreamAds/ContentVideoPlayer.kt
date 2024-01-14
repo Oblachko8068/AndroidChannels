@@ -97,17 +97,11 @@ class ContentVideoPlayer(
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
-            if (isPlaying) {
-                videoPlayerListener?.onVideoResumed()
-            } else {
-                videoPlayerListener?.onVideoPaused()
-            }
+            if (isPlaying) videoPlayerListener?.onVideoResumed() else videoPlayerListener?.onVideoPaused()
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
-            if (playbackState == Player.STATE_ENDED) {
-                onVideoCompleted()
-            }
+            if (playbackState == Player.STATE_ENDED) onVideoCompleted()
         }
 
         private fun onVideoCompleted() {
@@ -116,7 +110,6 @@ class ContentVideoPlayer(
     }
 
     private inner class ContentPlayerPrepareListener : Player.Listener {
-
         override fun onPlaybackStateChanged(playbackState: Int) {
             if (playbackState == Player.STATE_READY) {
                 videoPlayerListener?.onVideoPrepared()

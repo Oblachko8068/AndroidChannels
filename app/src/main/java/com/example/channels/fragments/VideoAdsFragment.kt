@@ -14,6 +14,7 @@ import com.yandex.mobile.ads.instream.InstreamAd
 import com.yandex.mobile.ads.instream.InstreamAdBinder
 
 interface InstreamAdClose {
+
     fun instreamAdCloseGoBack()
 }
 

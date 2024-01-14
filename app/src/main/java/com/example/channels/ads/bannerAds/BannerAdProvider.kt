@@ -9,4 +9,5 @@ interface BannerAdProvider {
     fun showBannerAd(): BannerAdView?
 
     fun isAdLoaded(): Boolean
+
 }

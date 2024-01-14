@@ -21,7 +21,9 @@ class RecyclerAdapter(
 ) : RecyclerView.Adapter<RecyclerAdapter.ChannelViewHolder>() {
 
     interface OnChannelItemClickListener {
+
         fun onChannelItemClicked(channel: Channel, epg: Epg)
+
         fun onFavoriteClicked(channel: Channel)
     }
 
@@ -36,18 +38,13 @@ class RecyclerAdapter(
 
         override fun getNewListSize(): Int = newChannelList.size
 
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldItem = oldChannelList[oldItemPosition]
-            val newItem = newChannelList[newItemPosition]
-            return oldItem.javaClass == newItem.javaClass
-        }
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            oldChannelList[oldItemPosition].javaClass == newChannelList[newItemPosition].javaClass
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldItem = oldChannelList[oldItemPosition]
-            val newItem = newChannelList[newItemPosition]
-            val oldFavorite = oldFavoriteChannelList.any { it.channelId == oldItem.id }
-            val newFavorite = newFavoriteChannelList.any { it.channelId == newItem.id }
-            return oldItem.hashCode() == newItem.hashCode() && oldFavorite == newFavorite
+            val oldFavorite = oldFavoriteChannelList.any { it.channelId == oldChannelList[oldItemPosition].id }
+            val newFavorite = newFavoriteChannelList.any { it.channelId == newChannelList[newItemPosition].id }
+            return oldChannelList[oldItemPosition].hashCode() == newChannelList[newItemPosition].hashCode() && oldFavorite == newFavorite
         }
     }
 
@@ -84,6 +81,7 @@ class RecyclerAdapter(
         private val binding: ChannelBlockBinding,
         private val itemClickListener: OnChannelItemClickListener,
     ) : RecyclerView.ViewHolder(binding.root) {
+
         fun bind(channelItem: Channel, epgItem: Epg, isFavorite: Boolean, context: Context) {
             Glide.with(context)
                 .load(channelItem.image)

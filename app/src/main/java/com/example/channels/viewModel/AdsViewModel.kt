@@ -21,4 +21,5 @@ class AdsViewModel : ViewModel() {
         adsManager.showInterOrInstreamAd(listener)
 
     fun showBannerAd(): BannerAdView? = adsManager.showBannerAd()
+
 }
