@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_of_fragments"
+    tools:context=".fragments.radioPlayer.RadioPlayerFragment">
+
+    <ImageButton
+        android:id="@+id/backToMain"
+        android:layout_width="40dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:background="@null"
+        android:src="@drawable/img_back" />
+
+    <ImageButton
+        android:id="@+id/startStopButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerInParent="true"
+        android:background="#000000"
+        android:scaleType="fitXY"
+        android:src="@android:drawable/ic_media_play" />
+</RelativeLayout>

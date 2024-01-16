@@ -1,5 +1,6 @@
 package com.example.channels.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +8,11 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.example.channels.R
 import com.example.channels.databinding.FragmentMainBinding
 import com.example.channels.fragments.listFragments.FragmentAdapter
+import com.example.channels.fragments.radioPlayer.RadioPlayerFragment
+import com.example.channels.fragments.radioPlayer.RadioPlayerService
 import com.example.channels.viewModel.AdsViewModel
 import com.example.channels.viewModel.ChannelViewModel
 import com.yandex.mobile.ads.banner.BannerAdView
@@ -32,7 +36,9 @@ class MainFragment : Fragment() {
         adsViewModel.initializeAdsManager(requireActivity().applicationContext)
 
         binding.crashButton.setOnClickListener {
-            throw RuntimeException("Test Crash")
+            val serviceIntent = Intent(requireContext(), RadioPlayerService::class.java)
+            requireContext().startService(serviceIntent)
+            launchFragment(RadioPlayerFragment())
         }
 
         //Поиск
@@ -58,5 +64,13 @@ class MainFragment : Fragment() {
             parent?.removeView(banner)
             binding.bannerAdView.addView(banner)
         }
+    }
+
+    private fun launchFragment(fragment: Fragment){
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .addToBackStack(null)
+            .replace(R.id.fragmentContainer, fragment)
+            .commitAllowingStateLoss()
     }
 }

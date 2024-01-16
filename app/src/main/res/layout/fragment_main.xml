@@ -28,9 +28,11 @@
 
     <Button
         android:id="@+id/crash_button"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:text="CrashButton"
+        android:layout_width="20dp"
+        android:layout_height="60dp"
+        android:backgroundTint="@color/background_of_stars_active"
+        android:text="R"
+        android:textColor="@color/background_of_stars"
         tools:ignore="MissingConstraints" />
     <!--Вкладки-->
 
