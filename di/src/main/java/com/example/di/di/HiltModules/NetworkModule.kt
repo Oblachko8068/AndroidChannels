@@ -15,24 +15,19 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
 
-    // Создание OkHttpClient с добавленным логгером
     @Provides
     @Singleton
-    fun provideClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(createInterceptor())
-            .build()
-    }
+    fun provideClient(): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(createInterceptor())
+        .build()
 
     @Provides
     @Singleton
-    fun provideRetrofit(client: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://api.jsonserve.com/") // Базовый URL API
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create()) // Конвертер JSON
-            .build()
-    }
+    fun provideRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl("https://api.jsonserve.com/")
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     private fun createInterceptor(): Interceptor {
         val interceptor = HttpLoggingInterceptor()

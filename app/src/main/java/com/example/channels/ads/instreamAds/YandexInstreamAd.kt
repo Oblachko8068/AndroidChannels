@@ -9,18 +9,18 @@ import com.yandex.mobile.ads.instream.InstreamAdLoadListener
 import com.yandex.mobile.ads.instream.InstreamAdLoader
 import com.yandex.mobile.ads.instream.InstreamAdRequestConfiguration
 
+const val PAGE_ID = "demo-instream-vmap-yandex"
+
 class YandexInstreamAd(private val context: Context) {
 
     private var instreamAdLoader: InstreamAdLoader? = null
     private val eventLogger = InstreamAdEventLogger()
-    private val PAGE_ID = "demo-instream-vmap-yandex"
     private var instreamAd: InstreamAd ?= null
     private var instreamAdListener: AdShownListener ?= null
 
     fun loadInstreamAd() {
         instreamAdLoader = InstreamAdLoader(context)
         instreamAdLoader?.setInstreamAdLoadListener(eventLogger)
-
         val configuration = InstreamAdRequestConfiguration.Builder(PAGE_ID).build()
         instreamAdLoader?.loadInstreamAd(context, configuration)
     }
@@ -28,26 +28,26 @@ class YandexInstreamAd(private val context: Context) {
     inner class InstreamAdEventLogger : InstreamAdLoadListener, InstreamAdListener {
 
         override fun onInstreamAdLoaded(ad: InstreamAd) {
-            Log.e("Zaebal", "Instream ad loaded")
+            Log.e("InstreamAd", "Instream ad loaded")
             instreamAd = ad
         }
 
         override fun onInstreamAdFailedToLoad(error: String) {
-            Log.e("Zaebal", "Instream ad failed to load")
+            Log.e("InstreamAd", "Instream ad failed to load")
             instreamAdListener?.onAdLoadedAndShown()
         }
 
         override fun onInstreamAdCompleted() {
-            Log.e("Zaebal", "Instream ad completed")
+            Log.e("InstreamAd", "Instream ad completed")
             instreamAdListener?.onAdLoadedAndShown()
         }
 
         override fun onInstreamAdPrepared() {
-            Log.e("Zaebal", "Instream ad prepared")
+            Log.e("InstreamAd", "Instream ad prepared")
         }
 
         override fun onError(error: String) {
-            Log.e("Zaebal", "Instream ad error:")
+            Log.e("InstreamAd", "Instream ad error:")
             instreamAdListener?.onAdLoadedAndShown()
         }
     }

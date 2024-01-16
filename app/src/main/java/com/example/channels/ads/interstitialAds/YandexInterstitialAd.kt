@@ -12,8 +12,10 @@ import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 
-class YandexInterstitialAd(private val context: Context, private val adUnitId: String)
-    : InterstitialAdProvider {
+class YandexInterstitialAd(
+    private val context: Context,
+    private val adUnitId: String
+) : InterstitialAdProvider {
 
     private var interstitialAd: InterstitialAd? = null
 
@@ -51,11 +53,9 @@ class YandexInterstitialAd(private val context: Context, private val adUnitId: S
                     interstitialAd?.setAdEventListener(null)
                 }
 
-                override fun onAdClicked() {
-                }
+                override fun onAdClicked() {}
 
-                override fun onAdImpression(impressionData: ImpressionData?) {
-                }
+                override fun onAdImpression(impressionData: ImpressionData?) {}
             })
         }?.show(context as Activity)
     }

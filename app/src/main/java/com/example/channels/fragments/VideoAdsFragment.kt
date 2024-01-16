@@ -1,7 +1,6 @@
 package com.example.channels.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,14 +12,9 @@ import com.example.channels.ads.instreamAds.SamplePlayer
 import com.example.channels.databinding.FragmentVideoAdsBinding
 import com.yandex.mobile.ads.instream.InstreamAd
 import com.yandex.mobile.ads.instream.InstreamAdBinder
-import com.yandex.mobile.ads.instream.InstreamAdListener
-import com.yandex.mobile.ads.instream.InstreamAdLoadListener
-import com.yandex.mobile.ads.instream.InstreamAdLoader
-import com.yandex.mobile.ads.instream.InstreamAdRequestConfiguration
-import com.yandex.mobile.ads.instream.player.content.VideoPlayer
-import com.yandex.mobile.ads.instream.player.content.VideoPlayerListener
 
-interface InsteamAdClose {
+interface InstreamAdClose {
+
     fun instreamAdCloseGoBack()
 }
 
@@ -45,7 +39,6 @@ class VideoAdsFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initPlayer()
         showInstreamAd()
     }
@@ -69,7 +62,6 @@ class VideoAdsFragment(
         instreamAdBinder?.unbind()
         instreamAdBinder?.invalidateAdPlayer()
         instreamAdBinder?.invalidateVideoPlayer()
-
         contentVideoPlayer?.release()
         instreamAdPlayer?.release()
         activePlayer = null
@@ -80,7 +72,7 @@ class VideoAdsFragment(
 
     private fun initPlayer(){
         val contentStreamUrl = getString(R.string.instream_content_url)
-        contentVideoPlayer = ContentVideoPlayer(contentStreamUrl, binding.adPlayerView, object : InsteamAdClose{
+        contentVideoPlayer = ContentVideoPlayer(contentStreamUrl, binding.adPlayerView, object : InstreamAdClose{
             override fun instreamAdCloseGoBack() {
                 back()
             }

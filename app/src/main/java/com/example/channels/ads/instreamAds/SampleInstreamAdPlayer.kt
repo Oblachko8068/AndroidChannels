@@ -1,6 +1,5 @@
 package com.example.channels.ads.instreamAds
 
-import android.util.Log
 import androidx.media3.ui.PlayerView
 import com.yandex.mobile.ads.instream.player.ad.InstreamAdPlayer
 import com.yandex.mobile.ads.instream.player.ad.InstreamAdPlayerListener
@@ -11,7 +10,6 @@ class SampleInstreamAdPlayer(
 ) : InstreamAdPlayer, SamplePlayer {
 
     private val adPlayers = mutableMapOf<VideoAd, SampleVideoAdPlayer>()
-
     private var currentVideoAd: VideoAd? = null
     private var adPlayerListener: InstreamAdPlayerListener? = null
 
@@ -21,7 +19,6 @@ class SampleInstreamAdPlayer(
     }
 
     override fun prepareAd(videoAd: VideoAd) {
-        Log.e("Zaebal", "Расходимся, дед мороз принял ислам")
         val videoAdPlayer = SampleVideoAdPlayer(videoAd, exoPlayerView)
         adPlayers[videoAd] = videoAdPlayer
 
@@ -54,32 +51,20 @@ class SampleInstreamAdPlayer(
         adPlayers[videoAd]?.setVolume(volume)
     }
 
-    override fun getVolume(videoAd: VideoAd): Float {
-        return adPlayers[videoAd]?.getVolume() ?: DEFAULT_VOLUME
-    }
+    override fun getVolume(videoAd: VideoAd): Float = adPlayers[videoAd]?.getVolume() ?: DEFAULT_VOLUME
 
-    override fun getAdDuration(videoAd: VideoAd): Long {
-        return adPlayers[videoAd]?.adDuration ?: 0
-    }
+    override fun getAdDuration(videoAd: VideoAd): Long = adPlayers[videoAd]?.adDuration ?: 0
 
-    override fun getAdPosition(videoAd: VideoAd): Long {
-        return adPlayers[videoAd]?.adPosition ?: 0
-    }
+    override fun getAdPosition(videoAd: VideoAd): Long = adPlayers[videoAd]?.adPosition ?: 0
 
-    override fun isPlayingAd(videoAd: VideoAd): Boolean {
-        return adPlayers[videoAd]?.isPlayingAd ?: false
-    }
+    override fun isPlayingAd(videoAd: VideoAd): Boolean = adPlayers[videoAd]?.isPlayingAd ?: false
 
     override fun releaseAd(videoAd: VideoAd) {
-        if(videoAd == currentVideoAd) {
-            currentVideoAd = null
-        }
-
+        if (videoAd == currentVideoAd) currentVideoAd = null
         adPlayers[videoAd]?.let { videoAdPlayer ->
             videoAdPlayer.setInstreamAdPlayerListener(null)
             videoAdPlayer.releaseAd()
         }
-
         adPlayers.remove(videoAd)
     }
 
@@ -88,9 +73,7 @@ class SampleInstreamAdPlayer(
         currentVideoAd = null
     }
 
-    override fun isPlaying(): Boolean {
-        return adPlayers[currentVideoAd]?.isPlayingAd ?: false
-    }
+    override fun isPlaying(): Boolean = adPlayers[currentVideoAd]?.isPlayingAd ?: false
 
     override fun resume() {
         adPlayers[currentVideoAd]?.resumeAd()

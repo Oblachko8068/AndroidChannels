@@ -27,7 +27,7 @@
         app:queryHint="Напишите название телеканала" />
 
     <Button
-        android:id="@+id/CrashButton"
+        android:id="@+id/crash_button"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:text="CrashButton"
@@ -53,7 +53,7 @@
         tools:ignore="MissingConstraints" />
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpagerForTabs"
+        android:id="@+id/view_pager_for_tabs"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/background_of_fragments"
@@ -68,7 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background_of_fragments"
-        app:layout_constraintTop_toBottomOf="@+id/viewpagerForTabs"
+        app:layout_constraintTop_toBottomOf="@+id/view_pager_for_tabs"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

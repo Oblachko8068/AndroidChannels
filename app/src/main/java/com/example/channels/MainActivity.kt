@@ -11,11 +11,9 @@ import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.fragments.ExoPlayerFragment
 import com.example.channels.fragments.MainFragment
 import com.example.channels.fragments.Navigator
-import com.example.channels.fragments.SET_RESULT
 import com.example.channels.fragments.VideoAdsFragment
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
-import com.yandex.mobile.ads.instream.InstreamAd
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,19 +37,14 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?) {
-        /*adsViewModel.showInterstitialAd(object : AdShownListener {
-            override fun onAdLoadedAndShown() {
-                launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
-            }
-        })*/
         val listener = object : AdShownListener {
             override fun onAdLoadedAndShown() {
                 launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
             }
         }
-        val pp = adsViewModel.showInterOrInstreamAd(listener)
-        if (pp != null){
-            launchFragment(VideoAdsFragment(pp))
+        val instreamAd = adsViewModel.showInterOrInstreamAd(listener)
+        if (instreamAd != null){
+            launchFragment(VideoAdsFragment(instreamAd))
         }
     }
 

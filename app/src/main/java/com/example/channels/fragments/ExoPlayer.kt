@@ -32,6 +32,8 @@ const val CHANNEL_EXO_DATA = "CHANNEL_EXO_DATA"
 const val EPG_DATA = "EPG_DATA"
 const val SET_RESULT = "SET_RESULT"
 const val hlsUri = "https://linear-143.frequency.stream/dist/localnow/143/hls/master/playlist.m3u8"
+const val trackType = 2
+const val autoQualityId = -1
 
 class ExoPlayerFragment : Fragment(), Player.Listener {
 
@@ -42,18 +44,16 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     private lateinit var player: ExoPlayer
     private var playbackState: Int = Player.STATE_IDLE
     private lateinit var videoTrackGroup: Tracks.Group
-    private var currentResolution = -1
+    private var currentResolution = autoQualityId
     private var tracksList = mutableListOf<Int>()
     private val playerListener = object : Player.Listener {
         override fun onTracksChanged(tracks: Tracks) {
             super.onTracksChanged(tracks)
             for (trackGroup in tracks.groups) {
-                if (trackGroup.type == 2) {
+                if (trackGroup.type == trackType) {
                     videoTrackGroup = trackGroup
                     for (i in 0 until trackGroup.length) {
-                        if (!tracksList.contains(trackGroup.getTrackFormat(i).width)) {
-                            tracksList.add(trackGroup.getTrackFormat(i).width)
-                        }
+                        trackGroup.getTrackFormat(i).width.takeUnless { it in tracksList }?.let { tracksList.add(it) }
                     }
                 }
             }
@@ -80,8 +80,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             val channelName = channel.name
             val channelDescription = epg?.title
             val channelIconResource = channel.image
-            val channelTimestart = epg?.timestart
-            val channelTimestop = epg?.timestop
             binding.activeChannelName.text = channelName
             binding.activeChannelDesc.text = "$channelDescription"
             context?.let {
@@ -96,17 +94,11 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         binding.container.setOnClickListener {
             if (player.isPlaying) {
                 coroutineScope.launch {
-                    if (visibilityView) {
-                        hidePlayerControls()
-                        visibilityView = false
-                    } else {
-                        showPlayerControls()
-                        visibilityView = true
-                    }
+                    visibilityView = if (visibilityView) hidePlayerControls().let { false }
+                    else showPlayerControls().let { true }
                 }
             }
         }
-
         binding.settings.setOnClickListener {
             val dialogFragment =
                 QualitySettingsFragment.newInstance(tracksList, currentResolution)
@@ -120,12 +112,12 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         }
         parentFragmentManager.setFragmentResultListener(SET_RESULT, viewLifecycleOwner) { _, res ->
             val result = res.getInt("quality")
-            if (result == -1) {
-                currentResolution = -1
+            if (result == autoQualityId) {
+                currentResolution = autoQualityId
                 autoQuality()
             } else {
                 currentResolution = result
-                updatePlayer(tracksList.indexOf(result))
+                updatePlayerQuality(tracksList.indexOf(result))
             }
         }
     }
@@ -141,9 +133,11 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         player = ExoPlayer.Builder(requireContext())
             .setTrackSelector(trackSelector)
             .build()
-        player.setMediaSource(hlsMediaSource)
-        player.addListener(playerListener)
-        player.prepare()
+        player.apply {
+            setMediaSource(hlsMediaSource)
+            addListener(playerListener)
+            prepare()
+        }
         binding.exoplayerView.player = player
         player.play()
     }
@@ -156,14 +150,10 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private fun updatePlayer(index: Int) {
+    private fun updatePlayerQuality(index: Int) {
         player.trackSelectionParameters = player.trackSelectionParameters
             .buildUpon()
-            .setOverrideForType(
-                TrackSelectionOverride(
-                    videoTrackGroup.mediaTrackGroup, index
-                )
-            )
+            .setOverrideForType(TrackSelectionOverride(videoTrackGroup.mediaTrackGroup, index))
             .build()
     }
 
@@ -188,11 +178,13 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     }
 
     private fun clearPlayer() {
-        player.stop()
-        player.removeListener(playerListener)
-        player.clearMediaItems()
-        player.clearVideoSurface()
-        player.release()
+        player.apply {
+            stop()
+            removeListener(playerListener)
+            clearMediaItems()
+            clearVideoSurface()
+            release()
+        }
     }
 
     private fun hideSystemUi() {

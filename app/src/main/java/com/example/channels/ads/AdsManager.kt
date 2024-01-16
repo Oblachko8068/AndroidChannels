@@ -26,62 +26,31 @@ class AdsManager(val context: Context) {
 
     private fun initializeInstreamAdInstances() {
         adInstancesList.add(YandexInstreamAd(context))
-        adInstancesList.forEach {
-            if (it is YandexInstreamAd){
-                it.loadInstreamAd()
-            }
-        }
+        adInstancesList.filterIsInstance<YandexInstreamAd>().forEach { it.loadInstreamAd() }
     }
 
     private fun initializeBannerAdInstances() {
         adBannerIdList.forEach {
             adInstancesList.add(YandexBannerAd(context, it))
         }
-        adInstancesList.forEach {
-            if (it is YandexBannerAd){
-                it.loadBannerAd()
-            }
-        }
+        adInstancesList.filterIsInstance<YandexBannerAd>().forEach { it.loadBannerAd() }
     }
 
     private fun initializeInterstitialAdInstances() {
         adInterstitialIdList.forEach {
             adInstancesList.add(YandexInterstitialAd(context, it))
         }
-        adInstancesList.forEach {
-            if (it is YandexInterstitialAd){
-                it.loadInterAd()
-            }
-        }
+        adInstancesList.filterIsInstance<YandexInterstitialAd>().forEach { it.loadInterAd() }
     }
 
     fun showBannerAd(): BannerAdView? {
         adInstancesList.forEach {
             if (it is YandexBannerAd && it.isAdLoaded()){
-                adInstancesList.add(
-                    adInstancesList.removeAt(
-                        adInstancesList.indexOf(it)
-                    )
-                )
+                updateInstancesList(it)
                 return it.showBannerAd()
             }
         }
         return null
-    }
-
-    fun showInterAd(listener: AdShownListener) {
-        for (ad in adInstancesList) {
-            if (ad is YandexInterstitialAd && ad.isAdLoaded()){
-                ad.showInterAd(listener)
-                ad.loadInterAd()
-                adInstancesList.add(
-                    adInstancesList.removeAt(
-                        adInstancesList.indexOf(ad)
-                    )
-                )
-                break
-            }
-        }
     }
 
     fun showInterOrInstreamAd(listener: AdShownListener): InstreamAd? {
@@ -89,21 +58,21 @@ class AdsManager(val context: Context) {
             if (ad is YandexInterstitialAd && ad.isAdLoaded()){
                 ad.showInterAd(listener)
                 ad.loadInterAd()
-                adInstancesList.add(
-                    adInstancesList.removeAt(
-                        adInstancesList.indexOf(ad)
-                    )
-                )
+                updateInstancesList(ad)
                 return null
             } else if (ad is YandexInstreamAd && ad.isAdLoaded()){
-                adInstancesList.add(
-                    adInstancesList.removeAt(
-                        adInstancesList.indexOf(ad)
-                    )
-                )
+                updateInstancesList(ad)
                 return ad.getInstreamAd(listener)
             }
         }
         return null
+    }
+
+    private fun updateInstancesList(ad: Any){
+        adInstancesList.add(
+            adInstancesList.removeAt(
+                adInstancesList.indexOf(ad)
+            )
+        )
     }
 }

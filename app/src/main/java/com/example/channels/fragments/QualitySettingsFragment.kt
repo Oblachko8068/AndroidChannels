@@ -14,6 +14,8 @@ import com.example.channels.databinding.FragmentQualitySettingsBinding
 
 const val QUALITY_LIST_KEY = "QUALITY_LIST_KEY"
 const val CURRENT_RESOLUTION_KEY = "CURRENT_RESOLUTION_KEY"
+const val xLocation = 15
+const val yLocation = 115
 
 class QualitySettingsFragment : DialogFragment() {
 
@@ -26,8 +28,8 @@ class QualitySettingsFragment : DialogFragment() {
     ): View {
         val location = WindowManager.LayoutParams()
         location.gravity = Gravity.BOTTOM or Gravity.END
-        location.x = 15
-        location.y = 115
+        location.x = xLocation
+        location.y = yLocation
         dialog!!.window?.attributes = location
         binding = FragmentQualitySettingsBinding.inflate(inflater, container, false)
         return binding.root
@@ -39,7 +41,7 @@ class QualitySettingsFragment : DialogFragment() {
         val qualityList = arguments?.getIntegerArrayList(QUALITY_LIST_KEY)
         val currentResolution = arguments?.getInt(CURRENT_RESOLUTION_KEY)
         var qualityArray = qualityList?.toTypedArray()
-        qualityArray = qualityArray?.plus(-1)
+        qualityArray = qualityArray?.plus(autoQualityId)
 
         binding.qualityListView.adapter =
             qualityArray?.let { ListViewAdapter(requireContext(), it, currentResolution) }

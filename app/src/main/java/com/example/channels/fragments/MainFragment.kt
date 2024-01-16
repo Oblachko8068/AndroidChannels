@@ -7,11 +7,10 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.example.channels.databinding.FragmentMainBinding
+import com.example.channels.fragments.listFragments.FragmentAdapter
 import com.example.channels.viewModel.AdsViewModel
 import com.example.channels.viewModel.ChannelViewModel
-import com.example.channels.databinding.FragmentMainBinding
-import com.example.channels.fragments.listFragments.FavoritesFragment
-import com.example.channels.fragments.listFragments.FragmentAdapter
 import com.yandex.mobile.ads.banner.BannerAdView
 
 class MainFragment : Fragment() {
@@ -32,16 +31,13 @@ class MainFragment : Fragment() {
         val adsViewModel: AdsViewModel by activityViewModels()
         adsViewModel.initializeAdsManager(requireActivity().applicationContext)
 
-        binding.CrashButton.setOnClickListener {
-            throw RuntimeException("Test Crash") // Force a crash
+        binding.crashButton.setOnClickListener {
+            throw RuntimeException("Test Crash")
         }
 
         //Поиск
-        binding.searchViewTvChannels.setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        binding.searchViewTvChannels.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 ChannelViewModel.setSearchText(newText.orEmpty())
@@ -51,13 +47,13 @@ class MainFragment : Fragment() {
 
         //Вкладки
         val fragmentAdapter = FragmentAdapter(childFragmentManager)
-        binding.viewpagerForTabs.adapter = fragmentAdapter
-        binding.tabs.setupWithViewPager(binding.viewpagerForTabs)
+        binding.viewPagerForTabs.adapter = fragmentAdapter
+        binding.tabs.setupWithViewPager(binding.viewPagerForTabs)
 
         //Реклама
         binding.bannerAdView.removeAllViewsInLayout()
         val banner: BannerAdView? = adsViewModel.showBannerAd()
-        if (banner != null) {
+        banner?.let {
             val parent = banner.parent as? ViewGroup
             parent?.removeView(banner)
             binding.bannerAdView.addView(banner)

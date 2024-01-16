@@ -15,22 +15,19 @@ class FavoriteChannelsRepositoryImpl @Inject constructor(
     private val favoriteChannelDao: FavoriteChannelDao
 ) : FavoriteChannelsRepository {
 
-    override fun getFavoriteChannelListLiveData(): LiveData<List<FavoriteChannel>> {
-        return favoriteChannelDao.getAllFavoriteChannelList()
+    override fun getFavoriteChannelListLiveData(): LiveData<List<FavoriteChannel>> =
+        favoriteChannelDao.getAllFavoriteChannelList()
             .map { favoriteChannelDbEntities -> favoriteChannelDbEntities.map { it.toFavoriteChannelDb() } }
-    }
 
     override fun addChannelFromFavoriteChannels(channelId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            val favoriteChannelDbEntity = FavoriteChannelDbEntity(channelId)
-            favoriteChannelDao.createFavoriteChannels(favoriteChannelDbEntity)
+            favoriteChannelDao.createFavoriteChannels(FavoriteChannelDbEntity(channelId))
         }
     }
 
     override fun removeChannelFromFavoriteChannels(channelId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            val favoriteChannelDbEntity = FavoriteChannelDbEntity(channelId)
-            favoriteChannelDao.deleteFavoriteChannel(favoriteChannelDbEntity)
+            favoriteChannelDao.deleteFavoriteChannel(FavoriteChannelDbEntity(channelId))
         }
     }
 }

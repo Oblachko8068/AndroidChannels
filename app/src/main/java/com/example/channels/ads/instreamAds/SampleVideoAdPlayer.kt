@@ -20,13 +20,10 @@ class SampleVideoAdPlayer(
 ) {
 
     private val context = exoPlayerView.context
-
     private val adPlayer = ExoPlayer.Builder(context).build().apply {
         addListener(ExoPlayerEventsListener())
     }
-
     private var adPlayerListener: InstreamAdPlayerListener? = null
-
 
     val adDuration: Long
         get() = adPlayer.duration
@@ -37,10 +34,8 @@ class SampleVideoAdPlayer(
     val isPlayingAd: Boolean
         get() = adPlayer.isPlaying
 
-
     @SuppressLint("UnsafeOptInUsageError")
     fun prepareAd() {
-        Log.e("Zaebal", "Нового года не будет")
         val streamUrl = videoAd.mediaFile.url
         val userAgent = Util.getUserAgent(context, context.packageName)
         val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory().setUserAgent(userAgent)
@@ -91,10 +86,6 @@ class SampleVideoAdPlayer(
         adPlayerListener = instreamAdPlayerListener
     }
 
-    fun onDestroy() {
-        adPlayer.release()
-    }
-
     private inner class ExoPlayerEventsListener : Player.Listener {
 
         private var adStarted = false
@@ -102,19 +93,11 @@ class SampleVideoAdPlayer(
         private var bufferingInProgress = false
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
-            if (isPlaying) {
-                onResumePlayback()
-            } else {
-                onPausePlayback()
-            }
+            if (isPlaying) onResumePlayback() else onPausePlayback()
         }
 
         private fun onResumePlayback() {
-            if (adStarted) {
-                adPlayerListener?.onAdResumed(videoAd)
-            } else {
-                adPlayerListener?.onAdStarted(videoAd)
-            }
+            if (adStarted) adPlayerListener?.onAdResumed(videoAd) else adPlayerListener?.onAdStarted(videoAd)
             adStarted = true
         }
 
@@ -125,12 +108,8 @@ class SampleVideoAdPlayer(
         override fun onPlaybackStateChanged(playbackState: Int) {
             when (playbackState) {
                 Player.STATE_READY -> {
-                    if (adPrepared.not()) {
-                        onAdPrepared()
-                    }
-                    if (bufferingInProgress) {
-                        onAdBufferingFinished()
-                    }
+                    if (adPrepared.not()) onAdPrepared()
+                    if (bufferingInProgress) onAdBufferingFinished()
                 }
                 Player.STATE_BUFFERING -> onAdBufferingStarted()
                 Player.STATE_ENDED -> onEndedState()
@@ -158,7 +137,6 @@ class SampleVideoAdPlayer(
 
         override fun onPlayerError(error: PlaybackException) {
             resetState()
-
         }
 
         fun resetState() {

@@ -6,7 +6,6 @@ import com.example.data.model.fromChannelJsonToEpgDbEntity
 import com.example.data.network.ChannelsApi
 import com.example.data.room.ChannelDao
 import com.example.data.room.EpgDao
-import com.example.data.room.FavoriteChannelDao
 import com.example.domain.repository.DownloadRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
