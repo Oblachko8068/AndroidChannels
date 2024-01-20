@@ -1,4 +1,4 @@
-package com.example.channels.fragments.radioPlayer
+package com.example.channels.radioPlayer
 
 import android.annotation.SuppressLint
 import android.content.ComponentName

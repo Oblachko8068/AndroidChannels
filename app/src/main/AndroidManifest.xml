@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".fragments.radioPlayer.RadioPlayerService"
+            android:name=".radioPlayer.RadioPlayerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaLibraryService" />

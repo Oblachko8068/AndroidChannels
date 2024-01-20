@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_of_fragments"
-    tools:context=".fragments.radioPlayer.RadioPlayerFragment">
+    tools:context=".radioPlayer.RadioPlayerFragment">
 
     <ImageButton
         android:id="@+id/backToMain"

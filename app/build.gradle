@@ -47,6 +47,8 @@ android {
 
 
 dependencies {
+    implementation("com.mikepenz:materialdrawer:7.0.0")
+    implementation ("com.mikepenz:materialdrawer-nav:7.0.0")
     //реклама
     implementation 'com.yandex.android:mobileads:6.3.0'
     implementation 'com.yandex.ads.mediation:mobileads-mytarget:5.19.0.1'
