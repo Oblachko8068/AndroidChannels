@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.channels.R
 import com.example.channels.databinding.FragmentRadioplayerBinding
 import com.example.channels.fragments.navigator
 
@@ -58,10 +59,10 @@ class RadioPlayerFragment : Fragment() {
         radioPlayerService?.let {
             if (it.isPlaying) {
                 it.pausePlayer()
-                binding.startStopButton.setImageResource(android.R.drawable.ic_media_play)
+                binding.startStopButton.setImageResource(R.drawable.radio_play_button)
             } else {
                 it.startPlayer()
-                binding.startStopButton.setImageResource(android.R.drawable.ic_media_pause)
+                binding.startStopButton.setImageResource(R.drawable.radio_pause_button)
             }
         }
     }

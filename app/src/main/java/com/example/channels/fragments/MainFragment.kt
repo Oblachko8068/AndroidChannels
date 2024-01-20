@@ -1,6 +1,5 @@
 package com.example.channels.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,11 +10,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.channels.AppDrawer
-import com.example.channels.R
 import com.example.channels.databinding.FragmentMainBinding
 import com.example.channels.fragments.listFragments.FragmentAdapter
-import com.example.channels.radioPlayer.RadioPlayerFragment
-import com.example.channels.radioPlayer.RadioPlayerService
 import com.example.channels.viewModel.AdsViewModel
 import com.example.channels.viewModel.ChannelViewModel
 import com.yandex.mobile.ads.banner.BannerAdView
@@ -42,7 +38,8 @@ class MainFragment : Fragment() {
         createAppDrawer()
 
         //Поиск
-        binding.searchViewTvChannels.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.searchViewTvChannels.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
