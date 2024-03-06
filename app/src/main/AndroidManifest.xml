@@ -30,7 +30,7 @@
         </activity>
         <service
             android:name=".radioPlayer.RadioPlayerService"
-            android:exported="false">
+            android:exported="false" >
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaLibraryService" />
                 <action android:name="android.media.browse.MediaBrowserService" />
