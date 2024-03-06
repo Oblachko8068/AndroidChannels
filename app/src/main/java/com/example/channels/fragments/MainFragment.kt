@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.example.channels.AppDrawer
 import com.example.channels.databinding.FragmentMainBinding
 import com.example.channels.fragments.listFragments.FragmentAdapter
 import com.example.channels.viewModel.AdsViewModel
@@ -17,6 +20,8 @@ class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+    private lateinit var mAppDrawer: AppDrawer
+    private lateinit var mToolbar: Toolbar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,13 +35,11 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val adsViewModel: AdsViewModel by activityViewModels()
         adsViewModel.initializeAdsManager(requireActivity().applicationContext)
-
-        binding.crashButton.setOnClickListener {
-            throw RuntimeException("Test Crash")
-        }
+        createAppDrawer()
 
         //Поиск
-        binding.searchViewTvChannels.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.searchViewTvChannels.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -58,5 +61,12 @@ class MainFragment : Fragment() {
             parent?.removeView(banner)
             binding.bannerAdView.addView(banner)
         }
+    }
+
+    private fun createAppDrawer() {
+        mToolbar = binding.mainToolbar
+        val appCompatActivityContext: AppCompatActivity = requireActivity() as AppCompatActivity
+        mAppDrawer = AppDrawer(appCompatActivityContext, mToolbar)
+        mAppDrawer.create()
     }
 }
