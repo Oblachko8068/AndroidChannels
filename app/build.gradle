@@ -47,6 +47,10 @@ android {
 
 
 dependencies {
+    //сплешскрин
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+
+    //
     implementation('com.mikepenz:materialdrawer:7.0.0')
     implementation ('com.mikepenz:materialdrawer-nav:7.0.0')
 

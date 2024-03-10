@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import com.example.channels.viewModel.AdsViewModel
 import com.example.channels.ads.AdShownListener
@@ -26,6 +27,11 @@ class MainActivity : AppCompatActivity(), Navigator {
     @SuppressLint("CommitTransaction")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /////Splash
+        installSplashScreen()
+        /////
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         adsViewModel.initializeAdsManager(this)
