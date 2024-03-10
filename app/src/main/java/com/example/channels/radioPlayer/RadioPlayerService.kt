@@ -27,6 +27,7 @@ const val CHANNEL_ID = "RadioChannel"
 const val NOTIFICATION_ID = 1
 const val radioUri = "https://hls-01-radiorecord.hostingradio.ru/record/112/playlist.m3u8"
 
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class RadioPlayerService : Service(), RadioPlayerController {
 
     private lateinit var radioPlayer: ExoPlayer

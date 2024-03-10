@@ -2,6 +2,7 @@ package com.example.channels.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -14,9 +15,10 @@ import com.example.channels.databinding.FragmentMainBinding
 import com.example.channels.fragments.listFragments.FragmentAdapter
 import com.example.channels.viewModel.AdsViewModel
 import com.example.channels.viewModel.ChannelViewModel
+import com.google.android.material.navigation.NavigationView
 import com.yandex.mobile.ads.banner.BannerAdView
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(){
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -69,4 +71,5 @@ class MainFragment : Fragment() {
         mAppDrawer = AppDrawer(appCompatActivityContext, mToolbar)
         mAppDrawer.create()
     }
+
 }

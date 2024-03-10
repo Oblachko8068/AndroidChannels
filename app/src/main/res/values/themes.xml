@@ -1,13 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Channels" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
+
+    <!-- светлая тема-->
+    <style name="Theme.Channels.Light" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/main_background</item>
     </style>
 
-    <style name="Theme.Channels" parent="Base.Theme.Channels" />
-    <style name="FullScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
+
+    <style name ="Theme.AnimatedSplash.MySplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/main_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/avd_logo_ramka</item>
+        <item name="windowSplashScreenAnimationDuration">3000</item>
+        <item name="postSplashScreenTheme">@style/Theme.Channels.Light</item>
     </style>
 </resources>

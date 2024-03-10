@@ -1,5 +1,6 @@
 package com.example.channels
 
+import android.annotation.SuppressLint
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -49,6 +50,7 @@ class AppDrawer(private val mainActivity: AppCompatActivity, private val mToolba
                     .withTextColorRes(R.color.text_dark)
                     .withSelectable(false)
             ).withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                @SuppressLint("CommitTransaction")
                 override fun onItemClick(
                     view: View?,
                     position: Int,
