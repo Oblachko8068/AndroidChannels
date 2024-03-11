@@ -3,13 +3,16 @@ package com.example.channels
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.constraintlayout.widget.ConstraintSet.Layout
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import com.example.channels.ads.AdShownListener
 import com.example.channels.databinding.ActivityMainBinding
+import com.example.channels.databinding.NavHeaderBinding
 import com.example.channels.fragments.ExoPlayerFragment
 import com.example.channels.fragments.MainFragment
 import com.example.channels.fragments.Navigator
@@ -39,7 +42,17 @@ class MainActivity : AppCompatActivity(), Navigator {
                 .add(R.id.fragmentContainer, MainFragment())
                 .commit()
         }
+        val secondLayout = layoutInflater.inflate(R.layout.nav_header, null)
+        val dayNightButton = secondLayout.findViewById<ImageButton>(R.id.day_night_theme)
 
+        dayNightButton?.setOnClickListener {
+            isDarkTheme = !isDarkTheme
+            if (isDarkTheme) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
         binding.button.setOnClickListener {
             isDarkTheme = !isDarkTheme
             if (isDarkTheme) {

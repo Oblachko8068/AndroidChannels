@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/header"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="bottom"
+    android:padding="30dp"
+    android:background="@drawable/ic_launcher_background">
+
+    <ImageView
+        android:id="@+id/profile_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_launcher_foreground"/>
+
+    <TextView
+        android:id="@+id/profile_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chikana"
+        app:layout_constraintTop_toBottomOf="@+id/profile_pic"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/dark_primary"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/profile_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="contact@androidknowledge.com"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_login"
+        android:textColor="@color/dark_primary"
+        android:textSize="14sp"/>
+    <ImageButton
+        android:id="@+id/day_night_theme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/baseline_star_24"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

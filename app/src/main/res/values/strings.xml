@@ -31,4 +31,8 @@
     <!---->
 
     <string name="instream_content_url">https://storage.mds.yandex.net/get-ads-mobile-sdk/212922/d170b1d2-0871-40ef-af57-9a0ae7428622</string>
+
+
+    <string name="open_nav">Open Navigation Drawer</string>
+    <string name="close_nav">Close Navigation Drawer</string>
 </resources>
