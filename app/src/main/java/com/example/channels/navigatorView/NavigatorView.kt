@@ -2,6 +2,7 @@ package com.example.channels.navigatorView
 
 import android.content.Context
 import android.view.View
+import android.widget.ImageButton
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.channels.MainActivity
@@ -31,10 +32,15 @@ class NavigatorView(
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        val header = binding.navView.getHeaderView(0)
-        val but: View = header.findViewById(R.id.day_night_theme)
-        but.setOnClickListener {
-            isDarkTheme = loadDarkThemeState(mainActivity)
+        isDarkTheme = loadDarkThemeState(mainActivity)
+        val headerView = binding.navView.getHeaderView(0)
+        val dayNightButton: ImageButton = headerView.findViewById(R.id.day_night_theme)
+        if (isDarkTheme) {
+            dayNightButton.setImageResource(R.drawable.icon_dark_theme)
+        } else {
+            dayNightButton.setImageResource(R.drawable.icon_light_theme)
+        }
+        dayNightButton.setOnClickListener {
             if (isDarkTheme) {
                 saveDarkThemeState(mainActivity, !isDarkTheme)
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)

@@ -118,7 +118,7 @@
             android:id="@+id/progressBar"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:background="@color/background_of_stars_active"
+            android:background="?attr/starIconEnable"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"

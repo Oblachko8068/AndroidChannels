@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:gravity="bottom"
     android:padding="25dp"
-    android:background="@color/text_of_the_search_bar">
+    android:background="?attr/headerBackground">
 
     <ImageView
         android:id="@+id/profile_pic"
@@ -25,7 +25,7 @@
         android:textSize="20sp"
         app:layout_constraintTop_toBottomOf="@+id/profile_pic"
         app:layout_constraintStart_toStartOf="parent"
-        android:textColor="#FFFFFF"
+        android:textColor="?attr/headerIcon"
         android:textStyle="bold"/>
 
     <TextView
@@ -35,14 +35,13 @@
         android:text=""
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_login"
-        android:textColor="@color/dark_primary"
+        android:textColor="?attr/headerIcon"
         android:textSize="14sp"/>
 
     <ImageButton
         android:id="@+id/day_night_theme"
         android:background="#00000000"
         android:layout_width="wrap_content"
-        android:src="@drawable/icon_light_theme"
         android:layout_height="wrap_content"
         android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"

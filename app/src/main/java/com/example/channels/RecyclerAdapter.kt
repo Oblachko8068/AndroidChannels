@@ -90,11 +90,11 @@ class RecyclerAdapter(
             binding.channelDesc.text = epgItem.title
             binding.iconFav.setImageResource(R.drawable.baseline_star_24)
             binding.iconFav.setColorFilter(
-                ContextCompat.getColor(context, if (isFavorite) R.color.icon_enable else R.color.icon_disable)
+                ContextCompat.getColor(context, if (isFavorite) R.color.star_icon_enable else R.color.star_icon_disable)
             )
             binding.iconFav.setOnClickListener {
                 binding.iconFav.setColorFilter(
-                    ContextCompat.getColor(context, if (isFavorite) R.color.icon_disable else R.color.icon_enable)
+                    ContextCompat.getColor(context, if (isFavorite) R.color.star_icon_enable else R.color.star_icon_disable)
                 )
                 itemClickListener.onFavoriteClicked(channelItem)
             }
