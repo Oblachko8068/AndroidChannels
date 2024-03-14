@@ -8,9 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.channels.databinding.FragmentMainBinding
-import com.example.channels.fragments.listFragments.FragmentAdapter
+import com.example.channels.fragments.channelListFragments.FragmentAdapter
 import com.example.channels.viewModels.AdsViewModel
-import com.example.channels.viewModels.ChannelViewModel
 import com.yandex.mobile.ads.banner.BannerAdView
 
 class MainFragment : Fragment() {

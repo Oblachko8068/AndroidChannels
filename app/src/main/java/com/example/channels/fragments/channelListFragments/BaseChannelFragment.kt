@@ -1,4 +1,4 @@
-package com.example.channels.fragments.listFragments
+package com.example.channels.fragments.channelListFragments
 
 import android.os.Bundle
 import android.view.LayoutInflater

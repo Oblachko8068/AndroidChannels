@@ -1,4 +1,4 @@
-package com.example.channels.navigator
+package com.example.channels.navigatorView
 
 import android.content.Context
 import android.view.View

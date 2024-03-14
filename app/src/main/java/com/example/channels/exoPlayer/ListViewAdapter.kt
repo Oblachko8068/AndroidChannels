@@ -1,4 +1,4 @@
-package com.example.channels.fragments
+package com.example.channels.exoPlayer
 
 import android.annotation.SuppressLint
 import android.content.Context

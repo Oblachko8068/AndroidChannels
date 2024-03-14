@@ -38,4 +38,7 @@
     <color name="played_video">#0077FF</color>
     <color name="unplayed_video_text_color">#75767B</color>
     <color name="list_view_divider">#8F8A8A</color>
+
+    <color name="main_background_dark">#343438</color>
+    <color name="background_of_fragments_dark">#232427</color>
 </resources>

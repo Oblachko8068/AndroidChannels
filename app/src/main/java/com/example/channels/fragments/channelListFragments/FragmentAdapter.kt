@@ -1,4 +1,4 @@
-package com.example.channels.fragments.listFragments
+package com.example.channels.fragments.channelListFragments
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

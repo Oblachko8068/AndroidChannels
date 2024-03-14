@@ -10,11 +10,11 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.example.channels.ads.AdShownListener
 import com.example.channels.databinding.ActivityMainBinding
-import com.example.channels.fragments.ExoPlayerFragment
+import com.example.channels.exoPlayer.ExoPlayerFragment
 import com.example.channels.fragments.MainFragment
 import com.example.channels.fragments.Navigator
 import com.example.channels.fragments.VideoAdsFragment
-import com.example.channels.navigator.NavigatorView
+import com.example.channels.navigatorView.NavigatorView
 import com.example.channels.radioPlayer.RadioPlayerFragment
 import com.example.channels.viewModels.AdsViewModel
 import com.example.domain.model.Channel

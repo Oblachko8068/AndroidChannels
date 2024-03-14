@@ -1,4 +1,4 @@
-package com.example.channels.fragments
+package com.example.channels.exoPlayer
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
@@ -22,6 +22,7 @@ import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.bumptech.glide.Glide
 import com.example.channels.databinding.FragmentExoplayerBinding
+import com.example.channels.fragments.navigator
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import kotlinx.coroutines.CoroutineScope

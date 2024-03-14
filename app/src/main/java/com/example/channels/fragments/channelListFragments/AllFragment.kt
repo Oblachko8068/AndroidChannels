@@ -1,14 +1,14 @@
-package com.example.channels.fragments.listFragments
+package com.example.channels.fragments.channelListFragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import com.example.channels.databinding.FragmentFavoritesBinding
+import com.example.channels.databinding.FragmentAllBinding
 
-class FavoritesFragment : BaseChannelFragment() {
+class AllFragment : BaseChannelFragment() {
 
-    private var _binding: FragmentFavoritesBinding? = null
+    private var _binding: FragmentAllBinding? = null
     override val binding get() = _binding!!
 
     override fun onCreateViewBinding(
@@ -16,8 +16,8 @@ class FavoritesFragment : BaseChannelFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): ViewBinding {
-        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
-        recyclerView = binding.favoriteChannelsRecyclerView
+        _binding = FragmentAllBinding.inflate(inflater, container, false)
+        recyclerView = binding.allChannelsRecyclerView
         return binding
     }
 }
