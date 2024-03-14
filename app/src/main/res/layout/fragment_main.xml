@@ -1,95 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.MainFragment"
-    android:background="@color/main_background"
-    android:fitsSystemWindows="true"
-    android:id="@+id/drawerLayout">
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/nav_menu"
-        app:itemIconTint="@color/background_of_stars_active"
-        app:itemTextColor="@color/background_of_stars_active"/>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
-        <!--Поиск-->
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/main_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/colorPrimary"
-            android:elevation="4dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView_tv_channels"
-                android:theme="@style/SearchViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/search_view_background"
-                android:imeOptions="flagNoExtractUi"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:searchHintIcon="@null"
-                app:closeIcon="@null"
-                app:queryHint="Напишите название телеканала" />
-        </androidx.appcompat.widget.Toolbar>
+    android:background="@color/main_background">
 
-        <!--Вкладки-->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/main_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/main_toolbar"
-            app:tabIndicatorColor="@color/background_of_the_lower_tabs"
-            app:tabGravity="start"
-            app:tabMode="scrollable"
-            app:tabTextAppearance="@style/CustomTabTextAppearance"
-            app:tabSelectedTextColor ="@color/text_of_the_tabs_active"
-            app:tabTextColor ="@color/text_of_the_tabs"
-            tools:ignore="MissingConstraints" />
+    <Button
+        android:id="@+id/CrashButton"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:text="CrashButton"
+        tools:ignore="MissingConstraints" />
+    <!--Вкладки-->
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/view_pager_for_tabs"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/background_of_fragments"
-            android:paddingTop="15dp"
-            app:layout_constraintTop_toBottomOf="@+id/tabs"
-            app:layout_constraintBottom_toTopOf="@id/banner_ad_view"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/main_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabIndicatorColor="@color/background_of_the_lower_tabs"
+        app:tabGravity="start"
+        app:tabMode="scrollable"
+        app:tabTextAppearance="@style/CustomTabTextAppearance"
+        app:tabSelectedTextColor ="@color/text_of_the_tabs_active"
+        app:tabTextColor ="@color/text_of_the_tabs"
+        tools:ignore="MissingConstraints" />
 
-        <FrameLayout
-            android:id="@+id/banner_ad_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background_of_fragments"
-            app:layout_constraintTop_toBottomOf="@+id/view_pager_for_tabs"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-        <!---->
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpagerForTabs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/background_of_fragments"
+        android:paddingTop="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/tabs"
+        app:layout_constraintBottom_toTopOf="@+id/banner_ad_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <com.yandex.mobile.ads.banner.BannerAdView
+        android:id="@+id/banner_ad_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/background_of_fragments"
+        app:layout_constraintTop_toBottomOf="@+id/viewpagerForTabs"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <!---->
 
-</androidx.drawerlayout.widget.DrawerLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

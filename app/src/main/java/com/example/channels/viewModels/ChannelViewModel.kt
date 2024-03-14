@@ -1,4 +1,4 @@
-package com.example.channels.viewModel
+package com.example.channels.viewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData

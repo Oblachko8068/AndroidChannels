@@ -6,42 +6,47 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="bottom"
-    android:padding="30dp"
-    android:background="@drawable/ic_launcher_background">
+    android:padding="25dp"
+    android:background="@color/text_of_the_search_bar">
 
     <ImageView
         android:id="@+id/profile_pic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/ic_launcher_foreground"/>
+        android:src="@drawable/icon_user_picture"/>
 
     <TextView
         android:id="@+id/profile_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Chikana"
+        android:text="Вы"
+        android:textSize="20sp"
         app:layout_constraintTop_toBottomOf="@+id/profile_pic"
         app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@color/dark_primary"
+        android:textColor="#FFFFFF"
         android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/profile_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="contact@androidknowledge.com"
+        android:text=""
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_login"
         android:textColor="@color/dark_primary"
         android:textSize="14sp"/>
+
     <ImageButton
         android:id="@+id/day_night_theme"
+        android:background="#00000000"
         android:layout_width="wrap_content"
+        android:src="@drawable/icon_light_theme"
         android:layout_height="wrap_content"
+        android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/baseline_star_24"/>
+        android:focusable="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

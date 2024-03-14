@@ -5,33 +5,41 @@
     tools:showIn = "navigation_view">
 
     <group
+        android:id="@+id/group1"
         android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_home"
-            android:title="Home"/>
+            android:id="@+id/nav_tv"
+            android:checkable="true"
+            android:icon="@drawable/icon_tv"
+            android:title="ТВ"/>
 
+        <item
+            android:id="@+id/nav_radio"
+            android:checkable="true"
+            android:icon="@drawable/icon_radio"
+            android:title="Радио"/>
+
+        <item
+            android:id="@+id/nav_music"
+            android:checkable="true"
+            android:icon="@drawable/icon_music"
+            android:title="Музыка"/>
         <item
             android:id="@+id/nav_settings"
-            android:title="Settings"/>
+            android:checkable="true"
+            android:icon="@drawable/icon_setting"
+            android:title="Настройки"/>
 
-        <item
-            android:id="@+id/nav_share"
-            android:title="Share"/>
-
-        <item
-            android:id="@+id/nav_about"
-            android:title="About Us"/>
     </group>
-    <item
-        android:title="">
-
-        <menu>
-            <item
-                android:id="@+id/nav_logout"
-                android:title="Logout"/>
-        </menu>
-
-    </item>
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_logout"
+            android:checkable="true"
+            android:icon="@drawable/icon_exit"
+            android:title="Выйти"/>
+    </group>
 
 </menu>

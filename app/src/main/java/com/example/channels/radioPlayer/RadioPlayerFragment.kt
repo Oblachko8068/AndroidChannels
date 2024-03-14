@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.channels.R
 import com.example.channels.databinding.FragmentRadioplayerBinding
@@ -27,6 +28,7 @@ class RadioPlayerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentRadioplayerBinding.inflate(inflater, container, false)
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         return binding.root
     }
 

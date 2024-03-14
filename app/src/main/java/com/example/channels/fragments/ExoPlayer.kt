@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -67,6 +68,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
     ): View {
         _binding = FragmentExoplayerBinding.inflate(inflater, container, false)
         hideSystemUi()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         return binding.root
     }
 
