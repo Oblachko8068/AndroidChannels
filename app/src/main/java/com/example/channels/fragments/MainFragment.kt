@@ -77,7 +77,10 @@ class MainFragment : Fragment(), NavigationView.OnNavigationItemSelectedListener
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when (p0.itemId) {
-
+            /* -> *..supportFragmentManager.beginTransaction()
+                            .addToBackStack(null)
+                            .replace(R.id.fragmentContainer, RadioPlayerFragment())
+                            .commit()*/
         }
         return true
     }

@@ -7,9 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".fragments.MainFragment"
     android:background="@color/main_background"
+    android:fitsSystemWindows="true"
     android:id="@+id/drawerLayout">
-
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu"
+        app:itemIconTint="@color/background_of_stars_active"
+        app:itemTextColor="@color/background_of_stars_active"/>
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
         <!--Поиск-->
@@ -82,13 +92,4 @@
         <!---->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.navigation.NavigationView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:id="@+id/navView"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/nav_menu"
-        app:itemIconTint="@color/background_of_stars_active"
-        app:itemTextColor="@color/background_of_stars_active" />
 </androidx.drawerlayout.widget.DrawerLayout>
