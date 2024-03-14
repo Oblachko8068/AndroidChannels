@@ -11,9 +11,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_icon"
+        android:icon="@drawable/avd_logo_ramka"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_icon_round"
+        android:roundIcon="@drawable/avd_logo_ramka"
         android:supportsRtl="true"
         android:theme="@style/Theme.Channels.Light"
         android:name=".App"
@@ -38,7 +38,7 @@
             </intent-filter>
         </service>
         <meta-data android:name="com.yandex.metrica.push.default_notification_icon"
-            android:resource="@mipmap/ic_icon"/>
+            android:resource="@drawable/avd_logo_ramka"/>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713"/>
