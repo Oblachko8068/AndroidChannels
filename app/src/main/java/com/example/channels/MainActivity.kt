@@ -9,6 +9,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.example.channels.ads.AdShownListener
+import com.example.channels.authorization.LoginFragment
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.exoPlayer.ExoPlayerFragment
 import com.example.channels.fragments.ChannelFragment
@@ -61,6 +62,7 @@ class MainActivity : AppCompatActivity(), Navigator {
             when (it.itemId) {
                 R.id.nav_tv -> launchFragment(ChannelFragment())
                 R.id.nav_radio -> launchFragment(RadioPlayerFragment())
+                R.id.nav_login -> launchFragment(LoginFragment())
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
