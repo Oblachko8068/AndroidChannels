@@ -7,21 +7,21 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.channels.databinding.FragmentMainBinding
+import com.example.channels.databinding.FragmentChannelBinding
 import com.example.channels.fragments.channelListFragments.FragmentAdapter
 import com.example.channels.viewModels.AdsViewModel
 import com.yandex.mobile.ads.banner.BannerAdView
 
-class MainFragment : Fragment() {
+class ChannelFragment : Fragment() {
 
-    private var _binding: FragmentMainBinding? = null
+    private var _binding: FragmentChannelBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentChannelBinding.inflate(inflater, container, false)
         (requireActivity() as AppCompatActivity).supportActionBar?.show()
         return binding.root
     }

@@ -1,7 +1,6 @@
 package com.example.channels.navigatorView
 
 import android.content.Context
-import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
