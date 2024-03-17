@@ -29,6 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".radioPlayer.RadioPlayerService"
             android:exported="false" >
@@ -37,6 +38,7 @@
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
+
         <meta-data android:name="com.yandex.metrica.push.default_notification_icon"
             android:resource="@drawable/avd_logo_ramka"/>
         <meta-data
