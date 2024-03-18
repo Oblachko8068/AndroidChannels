@@ -54,6 +54,7 @@ class LoginFragment : Fragment() {
         binding.nextButton.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
             binding.nextButton.visibility = View.INVISIBLE
+            val p = 0
             if (binding.loginInput.text.toString().isEmpty()){
                 Toast.makeText(requireContext(), "Введите данные для входа", Toast.LENGTH_SHORT).show()
             } else {
