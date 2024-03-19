@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.channels.MainActivity
 import com.example.channels.R
 import com.example.channels.databinding.FragmentLoginBinding
 import com.google.firebase.Firebase
@@ -31,10 +30,9 @@ class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-    private lateinit var auth: FirebaseAuth
     private lateinit var callback: PhoneAuthProvider.OnVerificationStateChangedCallbacks
-    private var storedVerificationId: String? = ""
     private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
+    private var inputPhone = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,19 +40,29 @@ class LoginFragment : Fragment() {
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         (requireActivity() as AppCompatActivity).supportActionBar?.show()
-        auth = Firebase.auth
-        FirebaseAuth.getInstance().firebaseAuthSettings.forceRecaptchaFlowForTesting(true)
-        auth.setLanguageCode("ru")
+        initDatabase()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val inputView = binding.loginInput
+        inputView.setText("+7")
+        binding.phoneEmailButton.setOnClickListener {
+            if (inputPhone){
+                inputView.hint = "Введите e-mail"
+                inputView.text.clear()
+                binding.phoneEmailButton.setImageResource(R.drawable.phone_icon)
+            } else {
+                inputView.setText("+7")
+                binding.phoneEmailButton.setImageResource(R.drawable.email_icon)
+            }
+            inputPhone = !inputPhone
+        }
 
         binding.nextButton.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
             binding.nextButton.visibility = View.INVISIBLE
-            val p = 0
             if (binding.loginInput.text.toString().isEmpty()){
                 Toast.makeText(requireContext(), "Введите данные для входа", Toast.LENGTH_SHORT).show()
             } else {
@@ -86,14 +94,7 @@ class LoginFragment : Fragment() {
         callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                auth.signInWithCredential(credential).addOnCompleteListener {
-                    if (it.isSuccessful){
-                        (activity as MainActivity).recreate()
-                        Toast.makeText(requireContext(), "Вы вошли", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Log.w(TAG, "onVerificationFailed", it.exception)
-                    }
-                }
+
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
@@ -111,12 +112,11 @@ class LoginFragment : Fragment() {
                 token: PhoneAuthProvider.ForceResendingToken,
             ) {
                 Log.d(TAG, "onCodeSent:$verificationId")
-                storedVerificationId = verificationId
                 resendToken = token
-                launchFragment(SignInFragment.newInstance(verificationId))
+                launchFragment(SignInFragment.newInstance(verificationId, binding.loginInput.text.toString()))
             }
         }
-        val options = PhoneAuthOptions.newBuilder(auth)
+        val options = PhoneAuthOptions.newBuilder(AUTH)
             .setPhoneNumber(binding.loginInput.text.toString())
             .setTimeout(60L, TimeUnit.SECONDS)
             .setActivity(requireActivity())

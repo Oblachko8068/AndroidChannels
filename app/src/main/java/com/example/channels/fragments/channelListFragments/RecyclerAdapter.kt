@@ -1,4 +1,4 @@
-package com.example.channels
+package com.example.channels.fragments.channelListFragments
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.channels.R
 import com.example.channels.databinding.ChannelBlockBinding
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
