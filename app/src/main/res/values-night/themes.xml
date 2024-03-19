@@ -1,7 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <!--<style name="Base.Theme.com.example.channels.list.Channels" parent="Theme.Material3.DayNight.NoActionBar">
-         Customize your dark theme here.
-        <item name="colorPrimary">@color/my_dark_primary</item>
-    </style> -->
+
+    <!-- темная тема-->
+    <style name="Theme.Channels.Light" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/main_background_dark</item>
+        <!-- фоны-->
+        <item name="mainBackground">@color/main_background_dark</item>
+        <item name="blocksBackground">@color/blocks_background_dark</item>
+        <item name="backgroundOfFragment">@color/background_of_fragments_dark</item>
+
+        <!-- текста-->
+        <item name="textActive">@color/text_active_dark</item>
+        <item name="textOfTabsActive">@color/text_of_the_tabs_active_dark</item>
+        <item name="textOfTabs">@color/text_of_the_tabs_dark</item>
+        <!-- навигатор-->
+        <item name="navIcons">@color/navigator_icons_dark</item>
+        <item name="navBackground">@color/navigator_background_dark</item>
+        <item name="headerBackground">@color/header_background_dark</item>
+        <item name="headerIcon">@color/navigator_icons_dark</item>
+        <!-- звезда -->
+        <item name="starIconDisable">@color/star_icon_disable</item>
+        <!-- выбор качества -->
+        <item name="chooseQuality">@color/choose_quality_dark</item>
+    </style>
+
 </resources>

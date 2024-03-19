@@ -2,10 +2,10 @@
 buildscript {
     ext.room_version = '2.6.1'
 
-    
     dependencies {
         classpath 'com.google.gms:google-services:4.4.1'
-        classpath "com.google.dagger:hilt-android-gradle-plugin:2.48"
+        classpath 'com.android.tools.build:gradle:8.3.0'
+        classpath "com.google.dagger:hilt-android-gradle-plugin:2.51"
     }
 
 }

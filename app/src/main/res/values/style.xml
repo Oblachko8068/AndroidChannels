@@ -4,12 +4,6 @@
     <style name="RoundedCornersDialog" parent="@style/Theme.MaterialComponents.Dialog">
         <item name="dialogCornerRadius">12dp</item>
     </style>
-    <!-- Стиль для текста -->
-    <style name="TextStyle">
-        <item name="android:textColor">@color/text_default</item>
-        <item name="android:textSize">@dimen/defaultTextSize</item>
-        <item name="android:gravity">top</item>
-    </style>
 
     <!-- Стиль для расположения контейнера в центре внутри родительского контейнера -->
     <style name="CenterElements">
@@ -21,15 +15,10 @@
         <item name="layout_constraintWidth_percent">0.9</item>
     </style>
 
-    <!-- Поиск -->
-    <style name="CustomSearchViewTvChannels">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColorHint">@color/text_active</item>
-    </style>
     <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/text_active</item>
-        <item name="android:editTextColor">@color/text_active</item>
+        <item name="android:textColor">?attr/textActive</item>
+        <item name="android:editTextColor">?attr/textActive</item>
     </style>
 
 <style name="CustomTabTextAppearance">
