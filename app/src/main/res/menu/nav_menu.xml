@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn = "navigation_view">
+
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_tv"
+            android:checkable="false"
+            android:icon="@drawable/icon_tv"
+            android:title="ТВ"/>
+
+        <item
+            android:id="@+id/nav_radio"
+            android:checkable="false"
+            android:icon="@drawable/icon_radio"
+            android:title="Радио"/>
+
+        <item
+            android:id="@+id/nav_music"
+            android:checkable="false"
+            android:icon="@drawable/icon_music"
+            android:title="Музыка"/>
+        <item
+            android:id="@+id/nav_settings"
+            android:checkable="false"
+            android:icon="@drawable/icon_setting"
+            android:title="Настройки"/>
+
+    </group>
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_login"
+            android:checkable="false"
+            android:icon="@drawable/icon_exit"
+            android:title="Войти"/>
+    </group>
+
+</menu>
