@@ -13,6 +13,7 @@ import com.example.channels.authorization.LoginFragment
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.exoPlayer.ExoPlayerFragment
 import com.example.channels.fragments.ChannelFragment
+import com.example.channels.fragments.MainFragment
 import com.example.channels.fragments.Navigator
 import com.example.channels.fragments.VideoAdsFragment
 import com.example.channels.navigatorView.NavigatorView
@@ -40,9 +41,21 @@ class MainActivity : AppCompatActivity(), Navigator {
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.fragmentContainer, ChannelFragment())
+                .add(R.id.fragmentContainer, MainFragment())
                 .commit()
         }
+    }
+
+    override fun showLoginFragment() {
+        launchFragment(LoginFragment())
+    }
+
+    override fun showRadioFragment() {
+        launchFragment(RadioPlayerFragment())
+    }
+
+    override fun showChannelFragment() {
+        launchFragment(ChannelFragment())
     }
 
     override fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?) {
@@ -60,9 +73,9 @@ class MainActivity : AppCompatActivity(), Navigator {
     private fun initNavigatorView() {
         val navigatorListener = NavigationView.OnNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.nav_tv -> launchFragment(ChannelFragment())
-                R.id.nav_radio -> launchFragment(RadioPlayerFragment())
-                R.id.nav_login -> launchFragment(LoginFragment())
+                R.id.nav_tv -> showChannelFragment()
+                R.id.nav_radio -> showRadioFragment()
+                R.id.nav_login -> showLoginFragment()
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true

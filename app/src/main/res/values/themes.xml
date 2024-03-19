@@ -3,6 +3,8 @@
     <!-- светлая тема-->
     <style name="Theme.Channels.Light" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/main_background</item>
+        <!--кнопки-->
+        <item name="mainButton">@color/main_button</item>
         <!-- фоны-->
         <item name="mainBackground">@color/main_background</item>
         <item name="blocksBackground">@color/blocks_background</item>

@@ -3,6 +3,9 @@
 
 
 <!-- светлые цвета -->
+    <!--кнопки-->
+    <color name="main_button">#000000</color>
+
     <!-- фоны-->
     <color name="main_background">#C4C0C0</color>
     <color name="background_of_fragments">#8B9088</color>
@@ -24,6 +27,9 @@
 
 
 <!-- темные цвета -->
+    <!--кнопки-->
+    <color name="main_button_dark">#FFFFFF</color>
+
     <!-- фоны-->
     <color name="main_background_dark">#343438</color>
     <color name="background_of_fragments_dark">#232427</color>

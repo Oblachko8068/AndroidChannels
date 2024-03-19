@@ -28,7 +28,7 @@ class RadioPlayerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentRadioplayerBinding.inflate(inflater, container, false)
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
         return binding.root
     }
 
@@ -38,10 +38,6 @@ class RadioPlayerFragment : Fragment() {
 
         binding.startStopButton.setOnClickListener {
             togglePlayer()
-        }
-
-        binding.backToMain.setOnClickListener {
-            navigator().goBack()
         }
 
         serviceConnection = object : ServiceConnection {
