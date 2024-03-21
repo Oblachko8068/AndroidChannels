@@ -1,22 +1,27 @@
 package com.example.channels.navigatorView
 
 import android.content.Context
+import android.view.View
 import android.widget.ImageButton
+import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.channels.MainActivity
 import com.example.channels.R
 import com.example.channels.databinding.ActivityMainBinding
+import com.example.channels.viewModels.UserViewModel
 import com.google.android.material.navigation.NavigationView
 import kotlin.properties.Delegates
 
 class NavigatorView(
-    mainActivity: MainActivity,
-    binding: ActivityMainBinding,
+    private val mainActivity: MainActivity,
+    private val binding: ActivityMainBinding,
     navigatorListener: NavigationView.OnNavigationItemSelectedListener
 ) {
 
     private var isDarkTheme by Delegates.notNull<Boolean>()
+    private val userViewModel: UserViewModel by mainActivity.viewModels()
 
     init {
         mainActivity.setSupportActionBar(binding.mainToolbar)
@@ -32,6 +37,10 @@ class NavigatorView(
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         isDarkTheme = loadDarkThemeState(mainActivity)
+        setHeader()
+    }
+
+    private fun setHeader(){
         val headerView = binding.navView.getHeaderView(0)
         val dayNightButton: ImageButton = headerView.findViewById(R.id.day_night_theme)
         if (isDarkTheme) {
@@ -48,6 +57,25 @@ class NavigatorView(
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
         }
+        setUserData(headerView)
+    }
+
+    private fun setUserData(headerView: View) {
+        val userLiveData = userViewModel.getUserData()
+        userLiveData.observe(mainActivity){
+            val user = it?.getOrNull(0)
+            val userName = headerView.findViewById<TextView>(R.id.profile_login)
+            val userDescription = headerView.findViewById<TextView>(R.id.profile_phone)
+            userName.text = user?.displayName ?: "Вы"
+            userDescription.text = user?.phone ?: ""
+            if (user != null){
+                //hideLoginButton()
+            }
+        }
+    }
+
+    private fun hideLoginButton() {
+        binding.navView.menu.removeItem(R.id.nav_login)
     }
 
     private fun saveDarkThemeState(context: Context, isDarkTheme: Boolean) {

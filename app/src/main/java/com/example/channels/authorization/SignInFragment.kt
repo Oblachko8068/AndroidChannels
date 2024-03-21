@@ -7,9 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import com.example.channels.databinding.FragmentSignInBinding
+import com.example.channels.viewModels.UserViewModel
+import com.example.domain.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -24,7 +28,8 @@ class SignInFragment : Fragment() {
 
     private var _binding: FragmentSignInBinding? = null
     private val binding get() = _binding!!
-    private var database = Firebase.database.reference
+    private val database = Firebase.database.reference
+    private val userViewModel: UserViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +56,17 @@ class SignInFragment : Fragment() {
                     dateMap["id"] = uid
                     dateMap["phone"] = phoneNumber as String
                     dateMap["user_name"] = uid
+
+                    val user = User(
+                        id = uid,
+                        displayName = "Чиканашка",
+                        phone = phoneNumber,
+                        email = "",
+                        image = 0,
+                        subscription = true
+                    )
+
+                    userViewModel.saveUser(user)
 
                     //запись в бд не работает
                     database.child("users").child(uid).updateChildren(dateMap)

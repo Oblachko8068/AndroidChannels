@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.channels.ads.AdShownListener
 import com.example.channels.authorization.LoginFragment
 import com.example.channels.databinding.ActivityMainBinding
@@ -18,11 +19,13 @@ import com.example.channels.fragments.VideoAdsFragment
 import com.example.channels.navigatorView.NavigatorView
 import com.example.channels.radioPlayer.RadioPlayerFragment
 import com.example.channels.viewModels.AdsViewModel
+import com.example.channels.viewModels.UserViewModel
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
+const val j = 0
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {
 
@@ -67,6 +70,7 @@ class MainActivity : AppCompatActivity(), Navigator {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+        
         val navigatorView = NavigatorView(this, binding, navigatorListener)
         val isDarkTheme = navigatorView.loadDarkThemeState(this)
         if (isDarkTheme) {

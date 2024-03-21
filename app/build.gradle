@@ -47,12 +47,6 @@ android {
 
 
 dependencies {
-
-    //потом удалить
-    implementation 'com.google.firebase:firebase-database:20.3.1'
-
-
-
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation 'androidx.core:core-splashscreen:1.0.1'
 
@@ -77,6 +71,7 @@ dependencies {
     implementation(platform('com.google.firebase:firebase-bom:32.7.4'))
     implementation('com.google.firebase:firebase-auth:22.3.1')
     implementation('com.google.firebase:firebase-analytics-ktx:21.5.1')
+    implementation 'com.google.firebase:firebase-database'
 
 
     implementation 'com.google.dagger:hilt-android:2.51'

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import com.example.domain.model.FavoriteChannel
+import com.example.domain.model.User
 import com.example.domain.repository.ChannelRepository
 import com.example.domain.repository.DownloadRepository
 import com.example.domain.repository.EpgRepository

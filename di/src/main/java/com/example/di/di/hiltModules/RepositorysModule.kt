@@ -4,10 +4,12 @@ import com.example.data.repository.ChannelRepositoryImpl
 import com.example.data.repository.DownloadRepositoryRetrofit
 import com.example.data.repository.EpgRepositoryImpl
 import com.example.data.repository.FavoriteChannelsRepositoryImpl
+import com.example.data.repository.UserRepositoryImpl
 import com.example.domain.repository.ChannelRepository
 import com.example.domain.repository.DownloadRepository
 import com.example.domain.repository.EpgRepository
 import com.example.domain.repository.FavoriteChannelsRepository
+import com.example.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,4 +43,10 @@ abstract class RepositorysModule {
     abstract fun bindFavoriteChannelRepository(
         favoriteChannelsRepository: FavoriteChannelsRepositoryImpl
     ): FavoriteChannelsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        userRepository: UserRepositoryImpl
+    ): UserRepository
 }
