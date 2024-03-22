@@ -1,16 +1,23 @@
 package com.example.channels.authorization
 
+import com.example.channels.viewModels.UserViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 lateinit var AUTH: FirebaseAuth
-lateinit var REF_DATABASE_ROOT: DatabaseReference
+lateinit var DATABASE: FirebaseDatabase
+lateinit var DB_REF: DatabaseReference
+lateinit var USER_VIEW_MODEL: UserViewModel
 
-const val NODE_USERS = "users"
 
 fun initDatabase() {
+    DATABASE =
+        FirebaseDatabase.getInstance("https://channels-41585-default-rtdb.europe-west1.firebasedatabase.app/")
+    DB_REF = DATABASE.getReference()
+    USER_VIEW_MODEL
     AUTH = Firebase.auth
     FirebaseAuth.getInstance().firebaseAuthSettings.forceRecaptchaFlowForTesting(true)
     AUTH.setLanguageCode("ru")

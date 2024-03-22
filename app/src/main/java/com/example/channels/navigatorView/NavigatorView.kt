@@ -9,6 +9,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.channels.MainActivity
 import com.example.channels.R
+import com.example.channels.authorization.USER_VIEW_MODEL
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.viewModels.UserViewModel
 import com.google.android.material.navigation.NavigationView
@@ -21,7 +22,7 @@ class NavigatorView(
 ) {
 
     private var isDarkTheme by Delegates.notNull<Boolean>()
-    private val userViewModel: UserViewModel by mainActivity.viewModels()
+    //private val userViewModel: UserViewModel by mainActivity.viewModels()
 
     init {
         mainActivity.setSupportActionBar(binding.mainToolbar)
@@ -61,9 +62,9 @@ class NavigatorView(
     }
 
     private fun setUserData(headerView: View) {
-        val userLiveData = userViewModel.getUserData()
+        val userLiveData = USER_VIEW_MODEL.getUserData()
         userLiveData.observe(mainActivity){
-            val user = it?.getOrNull(0)
+            val user = it?.lastOrNull()
             val userName = headerView.findViewById<TextView>(R.id.profile_login)
             val userDescription = headerView.findViewById<TextView>(R.id.profile_phone)
             userName.text = user?.displayName ?: "Вы"
@@ -79,14 +80,14 @@ class NavigatorView(
     }
 
     private fun saveDarkThemeState(context: Context, isDarkTheme: Boolean) {
-        val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences("ThemeState", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isDarkTheme", isDarkTheme)
         editor.apply()
     }
 
     fun loadDarkThemeState(context: Context): Boolean {
-        val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences("ThemeState", Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean("isDarkTheme", false)
     }
 }
