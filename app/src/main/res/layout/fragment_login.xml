@@ -54,6 +54,28 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_input" />
 
+        <TextView
+            android:id="@+id/google_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="или войдите с помощью аккаунта Google"
+            android:textSize="17sp"
+            android:layout_marginTop="20dp"
+            android:textAlignment="center"
+            android:textColor="?attr/textActive"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progressBar"/>
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/google_registration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/google_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

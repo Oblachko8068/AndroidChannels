@@ -5,6 +5,7 @@ data class User(
     val displayName: String = "",
     val phone: String = "",
     val email: String = "",
+    val google: Boolean = false,
     val image: Int = 0,
     val subscription: Boolean = false,
 )

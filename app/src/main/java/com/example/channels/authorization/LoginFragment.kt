@@ -1,5 +1,6 @@
 package com.example.channels.authorization
 
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
@@ -7,17 +8,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.channels.R
 import com.example.channels.databinding.FragmentLoginBinding
+import com.example.domain.model.User
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import java.util.concurrent.TimeUnit
 
 const val SIGN_IN_GOOD = "SIGN_IN_GOOD"
@@ -30,6 +41,32 @@ class LoginFragment : Fragment() {
     private lateinit var callback: PhoneAuthProvider.OnVerificationStateChangedCallbacks
     private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
     private lateinit var phoneNumber: String
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val signInAccountTask = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            if (signInAccountTask.isSuccessful) {
+                try {
+                    val googleSignInAccount = signInAccountTask.getResult(ApiException::class.java)
+                    val displayName = googleSignInAccount.displayName.toString()
+                    val email = googleSignInAccount.email.toString()
+                    if (googleSignInAccount != null) {
+                        val authCredential =
+                            GoogleAuthProvider.getCredential(googleSignInAccount.idToken, null)
+                        AUTH.signInWithCredential(authCredential).addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val uid = task.result.user?.uid.toString()
+                                checkUserInData(uid, displayName, email, true)
+                            } else {
+                                showToast("Ошибка с регистрацией пользователя, попробуйте позже")
+                            }
+                        }
+                    }
+                } catch (e: ApiException) {
+                    showToast(e.message.toString())
+                }
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +79,7 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        googleSignIn()
 
         binding.nextButton.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
@@ -49,7 +87,7 @@ class LoginFragment : Fragment() {
             if (binding.loginInput.text.toString().isEmpty()) {
                 showToast("Введите данные для входа")
             } else {
-                authUser()
+                phoneSignIn()
             }
         }
 
@@ -63,7 +101,7 @@ class LoginFragment : Fragment() {
                 fragmentManager.popBackStack()
             } else if (res.getInt("signedIn") == 0) {
                 val uid = res.getString("uid")
-                launchFragment(SignUpFragment.newInstance(uid, phoneNumber))
+                launchFragment(SignUpFragment.newInstance(uid, phoneNumber, "", "", false))
             }
         }
 
@@ -81,7 +119,40 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun authUser() {
+    private fun googleSignIn() {
+        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("272775250621-523c05jdaabblc837u7qh92tmvd220vu.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+        googleSignInClient =
+            GoogleSignIn.getClient(requireActivity() as Activity, googleSignInOptions)
+        binding.googleRegistration.setOnClickListener {
+            resultLauncher.launch(googleSignInClient.signInIntent)
+        }
+    }
+
+    private fun checkUserInData(uid: String, displayName: String, email: String, google: Boolean) {
+        DB_REF.child("users").child(uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val userData = snapshot.getValue(User::class.java)
+                        if (userData != null) {
+                            USER_VIEW_MODEL.saveUser(userData)
+                            val fragmentManager =
+                                requireActivity().supportFragmentManager
+                            fragmentManager.popBackStack()
+                        }
+                    } else {
+                        launchFragment(SignUpFragment.newInstance(uid, "", displayName, email, google))
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun phoneSignIn() {
         phoneNumber = binding.loginInput.text.toString()
         callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 

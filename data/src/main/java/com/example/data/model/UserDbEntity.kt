@@ -13,6 +13,7 @@ data class UserDbEntity(
     val displayName: String,
     val phone: String,
     val email: String,
+    val google: Boolean,
     val image: Int,
     val subscription: Boolean,
 ) {
@@ -23,6 +24,7 @@ data class UserDbEntity(
             phone = phone,
             email = email,
             image = image,
+            google = google,
             subscription = subscription,
         )
     }
@@ -34,5 +36,6 @@ fun User.toDbEntity(): UserDbEntity = UserDbEntity(
     phone = this.phone,
     email = this.email,
     image = this.image,
+    google = this.google,
     subscription = this.subscription,
 )

@@ -8,7 +8,7 @@ import com.example.data.model.FavoriteChannelDbEntity
 import com.example.data.model.UserDbEntity
 
 @Database(
-    version = 2,
+    version = 1,
     entities = [
         ChannelDbEntity::class,
         EpgDbEntity::class,
