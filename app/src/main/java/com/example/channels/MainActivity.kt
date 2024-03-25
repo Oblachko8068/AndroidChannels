@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity(), Navigator {
         installSplashScreen()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initNavigatorView()
         initDatabase(this)
+        initNavigatorView()
         adsViewModel.initializeAdsManager(this)
         if (savedInstanceState == null) {
             supportFragmentManager
