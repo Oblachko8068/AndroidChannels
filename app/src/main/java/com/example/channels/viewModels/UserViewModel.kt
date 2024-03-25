@@ -23,4 +23,10 @@ class UserViewModel @Inject constructor(
     }
 
     fun getUserData() = userLiveData
+
+    fun deleteUser(){
+        viewModelScope.launch {
+            userRepository.deleteUser()
+        }
+    }
 }

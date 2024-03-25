@@ -7,12 +7,16 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.get
+import com.bumptech.glide.Glide
 import com.example.channels.MainActivity
 import com.example.channels.R
 import com.example.channels.authorization.USER_VIEW_MODEL
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.viewModels.UserViewModel
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.Firebase
+import com.google.firebase.storage.storage
 import kotlin.properties.Delegates
 
 class NavigatorView(
@@ -70,13 +74,15 @@ class NavigatorView(
             userName.text = user?.displayName ?: "Вы"
             userDescription.text = user?.phone ?: ""
             if (user != null){
-                //hideLoginButton()
+                hideLoginButton()
+            } else {
+                binding.navView.menu[4].setVisible(true)
             }
         }
     }
 
     private fun hideLoginButton() {
-        binding.navView.menu.removeItem(R.id.nav_login)
+        binding.navView.menu[4].setVisible(false)
     }
 
     private fun saveDarkThemeState(context: Context, isDarkTheme: Boolean) {

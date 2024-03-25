@@ -67,7 +67,6 @@ class SignUpFragment : Fragment() {
 
     private fun saveToFirebase(uid: String, fullName: String, phoneNumber: String?) {
         val userDateMap = mutableMapOf<String, Any>()
-        saveToFirebase(uid, fullName, phoneNumber)
         userDateMap["id"] = uid
         userDateMap["displayName"] = fullName
         userDateMap["phone"] = phoneNumber as String

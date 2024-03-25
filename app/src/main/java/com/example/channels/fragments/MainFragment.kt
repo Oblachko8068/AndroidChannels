@@ -19,7 +19,7 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
         return binding.root
     }
 

@@ -8,4 +8,6 @@ interface UserRepository {
     fun getUsersDataFromRoom(): LiveData<List<User>>
 
     suspend fun setUsersDataToRoom(user: User)
+
+    suspend fun deleteUser()
 }

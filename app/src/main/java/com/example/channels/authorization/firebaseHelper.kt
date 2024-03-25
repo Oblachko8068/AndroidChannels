@@ -19,7 +19,6 @@ fun initDatabase(mainActivity: MainActivity) {
     DATABASE =
         FirebaseDatabase.getInstance("https://channels-41585-default-rtdb.europe-west1.firebasedatabase.app/")
     DB_REF = DATABASE.getReference()
-    USER_VIEW_MODEL
     AUTH = Firebase.auth
     FirebaseAuth.getInstance().firebaseAuthSettings.forceRecaptchaFlowForTesting(true)
     AUTH.setLanguageCode("ru")

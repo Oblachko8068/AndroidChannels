@@ -15,4 +15,7 @@ interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun setUsersData(userDbEntity: UserDbEntity)
+
+    @Query("DELETE FROM users")
+    fun deleteAllUsers()
 }

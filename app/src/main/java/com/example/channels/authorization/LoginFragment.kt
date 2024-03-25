@@ -29,7 +29,6 @@ class LoginFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var callback: PhoneAuthProvider.OnVerificationStateChangedCallbacks
     private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
-    private var inputPhone = true
     private lateinit var phoneNumber: String
 
     override fun onCreateView(
@@ -43,7 +42,6 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        emailOrPhoneInput()
 
         binding.nextButton.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
@@ -80,22 +78,6 @@ class LoginFragment : Fragment() {
             } else {
                 showToast("Ошибка регистрации, повторите попытку")
             }
-        }
-    }
-
-    private fun emailOrPhoneInput() {
-        val inputView = binding.loginInput
-        inputView.setText("+7")
-        binding.phoneEmailButton.setOnClickListener {
-            if (inputPhone) {
-                inputView.hint = "Введите e-mail"
-                inputView.text.clear()
-                binding.phoneEmailButton.setImageResource(R.drawable.phone_icon)
-            } else {
-                inputView.setText("+7")
-                binding.phoneEmailButton.setImageResource(R.drawable.email_icon)
-            }
-            inputPhone = !inputPhone
         }
     }
 

@@ -33,7 +33,7 @@ class SignInFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.submit.setOnClickListener {
             val inputCode = binding.codeInput.text.toString()
-            if (inputCode.length != 6) {
+            if (inputCode.length == 6) {
                 binding.progressBar.visibility = View.VISIBLE
                 binding.submit.visibility = View.INVISIBLE
                 val sendedCode = arguments?.getString(VERIFICATION_ID)

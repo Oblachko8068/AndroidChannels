@@ -25,7 +25,7 @@
     </style>
 
     <style name ="Theme.AnimatedSplash.MySplash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/main_background</item>
+        <item name="windowSplashScreenBackground">?attr/mainBackground</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/avd_logo_ramka</item>
         <item name="windowSplashScreenAnimationDuration">3000</item>
         <item name="postSplashScreenTheme">@style/Theme.Channels.Light</item>

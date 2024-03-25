@@ -39,7 +39,7 @@
             android:id="@+id/nav_login"
             android:checkable="false"
             android:visible="true"
-            android:icon="@drawable/icon_exit"
+            android:icon="@drawable/icon_login"
             android:title="Войти"/>
     </group>
 
