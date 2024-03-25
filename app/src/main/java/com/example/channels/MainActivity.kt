@@ -8,24 +8,24 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import com.example.channels.ads.AdShownListener
 import com.example.channels.authorization.LoginFragment
+import com.example.channels.authorization.initDatabase
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.exoPlayer.ExoPlayerFragment
 import com.example.channels.fragments.ChannelFragment
+import com.example.channels.fragments.MainFragment
 import com.example.channels.fragments.Navigator
+import com.example.channels.fragments.SettingsFragment
 import com.example.channels.fragments.VideoAdsFragment
 import com.example.channels.navigatorView.NavigatorView
 import com.example.channels.radioPlayer.RadioPlayerFragment
 import com.example.channels.viewModels.AdsViewModel
-import com.example.channels.viewModels.UserViewModel
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
-const val j = 0
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {
 
@@ -39,11 +39,12 @@ class MainActivity : AppCompatActivity(), Navigator {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initNavigatorView()
+        initDatabase(this)
         adsViewModel.initializeAdsManager(this)
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.fragmentContainer, ChannelFragment())
+                .add(R.id.fragmentContainer, MainFragment())
                 .commit()
         }
     }
@@ -63,14 +64,15 @@ class MainActivity : AppCompatActivity(), Navigator {
     private fun initNavigatorView() {
         val navigatorListener = NavigationView.OnNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.nav_tv -> launchFragment(ChannelFragment())
-                R.id.nav_radio -> launchFragment(RadioPlayerFragment())
-                R.id.nav_login -> launchFragment(LoginFragment())
+                R.id.nav_tv -> showChannelFragment()
+                R.id.nav_radio -> showRadioFragment()
+                R.id.nav_login -> showLoginFragment()
+                R.id.nav_settings -> launchFragment(SettingsFragment())
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
-        
+
         val navigatorView = NavigatorView(this, binding, navigatorListener)
         val isDarkTheme = navigatorView.loadDarkThemeState(this)
         if (isDarkTheme) {
@@ -78,6 +80,18 @@ class MainActivity : AppCompatActivity(), Navigator {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
+    }
+
+    override fun showLoginFragment() {
+        launchFragment(LoginFragment())
+    }
+
+    override fun showRadioFragment() {
+        launchFragment(RadioPlayerFragment())
+    }
+
+    override fun showChannelFragment() {
+        launchFragment(ChannelFragment())
     }
 
     override fun goBack() {

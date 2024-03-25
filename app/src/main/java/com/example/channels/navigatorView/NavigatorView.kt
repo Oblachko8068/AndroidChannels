@@ -22,7 +22,7 @@ class NavigatorView(
 ) {
 
     private var isDarkTheme by Delegates.notNull<Boolean>()
-    //private val userViewModel: UserViewModel by mainActivity.viewModels()
+    private val userViewModel: UserViewModel by mainActivity.viewModels()
 
     init {
         mainActivity.setSupportActionBar(binding.mainToolbar)
@@ -62,7 +62,7 @@ class NavigatorView(
     }
 
     private fun setUserData(headerView: View) {
-        val userLiveData = USER_VIEW_MODEL.getUserData()
+        val userLiveData = userViewModel.getUserData()
         userLiveData.observe(mainActivity){
             val user = it?.lastOrNull()
             val userName = headerView.findViewById<TextView>(R.id.profile_login)

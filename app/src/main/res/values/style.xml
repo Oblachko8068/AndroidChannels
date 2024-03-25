@@ -5,6 +5,12 @@
         <item name="dialogCornerRadius">12dp</item>
     </style>
 
+    <style name="RoundedCornerButton" parent="@style/Widget.AppCompat.Button.Colored">
+        <item name="background">@drawable/button_corner_radius</item>
+        <item name="colorButtonNormal">?attr/mainButton</item>
+        <item name="colorControlHighlight">?attr/mainButton</item>
+    </style>
+
     <!-- Стиль для расположения контейнера в центре внутри родительского контейнера -->
     <style name="CenterElements">
         <item name="layout_constraintStart_toStartOf">parent</item>
@@ -21,7 +27,7 @@
         <item name="android:editTextColor">?attr/textActive</item>
     </style>
 
-<style name="CustomTabTextAppearance">
+    <style name="CustomTabTextAppearance">
         <item name="android:textSize">16sp</item>
     </style>
 

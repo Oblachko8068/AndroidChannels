@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- кнопки -->
+    <attr name="mainButton" format="color" />
+
     <!-- фоны-->
     <attr name="mainBackground" format="color" />
     <attr name="backgroundOfFragment" format="color" />

@@ -2,7 +2,10 @@
 <resources>
 
 
-<!-- светлые цвета -->
+    <!-- светлые цвета -->
+    <!--кнопки-->
+    <color name="main_button">#000000</color>
+
     <!-- фоны-->
     <color name="main_background">#C4C0C0</color>
     <color name="background_of_fragments">#8B9088</color>
@@ -23,7 +26,10 @@
     <color name="choose_quality">#FFFFFF</color>
 
 
-<!-- темные цвета -->
+    <!-- темные цвета -->
+    <!--кнопки-->
+    <color name="main_button_dark">#FFFFFF</color>
+
     <!-- фоны-->
     <color name="main_background_dark">#343438</color>
     <color name="background_of_fragments_dark">#232427</color>
@@ -51,5 +57,5 @@
     <color name="unplayed_video_text_color">#75767B</color>
     <color name="list_view_divider">#8F8A8A</color>
     <color name="background_of_the_lower_tabs">#0077FF</color>
-
+    <color name="red_color">#DA1616</color>
 </resources>

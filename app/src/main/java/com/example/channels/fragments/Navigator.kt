@@ -10,6 +10,12 @@ fun Fragment.navigator(): Navigator {
 
 interface Navigator {
 
+    fun showLoginFragment()
+
+    fun showChannelFragment()
+
+    fun showRadioFragment()
+
     fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?)
 
     fun goBack()
