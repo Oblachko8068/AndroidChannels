@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), Navigator {
                 R.id.nav_tv -> showChannelFragment()
                 R.id.nav_radio -> showRadioFragment()
                 R.id.nav_login -> showLoginFragment()
-                R.id.nav_settings -> launchFragment(SettingsFragment())
+                R.id.nav_settings -> showSettingsFragment()
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -88,6 +88,10 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     override fun showRadioFragment() {
         launchFragment(RadioPlayerFragment())
+    }
+
+    override fun showSettingsFragment() {
+        launchFragment(SettingsFragment())
     }
 
     override fun showChannelFragment() {

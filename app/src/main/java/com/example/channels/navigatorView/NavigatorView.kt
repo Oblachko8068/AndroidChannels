@@ -8,15 +8,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.get
-import com.bumptech.glide.Glide
 import com.example.channels.MainActivity
 import com.example.channels.R
 import com.example.channels.authorization.USER_VIEW_MODEL
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.viewModels.UserViewModel
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.Firebase
-import com.google.firebase.storage.storage
 import kotlin.properties.Delegates
 
 class NavigatorView(
@@ -26,7 +23,6 @@ class NavigatorView(
 ) {
 
     private var isDarkTheme by Delegates.notNull<Boolean>()
-    private val userViewModel: UserViewModel by mainActivity.viewModels()
 
     init {
         mainActivity.setSupportActionBar(binding.mainToolbar)
@@ -66,7 +62,7 @@ class NavigatorView(
     }
 
     private fun setUserData(headerView: View) {
-        val userLiveData = userViewModel.getUserData()
+        val userLiveData = USER_VIEW_MODEL.getUserData()
         userLiveData.observe(mainActivity){
             val user = it?.lastOrNull()
             val userName = headerView.findViewById<TextView>(R.id.profile_login)

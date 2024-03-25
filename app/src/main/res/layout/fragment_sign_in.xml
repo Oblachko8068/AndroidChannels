@@ -25,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
+        android:inputType="number"
         android:textColor="?attr/textActive"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"

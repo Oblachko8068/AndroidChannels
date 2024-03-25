@@ -1,7 +1,6 @@
 package com.example.channels.ads.instreamAds
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -113,6 +112,7 @@ class SampleVideoAdPlayer(
                 }
                 Player.STATE_BUFFERING -> onAdBufferingStarted()
                 Player.STATE_ENDED -> onEndedState()
+                Player.STATE_IDLE -> {}
             }
         }
 

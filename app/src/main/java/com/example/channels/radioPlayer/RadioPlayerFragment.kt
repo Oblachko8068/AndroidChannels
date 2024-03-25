@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.channels.R
 import com.example.channels.databinding.FragmentRadioplayerBinding
-import com.example.channels.fragments.navigator
 
 class RadioPlayerFragment : Fragment() {
 
