@@ -50,17 +50,19 @@ class SignUpFragment : Fragment() {
                 val fullName = "${binding.inputName.text} ${binding.inputSirname.text}"
                 saveToFirebase(uid, fullName, phoneNumber, email, google)
                 saveToRoom(uid, fullName, phoneNumber, email, google)
-
-                val resultData = Bundle()
-                resultData.putInt("signedUp", 1)
-                setFragmentResult(SIGN_UP_GOOD, resultData)
-                val fragmentManager = requireActivity().supportFragmentManager
-                fragmentManager.popBackStack()
-
+                submitResult()
             } else {
                 Toast.makeText(requireContext(), "Введите имя", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun submitResult() {
+        val resultData = Bundle()
+        resultData.putInt("signedUp", 1)
+        setFragmentResult(SIGN_UP_GOOD, resultData)
+        val fragmentManager = requireActivity().supportFragmentManager
+        fragmentManager.popBackStack()
     }
 
     private fun saveToRoom(
@@ -76,7 +78,7 @@ class SignUpFragment : Fragment() {
             phone = phoneNumber,
             email = email,
             google = google as Boolean,
-            image = 0,
+            image = "",
             subscription = false
         )
         USER_VIEW_MODEL.saveUser(user)
@@ -95,7 +97,7 @@ class SignUpFragment : Fragment() {
         userDateMap["phone"] = phoneNumber
         userDateMap["email"] = email
         userDateMap["google"] = google as Boolean
-        userDateMap["image"] = 0
+        userDateMap["image"] = ""
         userDateMap["subscription"] = false
         DB_REF.child("users").child(uid).setValue(userDateMap)
     }

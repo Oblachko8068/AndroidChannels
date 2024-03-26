@@ -1,7 +1,6 @@
 package com.example.channels
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +16,7 @@ import com.example.channels.exoPlayer.ExoPlayerFragment
 import com.example.channels.fragments.ChannelFragment
 import com.example.channels.fragments.MainFragment
 import com.example.channels.fragments.Navigator
-import com.example.channels.fragments.SettingsFragment
+import com.example.channels.settings.SettingsFragment
 import com.example.channels.fragments.VideoAdsFragment
 import com.example.channels.navigatorView.NavigatorView
 import com.example.channels.radioPlayer.RadioPlayerFragment

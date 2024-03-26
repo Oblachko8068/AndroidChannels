@@ -14,7 +14,7 @@ data class UserDbEntity(
     val phone: String,
     val email: String,
     val google: Boolean,
-    val image: Int,
+    val image: String,
     val subscription: Boolean,
 ) {
     fun toUserDb(): User {

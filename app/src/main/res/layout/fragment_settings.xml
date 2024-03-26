@@ -5,24 +5,26 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/backgroundOfFragment"
-    tools:context=".fragments.SettingsFragment">
+    tools:context=".settings.SettingsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/profile_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="30dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="20dp"
         android:background="?attr/blocksBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/profile_pic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:src="@drawable/icon_user_picture"
-            android:background="#00000000"
+            android:background="@drawable/profile_img_border"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -67,6 +69,7 @@
             android:textSize="15sp"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/change_user_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="7dp"
@@ -84,7 +87,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Настройки чего-то"
+                android:text="Изменить данные аккаунта"
                 android:layout_marginStart="10dp"
                 android:textSize="17sp"
                 android:textColor="?attr/textActive"

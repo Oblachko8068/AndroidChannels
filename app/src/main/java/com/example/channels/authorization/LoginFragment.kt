@@ -1,9 +1,8 @@
 package com.example.channels.authorization
 
 import android.app.Activity
-import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +14,11 @@ import com.example.channels.R
 import com.example.channels.databinding.FragmentLoginBinding
 import com.example.domain.model.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.FirebaseException
-import com.google.firebase.FirebaseTooManyRequestsException
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
@@ -33,39 +30,18 @@ import java.util.concurrent.TimeUnit
 
 const val SIGN_IN_GOOD = "SIGN_IN_GOOD"
 const val SIGN_UP_GOOD = "SIGN_UP_GOOD"
+const val GOOGLE_TOKEN = "272775250621-523c05jdaabblc837u7qh92tmvd220vu.apps.googleusercontent.com"
 
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private lateinit var callback: PhoneAuthProvider.OnVerificationStateChangedCallbacks
-    private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
     private lateinit var phoneNumber: String
     private lateinit var googleSignInClient: GoogleSignInClient
-    private val resultLauncher =
+    private val googleResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val signInAccountTask = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-            if (signInAccountTask.isSuccessful) {
-                try {
-                    val googleSignInAccount = signInAccountTask.getResult(ApiException::class.java)
-                    val displayName = googleSignInAccount.displayName.toString()
-                    val email = googleSignInAccount.email.toString()
-                    if (googleSignInAccount != null) {
-                        val authCredential =
-                            GoogleAuthProvider.getCredential(googleSignInAccount.idToken, null)
-                        AUTH.signInWithCredential(authCredential).addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                val uid = task.result.user?.uid.toString()
-                                checkUserInData(uid, displayName, email, true)
-                            } else {
-                                showToast("Ошибка с регистрацией пользователя, попробуйте позже")
-                            }
-                        }
-                    }
-                } catch (e: ApiException) {
-                    showToast(e.message.toString())
-                }
-            }
+            signInWithGoogle(it.data)
         }
 
     override fun onCreateView(
@@ -84,11 +60,8 @@ class LoginFragment : Fragment() {
         binding.nextButton.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
             binding.nextButton.visibility = View.INVISIBLE
-            if (binding.loginInput.text.toString().isEmpty()) {
-                showToast("Введите данные для входа")
-            } else {
-                phoneSignIn()
-            }
+            if (binding.loginInput.text.toString().isEmpty()) showToast("Введите данные для входа")
+            else phoneSignIn()
         }
 
         parentFragmentManager.setFragmentResultListener(
@@ -121,13 +94,39 @@ class LoginFragment : Fragment() {
 
     private fun googleSignIn() {
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("272775250621-523c05jdaabblc837u7qh92tmvd220vu.apps.googleusercontent.com")
+            .requestIdToken(GOOGLE_TOKEN)
             .requestEmail()
             .build()
         googleSignInClient =
             GoogleSignIn.getClient(requireActivity() as Activity, googleSignInOptions)
         binding.googleRegistration.setOnClickListener {
-            resultLauncher.launch(googleSignInClient.signInIntent)
+            googleResultLauncher.launch(googleSignInClient.signInIntent)
+        }
+    }
+
+    private fun signInWithGoogle(data: Intent?) {
+        val signInAccountTask = GoogleSignIn.getSignedInAccountFromIntent(data)
+        if (signInAccountTask.isSuccessful) {
+            try {
+                val googleSignInAccount = signInAccountTask.getResult(ApiException::class.java)
+                authWithGoogle(googleSignInAccount)
+            } catch (e: ApiException) {
+                showToast(e.message.toString())
+            }
+        }
+    }
+
+    private fun authWithGoogle(googleSignInAccount: GoogleSignInAccount) {
+        val authCredential = GoogleAuthProvider.getCredential(googleSignInAccount.idToken, null)
+        AUTH.signInWithCredential(authCredential).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val uid = task.result.user?.uid.toString()
+                val displayName = googleSignInAccount.displayName.toString()
+                val email = googleSignInAccount.email.toString()
+                checkUserInData(uid, displayName, email, true)
+            } else {
+                showToast("Ошибка с регистрацией пользователя, попробуйте позже")
+            }
         }
     }
 
@@ -135,21 +134,21 @@ class LoginFragment : Fragment() {
         DB_REF.child("users").child(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val userData = snapshot.getValue(User::class.java)
-                        if (userData != null) {
-                            USER_VIEW_MODEL.saveUser(userData)
-                            val fragmentManager =
-                                requireActivity().supportFragmentManager
-                            fragmentManager.popBackStack()
-                        }
-                    } else {
-                        launchFragment(SignUpFragment.newInstance(uid, "", displayName, email, google))
-                    }
+                    snapshot.getValue(User::class.java)?.let { userData ->
+                        USER_VIEW_MODEL.saveUser(userData)
+                        fragmentPopBackStack()
+                    } ?: launchFragment(
+                        SignUpFragment.newInstance(uid, "", displayName, email, google)
+                    )
                 }
 
                 override fun onCancelled(error: DatabaseError) {}
             })
+    }
+
+    private fun fragmentPopBackStack() {
+        val fragmentManager = requireActivity().supportFragmentManager
+        fragmentManager.popBackStack()
     }
 
     private fun phoneSignIn() {
@@ -158,33 +157,13 @@ class LoginFragment : Fragment() {
 
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
 
-            override fun onVerificationFailed(e: FirebaseException) {
-                when (e) {
-                    is FirebaseAuthInvalidCredentialsException -> Log.w(
-                        TAG,
-                        "onVerificationFailed",
-                        e
-                    )
-
-                    is FirebaseTooManyRequestsException -> Log.w(TAG, "onVerificationFailed", e)
-                    is FirebaseAuthMissingActivityForRecaptchaException -> Log.w(
-                        TAG,
-                        "onVerificationFailed",
-                        e
-                    )
-                }
-            }
+            override fun onVerificationFailed(e: FirebaseException) {}
 
             override fun onCodeSent(
                 verificationId: String,
                 token: PhoneAuthProvider.ForceResendingToken,
             ) {
-                resendToken = token
-                launchFragment(
-                    SignInFragment.newInstance(
-                        verificationId
-                    )
-                )
+                launchFragment(SignInFragment.newInstance(verificationId))
             }
         }
         val options = PhoneAuthOptions.newBuilder(AUTH)

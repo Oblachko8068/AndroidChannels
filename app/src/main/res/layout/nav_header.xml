@@ -11,9 +11,9 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/profile_pic"
-        android:background="#00000000"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:background="@drawable/profile_img_border"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/icon_user_picture"/>

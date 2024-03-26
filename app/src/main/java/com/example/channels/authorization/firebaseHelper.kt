@@ -8,17 +8,25 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+
+const val FOLDER_PROFILE_IMAGE = "profile_image"
 
 lateinit var AUTH: FirebaseAuth
 lateinit var DATABASE: FirebaseDatabase
 lateinit var DB_REF: DatabaseReference
 lateinit var USER_VIEW_MODEL: UserViewModel
+lateinit var STORAGE: FirebaseStorage
+lateinit var STORAGE_REF: StorageReference
 
 fun initDatabase(mainActivity: MainActivity) {
     USER_VIEW_MODEL = mainActivity.viewModels<UserViewModel>().value
     DATABASE =
         FirebaseDatabase.getInstance("https://channels-41585-default-rtdb.europe-west1.firebasedatabase.app/")
     DB_REF = DATABASE.getReference()
+    STORAGE = FirebaseStorage.getInstance("gs://channels-41585.appspot.com")
+    STORAGE_REF = STORAGE.getReference()
     AUTH = Firebase.auth
     FirebaseAuth.getInstance().firebaseAuthSettings.forceRecaptchaFlowForTesting(true)
     AUTH.setLanguageCode("ru")
