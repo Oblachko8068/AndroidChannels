@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.VideoAdsFragment">
+
+    <com.yandex.mobile.ads.instream.player.ad.InstreamAdView
+        android:id="@+id/instream_ad_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingConstraints">
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/ad_player_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.yandex.mobile.ads.instream.player.ad.InstreamAdView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

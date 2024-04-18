@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">com.example.channels.list.Channels</string>
+
+    <string-array name="channel_names">
+        <item>Первый канал</item>
+        <item>НТВ</item>
+        <item>ТВ3</item>
+        <item>2х2</item>
+        <item>Пятница!</item>
+        <item>Суббота!</item>
+        <item>Карусель</item>
+        <item>ТНТ</item>
+    </string-array>
+    <string-array name="channel_desc">
+        <item>Жить здорово</item>
+        <item>Морские дьяволы</item>
+        <item>Сверхъестественное</item>
+        <item>Полночные откровения</item>
+        <item>На ножах</item>
+        <item>Маша и медведь</item>
+        <item>Леди Баг и Супер-Кот</item>
+        <item>Шоу Stand-Up</item>
+    </string-array>
+    <array name="channel_icons">
+        <item>@drawable/logo_perviy_kanal</item>
+        <item>@drawable/logo_ntv</item>
+        <item>@drawable/tv3</item>
+        <item>@drawable/logo_2x2</item>
+        <item>@drawable/logo_pyatnica</item>
+        <item>@drawable/logo_subbota</item>
+        <item>@drawable/logo_karusel_tv</item>
+        <item>@drawable/logo_tnt</item>
+    </array>
+    <string-array name="channel_fav_selected">
+        <item>false</item>
+        <item>false</item>
+        <item>false</item>
+        <item>false</item>
+        <item>false</item>
+        <item>false</item>
+        <item>false</item>
+        <item>false</item>
+    </string-array>
+
+
+</resources>
