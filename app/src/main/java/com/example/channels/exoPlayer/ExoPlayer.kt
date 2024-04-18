@@ -1,13 +1,7 @@
 package com.example.channels.exoPlayer
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.app.PendingIntent
-import android.app.PictureInPictureParams
-import android.app.RemoteAction
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
-import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,8 +23,10 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.bumptech.glide.Glide
-import com.example.channels.R
 import com.example.channels.databinding.FragmentExoplayerBinding
+import com.example.channels.exoPlayer.PipManager.enterPipMode
+import com.example.channels.exoPlayer.PipManager.setPipPauseParams
+import com.example.channels.exoPlayer.PipManager.setPipPlayParams
 import com.example.channels.fragments.navigator
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
@@ -49,8 +45,6 @@ const val autoQualityId = -1
 class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
 
     private var visibilityView: Boolean = true
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val paramsBuilder = PictureInPictureParams.Builder()
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var _binding: FragmentExoplayerBinding? = null
     private val binding get() = _binding!!
@@ -85,6 +79,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -103,11 +98,17 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
                     .into(binding.activeChannelIcon)
             }
         }
+        if (savedInstanceState != null) {
+            playbackState = savedInstanceState.getInt("playbackState")
+            if (playbackState == Player.STATE_READY) {
+                player.play()
+            }
+        }
         binding.backToMain.setOnClickListener {
             navigator().goBack()
         }
         binding.pipmode.setOnClickListener {
-            enterPipMode()
+            enterPipMode(activity, this)
         }
         binding.container.setOnClickListener {
             if (player.isPlaying) {
@@ -122,12 +123,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
                 QualitySettingsFragment.newInstance(tracksList, currentResolution)
             dialogFragment.show(parentFragmentManager, "setting")
         }
-        if (savedInstanceState != null) {
-            playbackState = savedInstanceState.getInt("playbackState")
-            if (playbackState == Player.STATE_READY) {
-                player.play()
-            }
-        }
         parentFragmentManager.setFragmentResultListener(SET_RESULT, viewLifecycleOwner) { _, res ->
             val result = res.getInt("quality")
             if (result == autoQualityId) {
@@ -137,64 +132,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
                 currentResolution = result
                 updatePlayerQuality(tracksList.indexOf(result))
             }
-        }
-    }
-
-    private fun enterPipMode() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && requireContext().packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
-            activity?.enterPictureInPictureMode(paramsBuilder.setActions(getPauseAction()).build())
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getPauseAction(): List<RemoteAction> {
-        val icon = Icon.createWithResource(activity, R.drawable.radio_pause_button)
-        PiPModeActionsReceiver.setListener(this)
-        val intent = PiPModeActionsReceiver.createPauseIntent(activity as Context)
-        val pendingIntent =
-            PendingIntent.getBroadcast(activity, 2, intent, PendingIntent.FLAG_IMMUTABLE)
-        val action = RemoteAction(icon, "Pause", "Pause Video", pendingIntent)
-        return listOf(action)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getPlayAction(): List<RemoteAction> {
-        val icon = Icon.createWithResource(activity, R.drawable.radio_play_button)
-        PiPModeActionsReceiver.setListener(this)
-        val intent = PiPModeActionsReceiver.createPlayIntent(activity as Context)
-        val pendingIntent =
-            PendingIntent.getBroadcast(activity, 1, intent, PendingIntent.FLAG_IMMUTABLE)
-        val action = RemoteAction(icon, "Play", "Play Video", pendingIntent)
-        return listOf(action)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    override fun onPlayClick() {
-        player.play()
-        val params = paramsBuilder.setActions(getPauseAction()).build()
-        activity?.setPictureInPictureParams(params)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onPauseClick() {
-        player.pause()
-        val params = paramsBuilder.setActions(getPlayAction()).build()
-        activity?.setPictureInPictureParams(params)
-    }
-
-    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode)
-        if (isInPictureInPictureMode) {
-            hidePlayerControls()
-        } else {
-            showPlayerControls()
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (activity?.isInPictureInPictureMode == true){
-            player.pause()
         }
     }
 
@@ -231,6 +168,34 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
             .buildUpon()
             .setOverrideForType(TrackSelectionOverride(videoTrackGroup.mediaTrackGroup, index))
             .build()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onPlayClick() {
+        player.play()
+        setPipPauseParams()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onPauseClick() {
+        player.pause()
+        setPipPlayParams()
+    }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode)
+        if (isInPictureInPictureMode) {
+            hidePlayerControls()
+        } else {
+            showPlayerControls()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (activity?.isInPictureInPictureMode == true) {
+            player.pause()
+        }
     }
 
     override fun onPause() {

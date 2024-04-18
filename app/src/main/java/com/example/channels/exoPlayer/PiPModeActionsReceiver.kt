@@ -12,15 +12,9 @@ class PiPModeActionsReceiver : BroadcastReceiver() {
         private const val REQUEST_PLAY = 1
         private const val REQUEST_PAUSE = 2
 
-        fun createPlayIntent(context: Context): Intent {
+        fun createIntent(context: Context, requestPlay: Boolean): Intent{
             val intent = Intent(context, PiPModeActionsReceiver::class.java)
-            intent.putExtra(EXTRA_CONTROL_TYPE, REQUEST_PLAY)
-            return intent
-        }
-
-        fun createPauseIntent(context: Context): Intent {
-            val intent = Intent(context, PiPModeActionsReceiver::class.java)
-            intent.putExtra(EXTRA_CONTROL_TYPE, REQUEST_PAUSE)
+            intent.putExtra(EXTRA_CONTROL_TYPE, if (requestPlay) REQUEST_PAUSE else REQUEST_PLAY)
             return intent
         }
 
