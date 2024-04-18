@@ -1,7 +1,9 @@
 package com.example.channels.exoPlayer
 
 import android.annotation.SuppressLint
+import android.app.PictureInPictureParams
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -55,7 +57,8 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 if (trackGroup.type == trackType) {
                     videoTrackGroup = trackGroup
                     for (i in 0 until trackGroup.length) {
-                        trackGroup.getTrackFormat(i).width.takeUnless { it in tracksList }?.let { tracksList.add(it) }
+                        trackGroup.getTrackFormat(i).width.takeUnless { it in tracksList }
+                            ?.let { tracksList.add(it) }
                     }
                 }
             }
@@ -94,6 +97,9 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         binding.backToMain.setOnClickListener {
             navigator().goBack()
         }
+        binding.pipmode.setOnClickListener {
+            enterPipMode()
+        }
         binding.container.setOnClickListener {
             if (player.isPlaying) {
                 coroutineScope.launch {
@@ -122,6 +128,22 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 currentResolution = result
                 updatePlayerQuality(tracksList.indexOf(result))
             }
+        }
+    }
+
+    private fun enterPipMode() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val params = PictureInPictureParams.Builder().build()
+            activity?.enterPictureInPictureMode(params)
+        }
+    }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode)
+        if (isInPictureInPictureMode) {
+            hidePlayerControls()
+        } else {
+            showPlayerControls()
         }
     }
 
@@ -162,7 +184,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
 
     override fun onPause() {
         super.onPause()
-        player.pause()
+        //player.pause()
         playbackState = player.playbackState
     }
 

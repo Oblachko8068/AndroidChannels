@@ -51,6 +51,7 @@ dependencies {
     implementation 'androidx.core:core-splashscreen:1.0.1'
 
     //реклама
+    //noinspection MobileAdsSdkOutdatedVersion
     implementation 'com.yandex.android:mobileads:6.4.0'
     implementation 'com.yandex.ads.mediation:mobileads-mytarget:5.20.0.0'
     implementation 'com.yandex.ads.mediation:mobileads-applovin:12.1.0.0'
