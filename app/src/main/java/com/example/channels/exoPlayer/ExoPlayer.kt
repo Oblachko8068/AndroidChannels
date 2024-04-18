@@ -1,13 +1,13 @@
 package com.example.channels.exoPlayer
 
 import android.annotation.SuppressLint
-import android.app.PictureInPictureParams
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -24,6 +24,9 @@ import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.bumptech.glide.Glide
 import com.example.channels.databinding.FragmentExoplayerBinding
+import com.example.channels.exoPlayer.PipManager.enterPipMode
+import com.example.channels.exoPlayer.PipManager.setPipPauseParams
+import com.example.channels.exoPlayer.PipManager.setPipPlayParams
 import com.example.channels.fragments.navigator
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
@@ -39,7 +42,7 @@ const val hlsUri = "https://linear-143.frequency.stream/dist/localnow/143/hls/ma
 const val trackType = 2
 const val autoQualityId = -1
 
-class ExoPlayerFragment : Fragment(), Player.Listener {
+class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
 
     private var visibilityView: Boolean = true
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -76,6 +79,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -94,11 +98,17 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                     .into(binding.activeChannelIcon)
             }
         }
+        if (savedInstanceState != null) {
+            playbackState = savedInstanceState.getInt("playbackState")
+            if (playbackState == Player.STATE_READY) {
+                player.play()
+            }
+        }
         binding.backToMain.setOnClickListener {
             navigator().goBack()
         }
         binding.pipmode.setOnClickListener {
-            enterPipMode()
+            enterPipMode(activity, this)
         }
         binding.container.setOnClickListener {
             if (player.isPlaying) {
@@ -113,12 +123,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 QualitySettingsFragment.newInstance(tracksList, currentResolution)
             dialogFragment.show(parentFragmentManager, "setting")
         }
-        if (savedInstanceState != null) {
-            playbackState = savedInstanceState.getInt("playbackState")
-            if (playbackState == Player.STATE_READY) {
-                player.play()
-            }
-        }
         parentFragmentManager.setFragmentResultListener(SET_RESULT, viewLifecycleOwner) { _, res ->
             val result = res.getInt("quality")
             if (result == autoQualityId) {
@@ -128,22 +132,6 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
                 currentResolution = result
                 updatePlayerQuality(tracksList.indexOf(result))
             }
-        }
-    }
-
-    private fun enterPipMode() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val params = PictureInPictureParams.Builder().build()
-            activity?.enterPictureInPictureMode(params)
-        }
-    }
-
-    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode)
-        if (isInPictureInPictureMode) {
-            hidePlayerControls()
-        } else {
-            showPlayerControls()
         }
     }
 
@@ -182,9 +170,36 @@ class ExoPlayerFragment : Fragment(), Player.Listener {
             .build()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onPlayClick() {
+        player.play()
+        setPipPauseParams()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onPauseClick() {
+        player.pause()
+        setPipPlayParams()
+    }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode)
+        if (isInPictureInPictureMode) {
+            hidePlayerControls()
+        } else {
+            showPlayerControls()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (activity?.isInPictureInPictureMode == true) {
+            player.pause()
+        }
+    }
+
     override fun onPause() {
         super.onPause()
-        //player.pause()
         playbackState = player.playbackState
     }
 
