@@ -12,11 +12,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import javax.inject.Inject
+import javax.inject.Named
 
 class DownloadRepositoryRetrofit @Inject constructor(
+    private val retrofit: Retrofit,
     private val channelDao: ChannelDao,
-    private val epgDao: EpgDao,
-    private val retrofit: Retrofit
+    private val epgDao: EpgDao
 ) : DownloadRepository {
 
     override suspend fun fetchChannels() {

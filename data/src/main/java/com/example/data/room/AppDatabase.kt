@@ -5,13 +5,15 @@ import androidx.room.RoomDatabase
 import com.example.data.model.ChannelDbEntity
 import com.example.data.model.EpgDbEntity
 import com.example.data.model.FavoriteChannelDbEntity
+import com.example.data.model.RadioDbEntity
 
 @Database(
     version = 1,
     entities = [
         ChannelDbEntity::class,
         EpgDbEntity::class,
-        FavoriteChannelDbEntity::class
+        FavoriteChannelDbEntity::class,
+        RadioDbEntity::class
     ]
 )
 
@@ -22,4 +24,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getEpgDao() : EpgDao
 
     abstract fun getFavoriteChannelDao(): FavoriteChannelDao
+
+    abstract fun getRadioDao(): RadioDao
 }

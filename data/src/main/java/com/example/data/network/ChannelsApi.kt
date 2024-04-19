@@ -6,6 +6,6 @@ import retrofit2.http.*
 
 interface ChannelsApi {
 
-    @GET("rKkyTS")
+    @GET("channels")
     suspend fun getChannelList(): Response<ChannelsJson>
 }

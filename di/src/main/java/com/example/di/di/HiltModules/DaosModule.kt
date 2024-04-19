@@ -6,6 +6,7 @@ import com.example.data.room.AppDatabase
 import com.example.data.room.ChannelDao
 import com.example.data.room.EpgDao
 import com.example.data.room.FavoriteChannelDao
+import com.example.data.room.RadioDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,9 @@ class DaosModule {
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase =
-        Room.databaseBuilder(appContext, AppDatabase::class.java, "database.db").build()
+        Room.databaseBuilder(appContext, AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
     @Singleton
@@ -34,4 +37,9 @@ class DaosModule {
     @Singleton
     fun provideFavoriteChannelDao(appDatabase: AppDatabase): FavoriteChannelDao =
         appDatabase.getFavoriteChannelDao()
+
+    @Provides
+    @Singleton
+    fun provideRadioDao(appDatabase: AppDatabase): RadioDao =
+        appDatabase.getRadioDao()
 }

@@ -8,27 +8,41 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Binder
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LiveData
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.PlayerNotificationManager
+import com.example.channels.exoPlayer.CHANNEL_EXO_DATA
+import com.example.channels.exoPlayer.EPG_DATA
+import com.example.channels.exoPlayer.ExoPlayerFragment
+import com.example.domain.model.Channel
+import com.example.domain.model.Epg
+import com.example.domain.model.Radio
 
 const val CHANNEL_ID = "RadioChannel"
 const val NOTIFICATION_ID = 1
-const val radioUri = "https://hls-01-radiorecord.hostingradio.ru/record/112/playlist.m3u8"
+const val radioUri = "http://pool.anison.fm:9000/AniSonFM(320)?nocache=0.9834540412142996"
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-class RadioPlayerService : Service(), RadioPlayerController {
+class RadioPlayerService(
+) : Service(), RadioPlayerController {
 
     private lateinit var radioPlayer: ExoPlayer
     private lateinit var playerNotificationManager: PlayerNotificationManager
@@ -62,15 +76,15 @@ class RadioPlayerService : Service(), RadioPlayerController {
 
     @androidx.annotation.OptIn(UnstableApi::class)
     private fun initializePlayer() {
-        val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
-        val hlsMediaSource = HlsMediaSource.Factory(dataSourceFactory)
-            .setAllowChunklessPreparation(false)
-            .createMediaSource(MediaItem.fromUri(radioUri))
-        val trackSelector = DefaultTrackSelector(this)
-        radioPlayer = ExoPlayer.Builder(this)
-            .setTrackSelector(trackSelector)
-            .build()
-        radioPlayer.addMediaSource(hlsMediaSource)
+        radioPlayer =
+            ExoPlayer.Builder(this)
+                .build()
+
+        val mediaItem =
+            MediaItem.Builder()
+                .setUri(radioUri)
+                .build()
+        radioPlayer.addMediaItem(mediaItem)
         radioPlayer.prepare()
     }
 
@@ -115,6 +129,10 @@ class RadioPlayerService : Service(), RadioPlayerController {
 
     override fun startPlayer() {
         radioPlayer.playWhenReady = true
+    }
+    fun nextRadio() {
+    }
+    fun nonextradio() {
     }
 
     override fun pausePlayer() {
