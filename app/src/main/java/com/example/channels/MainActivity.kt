@@ -1,8 +1,6 @@
 package com.example.channels
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -11,13 +9,12 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.example.channels.authorization.LoginFragment
-import com.example.channels.authorization.STORAGE_REF
 import com.example.channels.authorization.initDatabase
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.exoPlayer.ExoPlayerFragment
 import com.example.channels.fragments.ChannelFragment
 import com.example.channels.fragments.MainFragment
-import com.example.channels.fragments.Navigator
+import com.example.channels.musicPlayer.MusicPlayerFragment
 import com.example.channels.settings.SettingsFragment
 import com.example.channels.navigatorView.NavigatorView
 import com.example.channels.radioPlayer.RadioPlayerFragment
@@ -26,7 +23,6 @@ import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {
@@ -70,6 +66,7 @@ class MainActivity : AppCompatActivity(), Navigator {
                 R.id.nav_tv -> showChannelFragment()
                 R.id.nav_radio -> showRadioFragment()
                 R.id.nav_login -> showLoginFragment()
+                R.id.nav_music -> showMusicFragment()
                 R.id.nav_settings -> showSettingsFragment()
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -95,6 +92,10 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     override fun showSettingsFragment() {
         launchFragment(SettingsFragment())
+    }
+
+    override fun showMusicFragment() {
+        launchFragment(MusicPlayerFragment())
     }
 
     override fun showChannelFragment() {

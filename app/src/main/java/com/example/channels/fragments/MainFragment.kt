@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.example.channels.databinding.FragmentMainBinding
+import com.example.channels.navigator
 
 class MainFragment : Fragment() {
 
@@ -34,7 +35,7 @@ class MainFragment : Fragment() {
         }
 
         binding.muzButton.setOnClickListener {
-            navigator().showRadioFragment()
+            navigator().showMusicFragment()
         }
     }
 }

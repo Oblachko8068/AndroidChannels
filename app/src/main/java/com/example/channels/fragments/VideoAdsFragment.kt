@@ -10,6 +10,7 @@ import com.example.channels.ads.instreamAds.ContentVideoPlayer
 import com.example.channels.ads.instreamAds.SampleInstreamAdPlayer
 import com.example.channels.ads.instreamAds.SamplePlayer
 import com.example.channels.databinding.FragmentVideoAdsBinding
+import com.example.channels.navigator
 import com.yandex.mobile.ads.instream.InstreamAd
 import com.yandex.mobile.ads.instream.InstreamAdBinder
 

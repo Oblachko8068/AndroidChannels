@@ -1,4 +1,4 @@
-package com.example.channels.fragments
+package com.example.channels
 
 import androidx.fragment.app.Fragment
 import com.example.domain.model.Channel
@@ -17,6 +17,8 @@ interface Navigator {
     fun showRadioFragment()
 
     fun showSettingsFragment()
+
+    fun showMusicFragment()
 
     fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?)
 

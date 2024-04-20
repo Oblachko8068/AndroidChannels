@@ -27,7 +27,7 @@ import com.example.channels.databinding.FragmentExoplayerBinding
 import com.example.channels.exoPlayer.PipManager.enterPipMode
 import com.example.channels.exoPlayer.PipManager.setPipPauseParams
 import com.example.channels.exoPlayer.PipManager.setPipPlayParams
-import com.example.channels.fragments.navigator
+import com.example.channels.navigator
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import kotlinx.coroutines.CoroutineScope
