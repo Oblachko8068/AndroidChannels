@@ -1,5 +1,7 @@
 package com.example.channels.musicPlayer
 
+import com.example.domain.model.Music
+
 interface MusicPlayerController {
 
     val isPlaying: Boolean
@@ -9,8 +11,8 @@ interface MusicPlayerController {
     fun pausePlayer()
 
     fun stopPlayer()
-    fun playMusic()
-    fun playNext()
-    fun playPrevious()
 
+    fun playNext()
+
+    fun playPrevious()
 }

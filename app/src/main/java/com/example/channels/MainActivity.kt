@@ -14,6 +14,7 @@ import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.exoPlayer.ExoPlayerFragment
 import com.example.channels.fragments.ChannelFragment
 import com.example.channels.fragments.MainFragment
+import com.example.channels.musicPlayer.MusicListFragment
 import com.example.channels.musicPlayer.MusicPlayerFragment
 import com.example.channels.settings.SettingsFragment
 import com.example.channels.navigatorView.NavigatorView
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun showMusicFragment() {
-        launchFragment(MusicPlayerFragment())
+        launchFragment(MusicListFragment())
     }
 
     override fun showChannelFragment() {

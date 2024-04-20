@@ -1,4 +1,4 @@
-package com.example.channels.musicPlayer
+package com.example.domain.model
 
 import android.media.MediaMetadataRetriever
 import java.io.File
@@ -13,14 +13,6 @@ data class Music(
     val path: String,
     val artUri: String
 )
-
-class Playlist {
-    lateinit var name: String
-}
-
-class MusicPlaylist {
-    var ref: ArrayList<Playlist> = ArrayList()
-}
 
 fun formatDuration(duration: Long): String {
     val minutes = TimeUnit.MINUTES.convert(duration, TimeUnit.MILLISECONDS)

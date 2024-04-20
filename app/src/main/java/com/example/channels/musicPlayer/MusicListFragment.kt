@@ -2,58 +2,29 @@ package com.example.channels.musicPlayer
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.channels.R
 import com.example.channels.databinding.FragmentMusicListBinding
+import com.example.domain.model.Music
 import java.io.File
 import kotlin.concurrent.thread
 
-class MusicListFragment : Fragment() {
+class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
+
     private var _binding: FragmentMusicListBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var musicPlayerService: MusicPlayerService
-    private var isBound = false
-
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as MusicPlayerService.MusicBinder
-            musicPlayerService = binder.service
-            isBound = true
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-        }
-    }
-
-    companion object {
-        lateinit var MusicListMA: ArrayList<Music>
-        lateinit var musicListSearch: ArrayList<Music>
-        var search: Boolean = false
-        var sortOrder: Int = 0
-        val sortingList = arrayOf(
-            MediaStore.Audio.Media.DATE_ADDED + " DESC",
-            MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.SIZE + " DESC"
-        )
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,31 +38,10 @@ class MusicListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             requestRuntimePermission()
             initializeLayout()
         }
-
-        // Связываем активити с сервисом
-        val serviceIntent = Intent(requireContext(), MusicPlayerService::class.java)
-        requireActivity().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
-
-        binding.playlistRV.apply {
-            val musicAdapter = adapter as? MusicAdapter
-            musicAdapter?.setOnItemClickListener { position ->
-                val selectedMusic = MusicListMA[position]
-                musicPlayerService.playMusic(selectedMusic)
-            }
-        }
-    }
-
-
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
@@ -121,12 +71,29 @@ class MusicListFragment : Fragment() {
             MusicListMA = getAllAudio()
             requireActivity().runOnUiThread {
                 binding.playlistRV.setHasFixedSize(true)
-                binding.playlistRV.setItemViewCacheSize(13)
                 binding.playlistRV.layoutManager = LinearLayoutManager(requireContext())
-                val musicAdapter = MusicAdapter(requireContext(), MusicListMA)
+                val musicAdapter = MusicAdapter(requireContext(), MusicListMA,this)
                 binding.playlistRV.adapter = musicAdapter
             }
         }
+    }
+
+    override fun onMusicItemClicked(currentMusic: Music) {
+        val fragmentManager = requireActivity().supportFragmentManager
+        fragmentManager.beginTransaction()
+            .addToBackStack(null)
+            .replace(R.id.fragmentContainer, MusicPlayerFragment(MusicListMA, currentMusic))
+            .commit()
+    }
+
+    companion object {
+        lateinit var MusicListMA: ArrayList<Music>
+        var sortOrder: Int = 0
+        val sortingList = arrayOf(
+            MediaStore.Audio.Media.DATE_ADDED + " DESC",
+            MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.SIZE + " DESC"
+        )
     }
 
     @SuppressLint("Recycle", "Range")
@@ -156,18 +123,23 @@ class MusicListFragment : Fragment() {
             if (cursor.moveToFirst()) {
                 do {
                     val titleC =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)) ?: "Unknown"
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                            ?: "Unknown"
                     val idC =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID)) ?: "Unknown"
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
+                            ?: "Unknown"
                     val albumC =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)) ?: "Unknown"
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
+                            ?: "Unknown"
                     val artistC =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)) ?: "Unknown"
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                            ?: "Unknown"
                     val pathC = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
                     val durationC =
                         cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                     val albumIdC =
-                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)).toString()
+                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
+                            .toString()
                     val uri = Uri.parse("content://media/external/audio/albumart")
                     val artUriC = Uri.withAppendedPath(uri, albumIdC).toString()
                     val music = Music(
@@ -187,5 +159,10 @@ class MusicListFragment : Fragment() {
             cursor.close()
         }
         return tempList
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

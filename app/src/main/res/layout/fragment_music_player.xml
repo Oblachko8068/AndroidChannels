@@ -97,7 +97,7 @@
             android:src="@drawable/radio_next_button"/>
 
         <ImageButton
-            android:id="@+id/button_radio_list"
+            android:id="@+id/button_music_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#00000000"
