@@ -83,10 +83,10 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
     @SuppressLint("UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initializePlayer()
         val channel = arguments?.getSerializable(CHANNEL_EXO_DATA) as? Channel
         val epg = arguments?.getSerializable(EPG_DATA) as? Epg
         if (channel != null) {
+            initializePlayer(channel.stream)
             val channelName = channel.name
             val channelDescription = epg?.title
             val channelIconResource = channel.image
@@ -136,12 +136,12 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private fun initializePlayer() {
+    private fun initializePlayer(stream: String) {
         val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
         val hlsMediaSource =
             HlsMediaSource.Factory(dataSourceFactory)
                 .setAllowChunklessPreparation(false)
-                .createMediaSource(MediaItem.fromUri(hlsUri))
+                .createMediaSource(MediaItem.fromUri(stream))
         val trackSelector = DefaultTrackSelector(requireContext())
         player = ExoPlayer.Builder(requireContext())
             .setTrackSelector(trackSelector)
