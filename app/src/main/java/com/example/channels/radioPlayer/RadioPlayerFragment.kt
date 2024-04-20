@@ -16,7 +16,6 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentRadioplayerBinding
-import com.example.channels.fragments.navigator
 import com.example.channels.viewModels.RadioViewModel
 import com.example.domain.model.Radio
 
@@ -27,11 +26,9 @@ class RadioPlayerFragment : Fragment() {
     private var radioPlayerService: RadioPlayerService? = null
     private lateinit var serviceConnection: ServiceConnection
     private  val radioViewModel: RadioViewModel by activityViewModels()
-    //lateinit var radioList : List<Radio>
+    var radioList : MutableList<Radio> = mutableListOf()
     var idRadio = 0
     var sizeRadio = 0
-    var listImege: MutableList<String> = mutableListOf()
-    var listName: MutableList<String> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,21 +46,26 @@ class RadioPlayerFragment : Fragment() {
 
         radioViewModel.getRadioLiveData().observe(viewLifecycleOwner) { it->
             it.forEach{
-                listImege.add(it.image)
-                listName.add(it.name)
+                radioList.add(it)
             }
             sizeRadio = it.size
-            initializationImageAndTextViews()
+            if(radioList.size != 0){
+                initializationImageAndTextViews()
+            }
         }
 
         binding.buttonNext.setOnClickListener{
             if (idRadio == 0){
                 idRadio = sizeRadio - 1
-                initializationImageAndTextViews()
+                if(radioList.size != 0){
+                    initializationImageAndTextViews()
+                }
             }
             else{
                 idRadio -= 1
-                initializationImageAndTextViews()
+                if(radioList.size != 0){
+                    initializationImageAndTextViews()
+                }
             }
         }
 
@@ -96,14 +98,14 @@ class RadioPlayerFragment : Fragment() {
     }
     private fun initializationImageAndTextViews() {
 
-            val imageUrl = listImege[idRadio]
-            Glide.with(this)
-               .load(imageUrl)
-                .into(binding.radioImage)
+        val imageUrl = radioList[idRadio].image
+        Glide.with(this)
+            .load(imageUrl)
+            .into(binding.radioImage)
 
-           binding.radioTitle.setText(listName[idRadio])
+        binding.radioTitle.setText(radioList[idRadio].name)
 
-
+        radioPlayerService?.changeTheRadio(radioList[idRadio].stream, radioList[idRadio].name )
 
     }
 
@@ -113,6 +115,7 @@ class RadioPlayerFragment : Fragment() {
                 it.pausePlayer()
                 binding.startStopButton.setImageResource(R.drawable.radio_play_button)
             } else {
+                it.changeTheRadio(radioList[idRadio].stream, radioList[idRadio].name)
                 it.startPlayer()
                 binding.startStopButton.setImageResource(R.drawable.radio_pause_button)
             }

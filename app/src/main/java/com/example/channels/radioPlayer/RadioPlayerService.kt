@@ -8,37 +8,20 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Binder
 import android.os.Build
-import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.LiveData
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MimeTypes
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.hls.HlsMediaSource
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.PlayerNotificationManager
-import com.example.channels.exoPlayer.CHANNEL_EXO_DATA
-import com.example.channels.exoPlayer.EPG_DATA
-import com.example.channels.exoPlayer.ExoPlayerFragment
-import com.example.domain.model.Channel
-import com.example.domain.model.Epg
-import com.example.domain.model.Radio
 
 const val CHANNEL_ID = "RadioChannel"
 const val NOTIFICATION_ID = 1
-const val radioUri = "http://pool.anison.fm:9000/AniSonFM(320)?nocache=0.9834540412142996"
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class RadioPlayerService(
@@ -79,12 +62,18 @@ class RadioPlayerService(
         radioPlayer =
             ExoPlayer.Builder(this)
                 .build()
+    }
 
-        val mediaItem =
+    fun changeTheRadio(currentRadio: String, currentTitle: String){
+        val mediaMetadata = MediaMetadata.Builder()
+            .setTitle(currentTitle)
+            .build()
+        var mediaItem =
             MediaItem.Builder()
-                .setUri(radioUri)
+                .setUri(currentRadio)
+                .setMediaMetadata(mediaMetadata)
                 .build()
-        radioPlayer.addMediaItem(mediaItem)
+        radioPlayer.setMediaItem(mediaItem, true)
         radioPlayer.prepare()
     }
 
@@ -130,10 +119,6 @@ class RadioPlayerService(
     override fun startPlayer() {
         radioPlayer.playWhenReady = true
     }
-    fun nextRadio() {
-    }
-    fun nonextradio() {
-    }
 
     override fun pausePlayer() {
         radioPlayer.playWhenReady = false
@@ -159,16 +144,16 @@ class RadioPlayerService(
     private inner class MediaDescriptionAdapter :
         PlayerNotificationManager.MediaDescriptionAdapter {
         override fun getCurrentContentTitle(player: Player): CharSequence =
-            player.currentMediaItem?.mediaMetadata?.title ?: "Radio Record"
+            player.currentMediaItem?.mediaMetadata?.title ?: "Загрузка"
 
         override fun createCurrentContentIntent(player: Player): PendingIntent? = null
 
-        override fun getCurrentContentText(player: Player): CharSequence =
-            player.currentMediaItem?.mediaMetadata?.description ?: "Описание"
+        override fun getCurrentContentText(player: Player): CharSequence? = null
 
         override fun getCurrentLargeIcon(
             player: Player,
             callback: PlayerNotificationManager.BitmapCallback
         ): Bitmap? = null
+
     }
 }

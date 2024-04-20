@@ -4,7 +4,7 @@ import com.example.data.repository.ChannelRepositoryImpl
 import com.example.data.repository.DownloadRepositoryRetrofit
 import com.example.data.repository.EpgRepositoryImpl
 import com.example.data.repository.FavoriteChannelsRepositoryImpl
-import com.example.data.repository.RadioDownloadRepositoryRetrofit
+import com.example.data.repository.RadioDownloadRepositoryFirebaseDatabase
 import com.example.data.repository.RadioRepositoryImpl
 import com.example.domain.repository.ChannelRepository
 import com.example.domain.repository.DownloadRepository
@@ -55,6 +55,6 @@ abstract class RepositorysModule {
     @Binds
     @Singleton
     abstract fun bindRadioDownloadRepository(
-        radioDownloadRepository: RadioDownloadRepositoryRetrofit
+        radioDownloadRepository: RadioDownloadRepositoryFirebaseDatabase
     ): RadioDownloadRepository
 }
