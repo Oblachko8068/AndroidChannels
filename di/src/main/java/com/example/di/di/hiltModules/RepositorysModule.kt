@@ -4,11 +4,15 @@ import com.example.data.repository.ChannelRepositoryImpl
 import com.example.data.repository.DownloadRepositoryRetrofit
 import com.example.data.repository.EpgRepositoryImpl
 import com.example.data.repository.FavoriteChannelsRepositoryImpl
+import com.example.data.repository.RadioDownloadRepositoryFirebaseDatabase
+import com.example.data.repository.RadioRepositoryImpl
 import com.example.data.repository.UserRepositoryImpl
 import com.example.domain.repository.ChannelRepository
 import com.example.domain.repository.DownloadRepository
 import com.example.domain.repository.EpgRepository
 import com.example.domain.repository.FavoriteChannelsRepository
+import com.example.domain.repository.RadioDownloadRepository
+import com.example.domain.repository.RadioRepository
 import com.example.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -49,4 +53,16 @@ abstract class RepositorysModule {
     abstract fun bindUserRepository(
         userRepository: UserRepositoryImpl
     ): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRadioRepository(
+        radioRepository: RadioRepositoryImpl
+    ): RadioRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRadioDownloadRepository(
+        radioDownloadRepository: RadioDownloadRepositoryFirebaseDatabase
+    ): RadioDownloadRepository
 }

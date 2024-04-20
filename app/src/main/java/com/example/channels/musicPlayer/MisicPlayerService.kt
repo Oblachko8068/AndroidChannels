@@ -17,7 +17,6 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
-import com.example.channels.radioPlayer.NOTIFICATION_ID
 import com.example.domain.model.Music
 
 class MusicPlayerService : Service(), MusicPlayerController {
@@ -84,14 +83,14 @@ class MusicPlayerService : Service(), MusicPlayerController {
     override fun startPlayer() {
         if (!musicPlayer.isPlaying) {
             musicPlayer.playWhenReady = true
-            startForeground(NOTIFICATION_ID, createNotification())
+            startForeground(1, createNotification())
         }
     }
 
     override fun pausePlayer() {
         if (musicPlayer.isPlaying) {
             musicPlayer.playWhenReady = false
-            startForeground(NOTIFICATION_ID, createNotification())
+            startForeground(1, createNotification())
         }
     }
 
