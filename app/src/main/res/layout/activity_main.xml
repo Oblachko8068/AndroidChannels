@@ -24,7 +24,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.SearchView
+            <!--<androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView_tv_channels"
                 android:theme="@style/SearchViewStyle"
                 android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                 app:searchHintIcon="@null"
                 app:closeIcon="@null"
                 app:queryHint="Напишите название телеканала"
-                android:visibility="invisible"/>
+                android:visibility="invisible"/> -->
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.fragment.app.FragmentContainerView
