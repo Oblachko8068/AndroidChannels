@@ -12,8 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentRadioplayerBinding
+import com.example.channels.viewModels.RadioViewModel
+import com.example.domain.model.Radio
 
 class RadioPlayerFragment : Fragment() {
 
@@ -21,6 +25,10 @@ class RadioPlayerFragment : Fragment() {
     private val binding get() = _binding!!
     private var radioPlayerService: RadioPlayerService? = null
     private lateinit var serviceConnection: ServiceConnection
+    private  val radioViewModel: RadioViewModel by activityViewModels()
+    var radioList : MutableList<Radio> = mutableListOf()
+    var idRadio = 0
+    var sizeRadio = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +42,43 @@ class RadioPlayerFragment : Fragment() {
     @SuppressLint("UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        radioViewModel.getRadioLiveData().observe(viewLifecycleOwner) { it->
+            //radioList = it.toMutableList()
+            it.forEach{
+                radioList.add(it)
+            }
+            sizeRadio = it.size
+            if (radioList.size != 0){
+                initializationImageAndTextViews()
+            }
+        }
+
+        binding.buttonNext.setOnClickListener{
+            if (idRadio == 0){
+                idRadio = sizeRadio - 1
+                if(radioList.size != 0){
+                    initializationImageAndTextViews()
+                }
+            }
+            else{
+                idRadio -= 1
+                if(radioList.size != 0){
+                    initializationImageAndTextViews()
+                }
+            }
+        }
+
+        binding.buttonPrevious.setOnClickListener {
+            if (idRadio == sizeRadio - 1){
+                idRadio = 0
+                initializationImageAndTextViews()
+            }
+            else{
+                idRadio += 1
+                initializationImageAndTextViews()
+            }
+        }
 
         binding.startStopButton.setOnClickListener {
             togglePlayer()
@@ -50,6 +95,15 @@ class RadioPlayerFragment : Fragment() {
 
         val serviceIntent = Intent(requireContext(), RadioPlayerService::class.java)
         requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun initializationImageAndTextViews() {
+        val imageUrl = radioList[idRadio].image
+        Glide.with(this)
+            .load(imageUrl)
+            .into(binding.radioImage)
+        binding.radioTitle.text = radioList[idRadio].name
+        radioPlayerService?.changeTheRadio(radioList[idRadio].stream, radioList[idRadio].name)
     }
 
     private fun togglePlayer() {
@@ -70,4 +124,3 @@ class RadioPlayerFragment : Fragment() {
         _binding = null
     }
 }
-
