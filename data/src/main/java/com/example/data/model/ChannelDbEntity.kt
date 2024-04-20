@@ -7,13 +7,13 @@ import com.example.domain.model.Channel
 @Entity(
     tableName = "channels"
 )
+
 data class ChannelDbEntity(
     @PrimaryKey val id: Int,
     val name: String,
     val image: String,
     val stream: String
 ) {
-
     fun toChannelDb(): Channel {
         return Channel(
             id = id,
@@ -22,8 +22,8 @@ data class ChannelDbEntity(
             stream = stream
         )
     }
-
 }
+
 fun ChannelJson.fromChannelJsonToChannelDbEntity(): ChannelDbEntity = ChannelDbEntity(
     id = this.id,
     name = this.name,

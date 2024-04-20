@@ -4,7 +4,7 @@
     android:layout_width="128dp"
     android:layout_height="wrap_content"
     android:id="@+id/container"
-    tools:context=".fragments.QualitySettingsFragment"
+    tools:context=".exoPlayer.QualitySettingsFragment"
     android:layout_gravity="bottom|end"
     android:orientation="vertical">
 

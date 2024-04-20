@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.ChannelFragment"
+    android:background="?attr/mainBackground">
+
+    <Button
+        android:id="@+id/CrashButton"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:text="CrashButton"
+        tools:ignore="MissingConstraints" />
+    <!--Вкладки-->
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/blocksBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabIndicatorColor="@color/background_of_the_lower_tabs"
+        app:tabGravity="start"
+        app:tabMode="scrollable"
+        app:tabTextAppearance="@style/CustomTabTextAppearance"
+        app:tabSelectedTextColor ="?attr/textOfTabsActive"
+        app:tabTextColor ="?attr/textOfTabs"
+        tools:ignore="MissingConstraints" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpagerForTabs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="?attr/backgroundOfFragment"
+        android:paddingTop="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/tabs"
+        app:layout_constraintBottom_toTopOf="@+id/banner_ad_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <com.yandex.mobile.ads.banner.BannerAdView
+        android:id="@+id/banner_ad_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="?attr/backgroundOfFragment"
+        app:layout_constraintTop_toBottomOf="@+id/viewpagerForTabs"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <!---->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

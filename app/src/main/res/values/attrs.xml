@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- кнопки -->
+    <attr name="mainButton" format="color" />
+
+    <!-- фоны-->
+    <attr name="mainBackground" format="color" />
+    <attr name="backgroundOfFragment" format="color" />
+    <attr name="blocksBackground" format="color" />
+    <!-- текста-->
+    <attr name="textActive" format="color" />
+    <attr name="textOfTabsActive" format="color" />
+    <attr name="textOfTabs" format="color" />
+    <!-- навигатор-->
+    <attr name="navIcons" format="color" />
+    <attr name="navBackground" format="color" />
+    <attr name="headerBackground" format="color" />
+    <attr name="headerIcon" format="color" />
+    <!-- звезда -->
+    <attr name="starIconDisable" format="color"/>
+    <attr name="starIconEnable" format="color"/>
+    <!-- выбор качества -->
+    <attr name="chooseQuality" format="color"/>
+</resources>

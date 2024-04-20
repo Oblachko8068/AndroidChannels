@@ -4,13 +4,21 @@ import androidx.fragment.app.Fragment
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 
-typealias ResultListener<T> = (T) -> Unit
-
 fun Fragment.navigator(): Navigator {
     return requireActivity() as Navigator
 }
 
 interface Navigator {
+
+    fun showLoginFragment()
+
+    fun showChannelFragment()
+
+    fun showRadioFragment()
+
+    fun showMusicFragment()
+
+    fun showSettingsFragment()
 
     fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?)
 
