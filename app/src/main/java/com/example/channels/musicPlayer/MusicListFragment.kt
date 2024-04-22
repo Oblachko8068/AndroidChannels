@@ -2,10 +2,15 @@ package com.example.channels.musicPlayer
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentMusicListBinding
 import com.example.domain.model.Music
@@ -25,6 +31,8 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
 
     private var _binding: FragmentMusicListBinding? = null
     private val binding get() = _binding!!
+    private lateinit var musicPlayerService: MusicPlayerService
+    private lateinit var connection: ServiceConnection
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,9 +46,51 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            requestRuntimePermission()
-            initializeLayout()
+        binding.miniPlayerContainer.visibility = View.GONE
+        initServiceConnection()
+        binding.miniPlayerContainer.setOnClickListener {
+            val miniPlayerFragment = MusicPlayerFragment(musicPlayerService.getCurrentMusic())
+            val fragmentManager = requireActivity().supportFragmentManager
+            miniPlayerFragment.show(fragmentManager, miniPlayerFragment.tag)
+        }
+        binding.startStopMusic.setOnClickListener {
+            togglePlayer()
+        }
+        binding.nextMusic.setOnClickListener {
+            musicPlayerService.playNext()
+        }
+        binding.prevMusic.setOnClickListener {
+            musicPlayerService.playPrevious()
+        }
+    }
+
+    private fun initServiceConnection() {
+        connection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                val binder = service as MusicPlayerService.MusicBinder
+                musicPlayerService = binder.service
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    requestRuntimePermission()
+                    initializeLayout()
+                }
+                musicPlayerService.currentMusicPositionLiveData.observe(viewLifecycleOwner) {
+                    applyMiniPlayer(musicPlayerService.getCurrentMusic())
+                }
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {}
+        }
+        val serviceIntent = Intent(requireActivity(), MusicPlayerService::class.java)
+        requireActivity().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun togglePlayer() {
+        if (musicPlayerService.isPlaying) {
+            musicPlayerService.pausePlayer()
+            binding.startStopMusic.setImageResource(R.drawable.music_play)
+        } else {
+            musicPlayerService.startPlayer()
+            binding.startStopMusic.setImageResource(R.drawable.music_pause)
         }
     }
 
@@ -64,36 +114,28 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
     @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("SetTextI18n")
     private fun initializeLayout() {
-        val sortEditor = requireContext().getSharedPreferences("SORTING", 0)
-        sortOrder = sortEditor.getInt("sortOrder", 0)
-
         thread {
-            MusicListMA = getAllAudio()
+            musicPlayerService.musicListMA = getAllAudio()
             requireActivity().runOnUiThread {
                 binding.playlistRV.setHasFixedSize(true)
                 binding.playlistRV.layoutManager = LinearLayoutManager(requireContext())
-                val musicAdapter = MusicAdapter(requireContext(), MusicListMA,this)
+                val musicAdapter =
+                    MusicAdapter(requireContext(), musicPlayerService.musicListMA, this)
                 binding.playlistRV.adapter = musicAdapter
             }
         }
     }
 
-    override fun onMusicItemClicked(currentMusic: Music) {
-        val fragmentManager = requireActivity().supportFragmentManager
-        fragmentManager.beginTransaction()
-            .addToBackStack(null)
-            .replace(R.id.fragmentContainer, MusicPlayerFragment(MusicListMA, currentMusic))
-            .commit()
+    override fun onMusicItemClicked(musicPosition: Int) {
+        musicPlayerService.playNewMusic(musicPosition)
     }
 
-    companion object {
-        lateinit var MusicListMA: ArrayList<Music>
-        var sortOrder: Int = 0
-        val sortingList = arrayOf(
-            MediaStore.Audio.Media.DATE_ADDED + " DESC",
-            MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.SIZE + " DESC"
-        )
+    private fun applyMiniPlayer(music: Music) {
+        binding.miniPlayerContainer.visibility = View.VISIBLE
+        Glide.with(this)
+            .load(music.artUri)
+            .into(binding.imageMV)
+        binding.songNameMV.text = music.title
     }
 
     @SuppressLint("Recycle", "Range")
@@ -116,7 +158,7 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
             projection,
             selection,
             null,
-            sortingList[sortOrder],
+            MediaStore.Audio.Media.DATE_ADDED + " DESC",
             null
         )
         if (cursor != null) {

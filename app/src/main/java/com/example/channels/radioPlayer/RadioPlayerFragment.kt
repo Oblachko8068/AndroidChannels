@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.channels.R
 import com.example.channels.databinding.FragmentRadioplayerBinding
 import com.example.channels.viewModels.RadioViewModel
@@ -25,10 +26,9 @@ class RadioPlayerFragment : Fragment() {
     private val binding get() = _binding!!
     private var radioPlayerService: RadioPlayerService? = null
     private lateinit var serviceConnection: ServiceConnection
-    private  val radioViewModel: RadioViewModel by activityViewModels()
-    var radioList : MutableList<Radio> = mutableListOf()
-    var idRadio = 0
-    var sizeRadio = 0
+    private val radioViewModel: RadioViewModel by activityViewModels()
+    private var radioList : MutableList<Radio> = mutableListOf()
+    private var idRadio = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,48 +42,40 @@ class RadioPlayerFragment : Fragment() {
     @SuppressLint("UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        radioViewModel.getRadioLiveData().observe(viewLifecycleOwner) { it->
-            //radioList = it.toMutableList()
-            it.forEach{
-                radioList.add(it)
-            }
-            sizeRadio = it.size
+        initServiceConnection()
+        radioViewModel.getRadioLiveData().observe(viewLifecycleOwner) {
+            radioList = it.toMutableList()
             if (radioList.size != 0){
-                initializationImageAndTextViews()
+                applyView()
             }
         }
 
         binding.buttonNext.setOnClickListener{
-            if (idRadio == 0){
-                idRadio = sizeRadio - 1
-                if(radioList.size != 0){
-                    initializationImageAndTextViews()
-                }
-            }
-            else{
-                idRadio -= 1
-                if(radioList.size != 0){
-                    initializationImageAndTextViews()
-                }
-            }
+            idRadio = (idRadio - 1 + radioList.size) % radioList.size
+            applyView()
         }
 
         binding.buttonPrevious.setOnClickListener {
-            if (idRadio == sizeRadio - 1){
-                idRadio = 0
-                initializationImageAndTextViews()
-            }
-            else{
-                idRadio += 1
-                initializationImageAndTextViews()
-            }
+            idRadio = (idRadio + 1) % radioList.size
+            applyView()
         }
 
         binding.startStopButton.setOnClickListener {
             togglePlayer()
         }
+    }
 
+    private fun applyView() {
+        Glide.with(this)
+            .load(radioList[idRadio].image)
+            .transform(RoundedCorners(20))
+            .fitCenter()
+            .into(binding.radioImage)
+        binding.radioTitle.text = radioList[idRadio].name
+        radioPlayerService?.changeTheRadio(radioList[idRadio].stream, radioList[idRadio].name)
+    }
+
+    private fun initServiceConnection() {
         serviceConnection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 val binder = service as RadioPlayerService.RadioBinder
@@ -97,23 +89,14 @@ class RadioPlayerFragment : Fragment() {
         requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
-    private fun initializationImageAndTextViews() {
-        val imageUrl = radioList[idRadio].image
-        Glide.with(this)
-            .load(imageUrl)
-            .into(binding.radioImage)
-        binding.radioTitle.text = radioList[idRadio].name
-        radioPlayerService?.changeTheRadio(radioList[idRadio].stream, radioList[idRadio].name)
-    }
-
     private fun togglePlayer() {
         radioPlayerService?.let {
             if (it.isPlaying) {
                 it.pausePlayer()
-                binding.startStopButton.setImageResource(R.drawable.radio_play_button)
+                binding.startStopButton.setImageResource(R.drawable.icon_play)
             } else {
                 it.startPlayer()
-                binding.startStopButton.setImageResource(R.drawable.radio_pause_button)
+                binding.startStopButton.setImageResource(R.drawable.icon_pause)
             }
         }
     }

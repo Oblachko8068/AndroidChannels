@@ -129,13 +129,9 @@ class RadioPlayerService: Service(), RadioPlayerController {
 
     override fun onDestroy() {
         super.onDestroy()
-        releasePlayer()
-        mediaSessionCompat.release()
-    }
-
-    private fun releasePlayer() {
         radioPlayer.release()
         stopForeground(true)
+        mediaSessionCompat.release()
     }
 
     @UnstableApi
