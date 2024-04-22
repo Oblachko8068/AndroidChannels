@@ -12,13 +12,14 @@ import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import com.example.channels.radioPlayer.CHANNEL_ID
 import com.example.domain.model.Music
-
+//TODO добавить уведомления
 class MusicPlayerService : Service(), MusicPlayerController {
 
     private lateinit var musicPlayer: ExoPlayer
@@ -36,16 +37,48 @@ class MusicPlayerService : Service(), MusicPlayerController {
         super.onCreate()
         initializePlayer()
         mediaSessionCompat = MediaSessionCompat(this, "MusicPlayerService")
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            Intent(this, MusicPlayerService::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentIntent(pendingIntent)
+            .build()
+        mediaSessionCompat.setSessionActivity(pendingIntent)
+        startForeground(2, notification)
     }
 
     @OptIn(UnstableApi::class)
-    fun initializePlayer() {
-        val trackSelector = DefaultTrackSelector(this)
+    private fun initializePlayer() {
         musicPlayer = ExoPlayer.Builder(this)
-            .setTrackSelector(trackSelector)
             .build()
         musicPlayer.prepare()
+        musicPlayer.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                if (playbackState == Player.STATE_ENDED){
+                    playNext()
+                }
+            }
+        })
     }
+
+    override fun changeMediaItem(){
+        val mediaItem = MediaItem.Builder()
+            .setUri(musicListMA[currentMusicPosition].path)
+            .build()
+        musicPlayer.setMediaItem(mediaItem)
+        musicPlayer.prepare()
+    }
+
+    fun playNewMusic(musicPosition: Int) {
+        currentMusicPosition = musicPosition
+        changeMediaItem()
+        startPlayer()
+    }
+
+    fun getCurrentMusic(): Music = musicListMA[currentMusicPosition]
 
     private fun createNotification(): Notification {
         val channelId = "MusicPlayerServiceChannel"
@@ -68,7 +101,6 @@ class MusicPlayerService : Service(), MusicPlayerController {
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
-
         return notificationBuilder.build()
     }
 
@@ -80,18 +112,23 @@ class MusicPlayerService : Service(), MusicPlayerController {
     override val isPlaying: Boolean
         get() = musicPlayer.playWhenReady
 
-    override fun startPlayer() {
-        if (!musicPlayer.isPlaying) {
-            musicPlayer.playWhenReady = true
-            startForeground(1, createNotification())
+    val currentMusicPositionLiveData: MutableLiveData<Int> = MutableLiveData()
+    private var _currentMusicPosition: Int = 0
+    override var currentMusicPosition: Int
+        get() = _currentMusicPosition
+        set(value) {
+            _currentMusicPosition = value
+            currentMusicPositionLiveData.postValue(value)
         }
+
+    override var musicListMA: ArrayList<Music> = arrayListOf()
+
+    override fun startPlayer() {
+        musicPlayer.playWhenReady = true
     }
 
     override fun pausePlayer() {
-        if (musicPlayer.isPlaying) {
-            musicPlayer.playWhenReady = false
-            startForeground(1, createNotification())
-        }
+        musicPlayer.playWhenReady = false
     }
 
     override fun stopPlayer() {
@@ -100,10 +137,12 @@ class MusicPlayerService : Service(), MusicPlayerController {
     }
 
     override fun playNext() {
-        TODO("Not yet implemented")
+        currentMusicPosition = (currentMusicPosition + 1) % musicListMA.size
+        changeMediaItem()
     }
 
     override fun playPrevious() {
-        TODO("Not yet implemented")
+        currentMusicPosition = (currentMusicPosition - 1 + musicListMA.size) % musicListMA.size
+        changeMediaItem()
     }
 }

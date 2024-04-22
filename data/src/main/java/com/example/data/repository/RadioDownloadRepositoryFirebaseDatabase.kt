@@ -19,7 +19,6 @@ class RadioDownloadRepositoryFirebaseDatabase @Inject constructor(
 ): RadioDownloadRepository {
 
     override suspend fun fetchRadio(){
-
         val database = FirebaseDatabase.getInstance("https://channels-41585-default-rtdb.europe-west1.firebasedatabase.app/")
         val dbRef = database.getReference()
         val value = dbRef.child("radios")
@@ -31,15 +30,12 @@ class RadioDownloadRepositoryFirebaseDatabase @Inject constructor(
                     if (radios != null){
                         CoroutineScope(Dispatchers.IO).launch {
                             radioDao.createRadio(radios.map { it.fromRadioToRadioDbEntity() })
-                            val p = 0
                         }
                     }
                 }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 }

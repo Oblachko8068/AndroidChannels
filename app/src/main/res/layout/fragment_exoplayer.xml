@@ -31,7 +31,7 @@
             android:layout_height="36dp"
             android:layout_gravity="center_vertical"
             android:background="@null"
-            android:src="@drawable/img_back"
+            android:src="@drawable/icon_back"
             tools:ignore="ContentDescription" />
 
         <View
@@ -94,6 +94,16 @@
             android:textColor="@color/text_active_channel_description"
             android:textSize="16sp"
             tools:ignore="MissingConstraints"/>
+
+        <ImageButton
+            android:id="@+id/volume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="#00000000"
+            android:src="@drawable/icon_volume_off"
+            app:layout_constraintEnd_toStartOf="@+id/pipmode"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/pipmode"

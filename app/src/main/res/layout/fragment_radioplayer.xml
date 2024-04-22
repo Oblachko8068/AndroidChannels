@@ -32,7 +32,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radio_image" />
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/radio_controls"
         android:layout_width="match_parent"
@@ -52,7 +51,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/startStopButton"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/radio_next_button" />
+            android:src="@drawable/icon_next" />
 
         <ImageButton
             android:id="@+id/startStopButton"
@@ -60,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:background="#00000000"
-            android:src="@drawable/radio_play_button"
+            android:src="@drawable/icon_play"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -75,15 +74,15 @@
             app:layout_constraintEnd_toStartOf="@+id/startStopButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/radio_previous_button" />
+            android:src="@drawable/icon_prev" />
 
         <ImageButton
             android:id="@+id/button_radio_list"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_marginStart="13dp"
             android:background="#00000000"
-            android:src="@drawable/radio_list_of_radios"
+            android:src="@drawable/icon_list"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/button_next"

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.channels.databinding.MusicViewBinding
 import com.example.domain.model.Music
 
@@ -16,7 +17,7 @@ class MusicAdapter(
 
     interface OnMusicItemClickListener {
 
-        fun onMusicItemClicked(currentMusic: Music)
+        fun onMusicItemClicked(musicPosition: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicViewHolder {
@@ -30,6 +31,7 @@ class MusicAdapter(
         fun bind(currentMusic: Music, context: Context) {
             Glide.with(context)
                 .load(currentMusic.artUri)
+                .transform(RoundedCorners(18))
                 .into(binding.imageMV)
             binding.songNameMV.text = currentMusic.title
             binding.songAlbumMV.text = currentMusic.album
@@ -41,7 +43,7 @@ class MusicAdapter(
         val currentMusic = musicList[position]
         holder.bind(currentMusic, context)
         holder.itemView.setOnClickListener {
-            itemClickListener.onMusicItemClicked(currentMusic)
+            itemClickListener.onMusicItemClicked(position)
         }
     }
 

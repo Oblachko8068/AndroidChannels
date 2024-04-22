@@ -23,6 +23,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.bumptech.glide.Glide
+import com.example.channels.R
 import com.example.channels.databinding.FragmentExoplayerBinding
 import com.example.channels.exoPlayer.PipManager.enterPipMode
 import com.example.channels.exoPlayer.PipManager.setPipPauseParams
@@ -102,6 +103,15 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
             playbackState = savedInstanceState.getInt("playbackState")
             if (playbackState == Player.STATE_READY) {
                 player.play()
+            }
+        }
+        binding.volume.setOnClickListener {
+            if (player.volume > 0f) {
+                player.volume = 0f
+                binding.volume.setImageResource(R.drawable.icon_volume_on)
+            } else {
+                player.volume = 1f
+                binding.volume.setImageResource(R.drawable.icon_volume_off)
             }
         }
         binding.backToMain.setOnClickListener {
