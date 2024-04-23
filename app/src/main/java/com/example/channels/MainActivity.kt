@@ -15,7 +15,6 @@ import com.example.channels.exoPlayer.ExoPlayerFragment
 import com.example.channels.fragments.ChannelFragment
 import com.example.channels.fragments.MainFragment
 import com.example.channels.musicPlayer.MusicListFragment
-import com.example.channels.musicPlayer.MusicPlayerFragment
 import com.example.channels.settings.SettingsFragment
 import com.example.channels.navigatorView.NavigatorView
 import com.example.channels.radioPlayer.RadioPlayerFragment

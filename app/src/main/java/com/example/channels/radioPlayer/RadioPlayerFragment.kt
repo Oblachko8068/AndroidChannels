@@ -20,6 +20,8 @@ import com.example.channels.databinding.FragmentRadioplayerBinding
 import com.example.channels.viewModels.RadioViewModel
 import com.example.domain.model.Radio
 
+const val RADIO_POSITION_CHOOSED = "RADIO_POSITION_CHOOSED"
+
 class RadioPlayerFragment : Fragment() {
 
     private var _binding: FragmentRadioplayerBinding? = null
@@ -28,7 +30,6 @@ class RadioPlayerFragment : Fragment() {
     private lateinit var serviceConnection: ServiceConnection
     private val radioViewModel: RadioViewModel by activityViewModels()
     private var radioList : MutableList<Radio> = mutableListOf()
-    private var idRadio = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,29 +44,40 @@ class RadioPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initServiceConnection()
+        var idRadio = 0
         radioViewModel.getRadioLiveData().observe(viewLifecycleOwner) {
             radioList = it.toMutableList()
             if (radioList.size != 0){
-                applyView()
+                applyView(idRadio)
             }
         }
 
         binding.buttonNext.setOnClickListener{
             idRadio = (idRadio - 1 + radioList.size) % radioList.size
-            applyView()
+            applyView(idRadio)
         }
 
         binding.buttonPrevious.setOnClickListener {
             idRadio = (idRadio + 1) % radioList.size
-            applyView()
+            applyView(idRadio)
         }
 
         binding.startStopButton.setOnClickListener {
             togglePlayer()
         }
+
+        binding.buttonRadioList.setOnClickListener {
+            val radioListFragment = RadioListFragment.newInstance(radioList)
+            radioListFragment.show(parentFragmentManager, radioListFragment.tag)
+        }
+
+        parentFragmentManager.setFragmentResultListener(RADIO_POSITION_CHOOSED, viewLifecycleOwner){_, res->
+            val result = res.getInt("radio_position")
+            applyView(result)
+        }
     }
 
-    private fun applyView() {
+    private fun applyView(idRadio: Int) {
         Glide.with(this)
             .load(radioList[idRadio].image)
             .transform(RoundedCorners(20))
@@ -85,8 +97,8 @@ class RadioPlayerFragment : Fragment() {
             override fun onServiceDisconnected(name: ComponentName?) {}
         }
 
-        val serviceIntent = Intent(requireContext(), RadioPlayerService::class.java)
-        requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+        val serviceIntent = Intent(requireActivity(), RadioPlayerService::class.java)
+        requireActivity().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     private fun togglePlayer() {

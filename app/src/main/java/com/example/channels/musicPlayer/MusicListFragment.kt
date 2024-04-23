@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.channels.R
 import com.example.channels.databinding.FragmentMusicListBinding
 import com.example.domain.model.Music
@@ -33,6 +34,7 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
     private val binding get() = _binding!!
     private lateinit var musicPlayerService: MusicPlayerService
     private lateinit var connection: ServiceConnection
+    private var isBound = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,26 +43,21 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
     ): View {
         _binding = FragmentMusicListBinding.inflate(inflater, container, false)
         (requireActivity() as AppCompatActivity).supportActionBar?.show()
+        initServiceConnection()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.miniPlayerContainer.visibility = View.GONE
-        initServiceConnection()
-        binding.miniPlayerContainer.setOnClickListener {
-            val miniPlayerFragment = MusicPlayerFragment(musicPlayerService.getCurrentMusic())
-            val fragmentManager = requireActivity().supportFragmentManager
-            miniPlayerFragment.show(fragmentManager, miniPlayerFragment.tag)
-        }
         binding.startStopMusic.setOnClickListener {
             togglePlayer()
         }
         binding.nextMusic.setOnClickListener {
-            musicPlayerService.playNext()
+            if (isBound) musicPlayerService.playNext()
         }
         binding.prevMusic.setOnClickListener {
-            musicPlayerService.playPrevious()
+            if (isBound) musicPlayerService.playPrevious()
         }
     }
 
@@ -69,6 +66,7 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 val binder = service as MusicPlayerService.MusicBinder
                 musicPlayerService = binder.service
+                isBound = true
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     requestRuntimePermission()
                     initializeLayout()
@@ -78,19 +76,23 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
                 }
             }
 
-            override fun onServiceDisconnected(name: ComponentName?) {}
+            override fun onServiceDisconnected(name: ComponentName?) {
+                isBound = false
+            }
         }
         val serviceIntent = Intent(requireActivity(), MusicPlayerService::class.java)
         requireActivity().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
     }
 
     private fun togglePlayer() {
-        if (musicPlayerService.isPlaying) {
-            musicPlayerService.pausePlayer()
-            binding.startStopMusic.setImageResource(R.drawable.music_play)
-        } else {
-            musicPlayerService.startPlayer()
-            binding.startStopMusic.setImageResource(R.drawable.music_pause)
+        if (isBound){
+            if (musicPlayerService.isPlaying) {
+                musicPlayerService.pausePlayer()
+                binding.startStopMusic.setImageResource(R.drawable.music_play)
+            } else {
+                musicPlayerService.startPlayer()
+                binding.startStopMusic.setImageResource(R.drawable.music_pause)
+            }
         }
     }
 
@@ -115,7 +117,9 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
     @SuppressLint("SetTextI18n")
     private fun initializeLayout() {
         thread {
-            musicPlayerService.musicListMA = getAllAudio()
+            if (isBound){
+                musicPlayerService.musicListMA = getAllAudio()
+            }
             requireActivity().runOnUiThread {
                 binding.playlistRV.setHasFixedSize(true)
                 binding.playlistRV.layoutManager = LinearLayoutManager(requireContext())
@@ -127,13 +131,16 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
     }
 
     override fun onMusicItemClicked(musicPosition: Int) {
-        musicPlayerService.playNewMusic(musicPosition)
+        if (isBound){
+            musicPlayerService.playNewMusic(musicPosition)
+        }
     }
 
     private fun applyMiniPlayer(music: Music) {
         binding.miniPlayerContainer.visibility = View.VISIBLE
         Glide.with(this)
             .load(music.artUri)
+            .transform(RoundedCorners(18))
             .into(binding.imageMV)
         binding.songNameMV.text = music.title
     }
