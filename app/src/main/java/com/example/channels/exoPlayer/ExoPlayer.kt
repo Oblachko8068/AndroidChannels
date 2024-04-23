@@ -22,6 +22,7 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.ui.AspectRatioFrameLayout
 import com.bumptech.glide.Glide
 import com.example.channels.R
 import com.example.channels.databinding.FragmentExoplayerBinding
@@ -39,7 +40,6 @@ import kotlinx.coroutines.launch
 const val CHANNEL_EXO_DATA = "CHANNEL_EXO_DATA"
 const val EPG_DATA = "EPG_DATA"
 const val SET_RESULT = "SET_RESULT"
-const val hlsUri = "https://linear-143.frequency.stream/dist/localnow/143/hls/master/playlist.m3u8"
 const val trackType = 2
 const val autoQualityId = -1
 
@@ -54,20 +54,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
     private lateinit var videoTrackGroup: Tracks.Group
     private var currentResolution = autoQualityId
     private var tracksList = mutableListOf<Int>()
-    private val playerListener = object : Player.Listener {
-        override fun onTracksChanged(tracks: Tracks) {
-            super.onTracksChanged(tracks)
-            for (trackGroup in tracks.groups) {
-                if (trackGroup.type == trackType) {
-                    videoTrackGroup = trackGroup
-                    for (i in 0 until trackGroup.length) {
-                        trackGroup.getTrackFormat(i).width.takeUnless { it in tracksList }
-                            ?.let { tracksList.add(it) }
-                    }
-                }
-            }
-        }
-    }
+    private val playerListener = initListener()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,21 +71,7 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
     @SuppressLint("UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val channel = arguments?.getSerializable(CHANNEL_EXO_DATA) as? Channel
-        val epg = arguments?.getSerializable(EPG_DATA) as? Epg
-        if (channel != null) {
-            initializePlayer(channel.stream)
-            val channelName = channel.name
-            val channelDescription = epg?.title
-            val channelIconResource = channel.image
-            binding.activeChannelName.text = channelName
-            binding.activeChannelDesc.text = "$channelDescription"
-            context?.let {
-                Glide.with(it)
-                    .load(channelIconResource)
-                    .into(binding.activeChannelIcon)
-            }
-        }
+        initLayout()
         if (savedInstanceState != null) {
             playbackState = savedInstanceState.getInt("playbackState")
             if (playbackState == Player.STATE_READY) {
@@ -119,6 +92,15 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
         }
         binding.pipmode.setOnClickListener {
             enterPipMode(activity, this)
+        }
+        binding.zoom.setOnClickListener {
+            if (binding.exoplayerView.resizeMode == AspectRatioFrameLayout.RESIZE_MODE_ZOOM){
+                binding.exoplayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT)
+                binding.zoom.setImageResource(R.drawable.icon_zoom_player)
+            } else {
+                binding.exoplayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM)
+                binding.zoom.setImageResource(R.drawable.icon_fit_player)
+            }
         }
         binding.container.setOnClickListener {
             if (player.isPlaying) {
@@ -141,6 +123,24 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
             } else {
                 currentResolution = result
                 updatePlayerQuality(tracksList.indexOf(result))
+            }
+        }
+    }
+
+    private fun initLayout() {
+        val channel = arguments?.getSerializable(CHANNEL_EXO_DATA) as? Channel
+        val epg = arguments?.getSerializable(EPG_DATA) as? Epg
+        if (channel != null) {
+            initializePlayer(channel.stream)
+            val channelName = channel.name
+            val channelDescription = epg?.title
+            val channelIconResource = channel.image
+            binding.activeChannelName.text = channelName
+            binding.activeChannelDesc.text = "$channelDescription"
+            context?.let {
+                Glide.with(it)
+                    .load(channelIconResource)
+                    .into(binding.activeChannelIcon)
             }
         }
     }
@@ -235,6 +235,46 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
             clearVideoSurface()
             release()
         }
+    }
+
+    private fun initListener(): Player.Listener = object : Player.Listener {
+        override fun onTracksChanged(tracks: Tracks) {
+            super.onTracksChanged(tracks)
+            for (trackGroup in tracks.groups) {
+                if (trackGroup.type == trackType) {
+                    videoTrackGroup = trackGroup
+                    for (i in 0 until trackGroup.length) {
+                        trackGroup.getTrackFormat(i).width.takeUnless { it in tracksList }
+                            ?.let { tracksList.add(it) }
+                    }
+                }
+            }
+        }
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            when (playbackState) {
+                Player.STATE_BUFFERING -> {
+                    showLoadingIndicator()
+                    showPlayerControls()
+                }
+                Player.STATE_READY, Player.STATE_ENDED, Player.STATE_IDLE -> hideLoadingIndicator()
+            }
+        }
+
+        override fun onIsLoadingChanged(isLoading: Boolean) {
+            if (isLoading) {
+                showLoadingIndicator()
+                showPlayerControls()
+            } else hideLoadingIndicator()
+        }
+    }
+
+    private fun hideLoadingIndicator() {
+        binding.loadingBar.visibility = View.GONE
+    }
+
+    private fun showLoadingIndicator() {
+        binding.loadingBar.visibility = View.VISIBLE
     }
 
     private fun hideSystemUi() {

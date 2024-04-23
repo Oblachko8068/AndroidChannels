@@ -37,7 +37,7 @@ class MusicPlayerService : Service(), MusicPlayerController {
         super.onCreate()
         initializePlayer()
         mediaSessionCompat = MediaSessionCompat(this, "MusicPlayerService")
-        val pendingIntent = PendingIntent.getActivity(
+        /*val pendingIntent = PendingIntent.getActivity(
             this,
             0,
             Intent(this, MusicPlayerService::class.java),
@@ -47,7 +47,7 @@ class MusicPlayerService : Service(), MusicPlayerController {
             .setContentIntent(pendingIntent)
             .build()
         mediaSessionCompat.setSessionActivity(pendingIntent)
-        startForeground(2, notification)
+        startForeground(2, notification)*/
     }
 
     @OptIn(UnstableApi::class)
@@ -82,7 +82,7 @@ class MusicPlayerService : Service(), MusicPlayerController {
 
     private fun createNotification(): Notification {
         val channelId = "MusicPlayerServiceChannel"
-        val notificationIntent = Intent(this, MusicPlayerFragment::class.java)
+        val notificationIntent = Intent(this, MusicListFragment::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
             PendingIntent.FLAG_IMMUTABLE)
 

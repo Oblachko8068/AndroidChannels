@@ -23,6 +23,7 @@ import androidx.media3.ui.PlayerNotificationManager
 const val CHANNEL_ID = "RadioChannel"
 const val NOTIFICATION_RADIO_ID = 1
 
+//TODO настроить уведомления
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class RadioPlayerService: Service(), RadioPlayerController {
 

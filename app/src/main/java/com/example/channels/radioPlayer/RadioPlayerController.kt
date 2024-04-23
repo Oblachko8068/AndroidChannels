@@ -9,5 +9,4 @@ interface RadioPlayerController {
     fun pausePlayer()
 
     fun stopPlayer()
-
 }
