@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import com.example.channels.ads.AdShownListener
 import com.example.channels.authorization.LoginFragment
 import com.example.channels.authorization.initDatabase
 import com.example.channels.databinding.ActivityMainBinding
@@ -48,16 +49,12 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?) {
-        launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
-        /*val listener = object : AdShownListener {
+        val listener = object : AdShownListener {
             override fun onAdLoadedAndShown() {
                 launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
             }
         }
-        val instreamAd = adsViewModel.showInterOrInstreamAd(listener)
-        if (instreamAd != null) {
-            launchFragment(VideoAdsFragment(instreamAd))
-        }*/
+        adsViewModel.showInterAd(listener)
     }
 
     private fun initNavigatorView() {

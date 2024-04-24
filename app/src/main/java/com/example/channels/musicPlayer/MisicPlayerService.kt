@@ -17,7 +17,6 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import com.example.channels.radioPlayer.CHANNEL_ID
 import com.example.domain.model.Music
 //TODO добавить уведомления
 class MusicPlayerService : Service(), MusicPlayerController {

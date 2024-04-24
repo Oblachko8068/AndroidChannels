@@ -16,6 +16,7 @@ class ChannelFragment : Fragment() {
 
     private var _binding: FragmentChannelBinding? = null
     private val binding get() = _binding!!
+    private val adsViewModel: AdsViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,10 +29,7 @@ class ChannelFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adsViewModel: AdsViewModel by activityViewModels()
-        adsViewModel.initializeAdsManager(requireActivity().applicationContext)
-
-        //Поиск
+        initBannerAd()
         /*binding.searchViewTvChannels.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
@@ -42,12 +40,12 @@ class ChannelFragment : Fragment() {
             }
         })*/
 
-        //Вкладки
         val fragmentAdapter = FragmentAdapter(childFragmentManager)
         binding.viewpagerForTabs.adapter = fragmentAdapter
         binding.tabs.setupWithViewPager(binding.viewpagerForTabs)
+    }
 
-        //Реклама
+    private fun initBannerAd() {
         binding.bannerAdView.removeAllViewsInLayout()
         val banner: BannerAdView? = adsViewModel.showBannerAd()
         banner?.let {
@@ -55,5 +53,10 @@ class ChannelFragment : Fragment() {
             parent?.removeView(banner)
             binding.bannerAdView.addView(banner)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
