@@ -6,6 +6,6 @@ data class User(
     var phone: String = "",
     var email: String = "",
     var google: Boolean = false,
-    val image: String = "",
+    var image: String = "",
     val subscription: Boolean = false,
 )

@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class RadioDownloadRepositoryFB @Inject constructor(
+class RadioDownloadRepositoryImpl @Inject constructor(
     private val radioDao: RadioDao,
     private val databaseReference: DatabaseReference
 ): RadioDownloadRepository {

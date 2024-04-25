@@ -8,18 +8,16 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.channels.R
 import com.example.channels.USER_VIEW_MODEL
 import com.example.channels.databinding.FragmentLoginBinding
+import com.example.domain.listener.UserViewModelProvider
 
-const val SIGN_UP_GOOD = "SIGN_UP_GOOD"
-
-class LoginFragment : Fragment(), UserViewModelProvider {
+class LoginFragment() : Fragment(), UserViewModelProvider {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private var isCodeRequest = false
-    private lateinit var verificationCode: String
+    private var verificationCode: String = ""
     private val googleResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             USER_VIEW_MODEL.authWithGoogle(it.data)
@@ -31,13 +29,12 @@ class LoginFragment : Fragment(), UserViewModelProvider {
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         (requireActivity() as AppCompatActivity).supportActionBar?.show()
+        USER_VIEW_MODEL.setListener(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        USER_VIEW_MODEL.setListener(this)
-
         binding.googleRegistration.setOnClickListener {
             googleResultLauncher.launch(USER_VIEW_MODEL.getGoogleSignInIntent())
         }
@@ -59,21 +56,9 @@ class LoginFragment : Fragment(), UserViewModelProvider {
                     showProgressBar()
                     USER_VIEW_MODEL.authWithPhone(verificationCode, inputCode, phoneNumber)
                 } else {
-                    showButtonNext()
                     showToast("Длина кода 6 символов")
+                    showButtonNext()
                 }
-            }
-        }
-
-        parentFragmentManager.setFragmentResultListener(
-            SIGN_UP_GOOD,
-            viewLifecycleOwner
-        ) { _, res ->
-            if (res.getInt("signedUp") == 1) {
-                showToast("Вы зарегистрировались")
-                fragmentPopBackStack()
-            } else {
-                showToast("Ошибка регистрации, повторите попытку")
             }
         }
     }
@@ -89,18 +74,13 @@ class LoginFragment : Fragment(), UserViewModelProvider {
     }
 
     override fun signInIsGood() {
+        showToast("Вы вошли")
+        showButtonNext()
         fragmentPopBackStack()
     }
 
-    override fun signUpUser() {
-        parentFragmentManager
-            .beginTransaction()
-            .addToBackStack(null)
-            .replace(R.id.fragmentContainer, SignUpFragment())
-            .commit()
-    }
-
     override fun errorOccurred(message: String) {
+        showButtonNext()
         showToast(message)
     }
 
@@ -108,12 +88,8 @@ class LoginFragment : Fragment(), UserViewModelProvider {
         binding.codeInput.visibility = View.VISIBLE
         binding.signInText.visibility = View.VISIBLE
         showButtonNext()
+        isCodeRequest = true
         verificationCode = id
-    }
-
-    override fun phoneVerificationFailed() {
-        showButtonNext()
-        showToast("Проверьте номер телефона")
     }
 
     private fun fragmentPopBackStack() {

@@ -1,14 +1,10 @@
-package com.example.channels.authorization
+package com.example.domain.listener
 
 interface UserViewModelProvider {
 
     fun signInIsGood()
 
-    fun signUpUser()
-
     fun errorOccurred(message: String)
 
     fun codeSend(id: String)
-
-    fun phoneVerificationFailed()
 }

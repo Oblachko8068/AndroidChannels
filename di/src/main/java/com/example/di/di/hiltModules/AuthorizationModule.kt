@@ -1,16 +1,16 @@
 package com.example.di.di.hiltModules
 
-import android.app.Activity
 import android.content.Context
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -31,12 +31,12 @@ class AuthorizationModule {
 
     @Provides
     @Singleton
-    fun provideGoogleSignIn(context: Context): GoogleSignInClient {
+    fun provideGoogleSignIn(@ApplicationContext appContext: Context): GoogleSignInClient {
         val googleSignInOptions =
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(GOOGLE_TOKEN)
                 .requestEmail()
                 .build()
-        return GoogleSignIn.getClient(context as Activity, googleSignInOptions)
+        return GoogleSignIn.getClient(appContext, googleSignInOptions)
     }
 }

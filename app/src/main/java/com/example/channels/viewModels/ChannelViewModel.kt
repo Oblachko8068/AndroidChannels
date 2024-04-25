@@ -9,7 +9,7 @@ import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import com.example.domain.model.FavoriteChannel
 import com.example.domain.repository.ChannelRepository
-import com.example.domain.repository.DownloadRepository
+import com.example.domain.repository.ChannelDownloadRepository
 import com.example.domain.repository.EpgRepository
 import com.example.domain.repository.FavoriteChannelsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class ChannelViewModel @Inject constructor(
-    downloadRepository: DownloadRepository,
+    channelDownloadRepository: ChannelDownloadRepository,
     channelRepository: ChannelRepository,
     epgRepository: EpgRepository,
     private val favoriteChannelsRepository: FavoriteChannelsRepository,
@@ -43,7 +43,7 @@ class ChannelViewModel @Inject constructor(
             mediatorLiveData.value = Pair(channel, epg)
         }
         viewModelScope.launch(coroutineContext) {
-            downloadRepository.fetchChannels()
+            channelDownloadRepository.fetchChannels()
         }
     }
 

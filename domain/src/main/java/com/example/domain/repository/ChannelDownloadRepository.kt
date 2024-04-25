@@ -1,6 +1,6 @@
 package com.example.domain.repository
 
-interface DownloadRepository {
+interface ChannelDownloadRepository {
 
     suspend fun fetchChannels()
 }
