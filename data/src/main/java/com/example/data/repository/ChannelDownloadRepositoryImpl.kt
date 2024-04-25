@@ -6,10 +6,10 @@ import com.example.data.model.fromChannelJsonToChannelDbEntity
 import com.example.data.model.fromChannelJsonToEpgDbEntity
 import com.example.data.room.ChannelDao
 import com.example.data.room.EpgDao
-import com.example.domain.repository.DownloadRepository
+import com.example.domain.repository.ChannelDownloadRepository
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.CoroutineScope
@@ -17,16 +17,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class DownloadRepositoryRetrofit @Inject constructor(
+class ChannelDownloadRepositoryImpl @Inject constructor(
     private val channelDao: ChannelDao,
     private val epgDao: EpgDao,
-) : DownloadRepository {
+    private val databaseReference: DatabaseReference
+) : ChannelDownloadRepository {
 
     override suspend fun fetchChannels() {
-        val database =
-            FirebaseDatabase.getInstance("https://channels-41585-default-rtdb.europe-west1.firebasedatabase.app/")
-        val dbRef = database.getReference()
-        val value = dbRef.child("channels")
+        val value = databaseReference.child("channels")
         value.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {

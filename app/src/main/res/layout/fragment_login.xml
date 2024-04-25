@@ -31,11 +31,37 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             android:text="+7"
-            android:inputType="number"
             android:textSize="20sp"
             android:textColor="?attr/textActive"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/enter_login_text" />
+
+        <TextView
+            android:id="@+id/sign_in_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Код: "
+            android:visibility="invisible"
+            android:layout_marginTop="20dp"
+            android:textColor="?attr/textActive"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/login_input" />
+
+        <EditText
+            android:id="@+id/code_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="20sp"
+            android:visibility="invisible"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="?attr/textActive"
+            app:layout_constraintStart_toEndOf="@+id/sign_in_text"
+            app:layout_constraintEnd_toStartOf="@+id/next_button"
+            app:layout_constraintTop_toBottomOf="@+id/login_input" />
 
         <ImageButton
             android:id="@+id/next_button"

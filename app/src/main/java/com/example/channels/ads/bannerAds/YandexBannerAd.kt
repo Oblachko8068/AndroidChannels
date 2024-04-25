@@ -17,18 +17,18 @@ class YandexBannerAd(
 ) : BannerAdProvider {
 
     private var bannerAd: BannerAdView? = null
-    private var bannerReady = false
+    private var isLoaded = false
 
     override fun loadBannerAd() {
-        bannerReady = false
+        isLoaded = false
         bannerAd?.destroy()
         bannerAd = BannerAdView(context)
         bannerAd?.setBannerAdEventListener(object : BannerAdEventListener {
             override fun onAdLoaded() {
-                bannerReady = true
+                isLoaded = true
             }
 
-            override fun onAdFailedToLoad(p0: AdRequestError) {}
+            override fun onAdFailedToLoad(error: AdRequestError) {}
 
             override fun onAdClicked() {}
 
@@ -36,7 +36,7 @@ class YandexBannerAd(
 
             override fun onReturnedToApplication() {}
 
-            override fun onImpression(p0: ImpressionData?) {}  
+            override fun onImpression(impressionData: ImpressionData?) {}
         })
         bannerAd?.setAdUnitId(adUnitId)
         bannerAd?.setAdSize(BannerAdSize.inlineSize(context, adsMaxWidth, adsMaxHeight))
@@ -45,6 +45,5 @@ class YandexBannerAd(
 
     override fun showBannerAd(): BannerAdView? = bannerAd
 
-    override fun isAdLoaded(): Boolean = bannerReady
-
+    override fun isAdLoaded(): Boolean = isLoaded
 }

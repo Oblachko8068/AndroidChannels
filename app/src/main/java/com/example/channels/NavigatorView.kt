@@ -1,4 +1,4 @@
-package com.example.channels.navigatorView
+package com.example.channels
 
 import android.content.Context
 import android.view.View
@@ -11,10 +11,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.channels.MainActivity
-import com.example.channels.R
-import com.example.channels.authorization.USER_VIEW_MODEL
+import com.example.channels.authorization.CHANGE_USER_INFO
+import com.example.channels.authorization.ChangeUserInfoDialog
 import com.example.channels.databinding.ActivityMainBinding
+import com.example.domain.model.User
 import com.google.android.material.navigation.NavigationView
 import kotlin.properties.Delegates
 
@@ -63,17 +63,49 @@ class NavigatorView(
             val userImageView = headerView.findViewById<ImageView>(R.id.profile_pic)
             userName.text = user?.displayName ?: "Вы"
             userDescription.text = user?.phone.takeUnless { phone -> phone.isNullOrEmpty() }
-                ?: user?.email.takeUnless { email -> email.isNullOrEmpty() }
-                        ?: ""
-            val userImage = user?.image
-            if (userImage != "" && userImage != null) {
-                setUserImage(userImage, userImageView)
-            } else {
-                val imgResId = R.drawable.icon_user_picture
-                val drawable = ContextCompat.getDrawable(mainActivity, imgResId)
-                userImageView.setImageDrawable(drawable)
+                ?: user?.email.takeUnless { email -> email.isNullOrEmpty() } ?: ""
+            setBasicPhoto(user?.image, userImageView)
+            binding.navView.menu[3].setVisible(user == null)
+            if (user != null) {
+                userImageView.setOnClickListener {
+                    val dialogFragment =
+                        ChangeUserInfoDialog.newInstance(user.displayName, user.image)
+                    dialogFragment.show(mainActivity.supportFragmentManager, dialogFragment.tag)
+                    initFragmentResult(user, userImageView)
+                }
             }
-            binding.navView.menu[4].setVisible(user == null)
+        }
+    }
+
+    private fun initFragmentResult(user: User, userImageView: ImageView) {
+        mainActivity.supportFragmentManager.setFragmentResultListener(
+            CHANGE_USER_INFO,
+            mainActivity
+        ) { _, res ->
+            if (res.getBoolean("exit")) {
+                USER_VIEW_MODEL.signOutFromAccount()
+            }
+            val newDisplayName = res.getString("fullName")
+            if (newDisplayName != user.displayName && newDisplayName != null) {
+                USER_VIEW_MODEL.updateUserDisplayName(user, newDisplayName)
+            }
+            val newImage = res.getString("imageUri")
+            if (newImage.isNullOrBlank()) {
+                setBasicPhoto(user.image, userImageView)
+            } else {
+                USER_VIEW_MODEL.updateUserPhoto(user, newImage)
+                setUserImage(newImage, userImageView)
+            }
+        }
+    }
+
+    private fun setBasicPhoto(image: String?, userImageView: ImageView) {
+        if (image != "" && image != null) {
+            setUserImage(image, userImageView)
+        } else {
+            val imgResId = R.drawable.icon_user_picture
+            val drawable = ContextCompat.getDrawable(mainActivity, imgResId)
+            userImageView.setImageDrawable(drawable)
         }
     }
 

@@ -16,5 +16,4 @@ interface RadioDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun createRadio(radioDbEntity: List<RadioDbEntity>)
-
 }

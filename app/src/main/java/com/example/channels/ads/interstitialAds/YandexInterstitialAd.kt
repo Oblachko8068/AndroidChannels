@@ -23,35 +23,31 @@ class YandexInterstitialAd(
         val adRequest = AdRequestConfiguration.Builder(adUnitId).build()
         InterstitialAdLoader(context).apply {
             setAdLoadListener(object : InterstitialAdLoadListener {
-                override fun onAdLoaded(ad: InterstitialAd) {
-                    interstitialAd = ad
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    this@YandexInterstitialAd.interstitialAd = interstitialAd
                 }
 
-                override fun onAdFailedToLoad(adRequestError: AdRequestError) {
+                override fun onAdFailedToLoad(error: AdRequestError) {
                     interstitialAd = null
                 }
             })
         }.loadAd(adRequest)
     }
 
-    override fun isAdLoaded(): Boolean = interstitialAd != null
-
     override fun showInterAd(listener: AdShownListener) {
         interstitialAd?.apply {
             setAdEventListener(object : InterstitialAdEventListener {
                 override fun onAdShown() {
-                    interstitialAd?.setAdEventListener(null)
                     listener.onAdLoadedAndShown()
+                    interstitialAd?.setAdEventListener(null)
                 }
 
                 override fun onAdFailedToShow(adError: AdError) {
-                    interstitialAd?.setAdEventListener(null)
                     listener.onAdLoadedAndShown()
+                    interstitialAd?.setAdEventListener(null)
                 }
 
-                override fun onAdDismissed() {
-                    interstitialAd?.setAdEventListener(null)
-                }
+                override fun onAdDismissed() {}
 
                 override fun onAdClicked() {}
 
@@ -59,4 +55,6 @@ class YandexInterstitialAd(
             })
         }?.show(context as Activity)
     }
+
+    override fun isAdLoaded(): Boolean = interstitialAd != null
 }

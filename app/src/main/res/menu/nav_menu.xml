@@ -25,11 +25,6 @@
             android:checkable="false"
             android:icon="@drawable/icon_music"
             android:title="Музыка"/>
-        <item
-            android:id="@+id/nav_settings"
-            android:checkable="false"
-            android:icon="@drawable/icon_setting"
-            android:title="Настройки"/>
 
     </group>
     <group

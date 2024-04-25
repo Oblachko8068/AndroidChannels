@@ -1,4 +1,4 @@
-package com.example.channels.settings
+package com.example.channels.authorization
 
 import android.app.Activity
 import android.content.Intent
@@ -15,13 +15,11 @@ import androidx.fragment.app.setFragmentResult
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.channels.R
-import com.example.channels.authorization.FOLDER_PROFILE_IMAGE
-import com.example.channels.authorization.STORAGE_REF
 import com.example.channels.databinding.FragmentChangeUserInfoDialogBinding
 
 const val NAME = "NAME"
 const val IMAGE = "IMAGE"
-const val UID = "UID"
+const val CHANGE_USER_INFO = "ChangeUserInfoDialogResult"
 
 class ChangeUserInfoDialog : DialogFragment() {
 
@@ -29,12 +27,13 @@ class ChangeUserInfoDialog : DialogFragment() {
     private val binding get() = _binding!!
     override fun getTheme() = R.style.RoundedCornersDialog
     private var changedImageUri: Uri? = null
-    private var changeImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if (it.resultCode == Activity.RESULT_OK) {
-            changedImageUri = it.data?.data
-            changedImageUri?.let { it1 -> setImageView(it1) }
+    private var changeImage =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                changedImageUri = it.data?.data
+                changedImageUri?.let { uri -> setImageView(uri) }
+            }
         }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,10 +45,16 @@ class ChangeUserInfoDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val displayName = arguments?.getString(NAME).toString()
+        val displayName = arguments?.getString(NAME)
         val img = arguments?.getString(IMAGE)
-        val uid = arguments?.getString(UID)
-        setUserInfo(displayName, img)
+        if (displayName != "" && displayName != null) {
+            val parts = displayName.split(" ")
+            binding.changeProfileName.setText(parts[0])
+            binding.changeProfileSirname.setText(parts[1])
+        }
+        if (img != "" && img != null) {
+            setImageView(img)
+        }
 
         binding.changeProfileImage.setOnClickListener {
             val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
@@ -57,37 +62,32 @@ class ChangeUserInfoDialog : DialogFragment() {
         }
 
         binding.submit.setOnClickListener {
-            if (binding.changeProfileName.text.isEmpty()){
+            if (binding.changeProfileName.text.isEmpty()) {
                 Toast.makeText(requireContext(), "Введите имя", Toast.LENGTH_SHORT).show()
             } else {
-                updateStorageImage(uid.toString())
-                submitChanges(img)
+                val newName = "${binding.changeProfileName.text} ${binding.changeProfileSirname.text}"
+                submitChanges(newName)
             }
+        }
+
+        binding.exit.setOnClickListener {
+            exitFromAccount()
         }
     }
 
-    private fun submitChanges(img: String?) {
+    private fun exitFromAccount() {
         val result = Bundle()
-        result.putString("fullName", "${binding.changeProfileName.text} ${binding.changeProfileSirname.text}")
-        result.putString("imageUri", changedImageUri?.toString() ?: img)
-        setFragmentResult(USER_INFO_CHANGED, result)
+        result.putBoolean("exit", true)
+        setFragmentResult(CHANGE_USER_INFO, result)
         dismiss()
     }
 
-    private fun updateStorageImage(uid: String) {
-        val path = STORAGE_REF.child(FOLDER_PROFILE_IMAGE).child(uid)
-        changedImageUri?.let { it1 -> path.putFile(it1) }
-    }
-
-    private fun setUserInfo(displayName: String, img: String?) {
-        val parts = displayName.split(" ")
-        val name = parts[0]
-        val sirname = parts[1]
-        binding.changeProfileName.setText(name)
-        binding.changeProfileSirname.setText(sirname)
-        if (img != "" && img != null){
-            setImageView(img)
-        }
+    private fun submitChanges(newName: String) {
+        val result = Bundle()
+        result.putString("fullName", newName)
+        result.putString("imageUri", changedImageUri?.toString())
+        setFragmentResult(CHANGE_USER_INFO, result)
+        dismiss()
     }
 
     private fun setImageView(image: Any) {
@@ -97,13 +97,12 @@ class ChangeUserInfoDialog : DialogFragment() {
             .into(binding.profilePic)
     }
 
-    companion object{
-        fun newInstance(displayName: String, image: String, id: String): ChangeUserInfoDialog{
+    companion object {
+        fun newInstance(displayName: String, image: String): ChangeUserInfoDialog {
             return ChangeUserInfoDialog().apply {
                 arguments = Bundle().apply {
                     putString(NAME, displayName)
                     putString(IMAGE, image)
-                    putString(UID, id)
                 }
             }
         }
