@@ -1,10 +1,10 @@
 package com.example.di.di.hiltModules
 
 import com.example.data.repository.ChannelRepositoryImpl
-import com.example.data.repository.DownloadRepositoryRetrofit
+import com.example.data.repository.ChannelDownloadRepositoryFB
 import com.example.data.repository.EpgRepositoryImpl
 import com.example.data.repository.FavoriteChannelsRepositoryImpl
-import com.example.data.repository.RadioDownloadRepositoryFirebaseDatabase
+import com.example.data.repository.RadioDownloadRepositoryFB
 import com.example.data.repository.RadioRepositoryImpl
 import com.example.data.repository.UserRepositoryImpl
 import com.example.domain.repository.ChannelRepository
@@ -27,7 +27,7 @@ abstract class RepositorysModule {
     @Binds
     @Singleton
     abstract fun bindDownloadRepository(
-        downloadRepository: DownloadRepositoryRetrofit
+        downloadRepository: ChannelDownloadRepositoryFB
     ): DownloadRepository
 
     @Binds
@@ -63,6 +63,6 @@ abstract class RepositorysModule {
     @Binds
     @Singleton
     abstract fun bindRadioDownloadRepository(
-        radioDownloadRepository: RadioDownloadRepositoryFirebaseDatabase
+        radioDownloadRepository: RadioDownloadRepositoryFB
     ): RadioDownloadRepository
 }

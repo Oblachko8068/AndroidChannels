@@ -1,4 +1,4 @@
-package com.example.channels.navigatorView
+package com.example.channels
 
 import android.content.Context
 import android.view.View
@@ -11,10 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.channels.MainActivity
-import com.example.channels.R
-import com.example.channels.authorization.USER_VIEW_MODEL
 import com.example.channels.databinding.ActivityMainBinding
+import com.example.channels.authorization.ChangeUserInfoDialog
 import com.google.android.material.navigation.NavigationView
 import kotlin.properties.Delegates
 
@@ -73,7 +71,14 @@ class NavigatorView(
                 val drawable = ContextCompat.getDrawable(mainActivity, imgResId)
                 userImageView.setImageDrawable(drawable)
             }
-            binding.navView.menu[4].setVisible(user == null)
+            binding.navView.menu[3].setVisible(user == null)
+            if (user != null){
+                userImageView.setOnClickListener {
+                    val dialogFragment =
+                        ChangeUserInfoDialog.newInstance(user.displayName, user.image, user.id)
+                    dialogFragment.show(mainActivity.supportFragmentManager, dialogFragment.tag)
+                }
+            }
         }
     }
 

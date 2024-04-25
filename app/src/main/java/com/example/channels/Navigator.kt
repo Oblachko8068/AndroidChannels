@@ -16,8 +16,6 @@ interface Navigator {
 
     fun showRadioFragment()
 
-    fun showSettingsFragment()
-
     fun showMusicFragment()
 
     fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?)
