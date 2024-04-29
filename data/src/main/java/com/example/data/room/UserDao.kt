@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.example.data.model.UserDbEntity
 
 @Dao
@@ -18,4 +19,7 @@ interface UserDao {
 
     @Query("DELETE FROM users")
     fun deleteAllUsers()
+
+    @Update
+    fun updateUserInfo(userDbEntity: UserDbEntity)
 }

@@ -9,7 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.example.channels.fragments.navigator
+import com.example.channels.navigator
 import com.example.channels.viewModels.ChannelViewModel
 import com.example.channels.viewModels.ChannelViewModel.Companion.searchTextLiveData
 import com.example.domain.model.Channel

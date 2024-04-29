@@ -7,14 +7,6 @@
     tools:context=".fragments.ChannelFragment"
     android:background="?attr/mainBackground">
 
-    <Button
-        android:id="@+id/CrashButton"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:text="CrashButton"
-        tools:ignore="MissingConstraints" />
-    <!--Вкладки-->
-
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
@@ -43,6 +35,7 @@
         app:layout_constraintBottom_toTopOf="@+id/banner_ad_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
     <com.yandex.mobile.ads.banner.BannerAdView
         android:id="@+id/banner_ad_view"
         android:layout_width="match_parent"
@@ -52,6 +45,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-    <!---->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,7 @@ import com.example.data.model.ChannelDbEntity
 import com.example.data.model.EpgDbEntity
 import com.example.data.model.FavoriteChannelDbEntity
 import com.example.data.model.UserDbEntity
+import com.example.data.model.RadioDbEntity
 
 @Database(
     version = 2,
@@ -13,7 +14,8 @@ import com.example.data.model.UserDbEntity
         ChannelDbEntity::class,
         EpgDbEntity::class,
         FavoriteChannelDbEntity::class,
-        UserDbEntity::class
+        UserDbEntity::class,
+        RadioDbEntity::class
     ]
 )
 
@@ -27,4 +29,5 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun getUserDao(): UserDao
 
+    abstract fun getRadioDao(): RadioDao
 }

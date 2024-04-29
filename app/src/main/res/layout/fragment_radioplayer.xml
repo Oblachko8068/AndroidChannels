@@ -7,51 +7,30 @@
     android:background="?attr/blocksBackground"
     tools:context=".radioPlayer.RadioPlayerFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:text="Радио"
-        android:textSize="16sp"
-        android:textColor="?attr/textActive"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
 
     <ImageView
         android:id="@+id/radio_image"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_margin="50dp"
-        android:layout_marginBottom="32dp"
-        android:src="@drawable/radio_record_image"
-        app:layout_constraintBottom_toBottomOf="@id/radio_info"
+        android:layout_marginBottom="104dp"
+        android:src="@drawable/avd_logo_ramka"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/radio_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/radio_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Радио подгружается"
+        android:textColor="?attr/textActive"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/radio_controls"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/radio_controls">
-
-        <TextView
-            android:id="@+id/radio_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Radio Record"
-            android:textSize="25sp"
-            android:textColor="?attr/textActive"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radio_image" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/radio_controls"
@@ -65,47 +44,51 @@
 
         <ImageButton
             android:id="@+id/button_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="#00000000"
-            android:layout_marginEnd="25dp"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/startStopButton"
-            android:src="@drawable/radio_previous_button"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/startStopButton"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/icon_next" />
 
         <ImageButton
             android:id="@+id/startStopButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/radio_play_button"
+            android:layout_alignParentEnd="true"
             android:background="#00000000"
-            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/icon_play"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/button_previous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="#00000000"
-            android:layout_marginStart="25dp"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/startStopButton"
-            android:src="@drawable/radio_next_button"/>
+            app:layout_constraintEnd_toStartOf="@+id/startStopButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/icon_prev" />
 
         <ImageButton
             android:id="@+id/button_radio_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="13dp"
             android:background="#00000000"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/icon_list"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:src="@drawable/radio_list_of_radios"
-            />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/button_next"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

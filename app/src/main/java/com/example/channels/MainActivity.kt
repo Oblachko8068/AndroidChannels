@@ -8,22 +8,22 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import com.example.channels.ads.AdShownListener
 import com.example.channels.authorization.LoginFragment
-import com.example.channels.authorization.initDatabase
 import com.example.channels.databinding.ActivityMainBinding
 import com.example.channels.exoPlayer.ExoPlayerFragment
 import com.example.channels.fragments.ChannelFragment
 import com.example.channels.fragments.MainFragment
-import com.example.channels.fragments.Navigator
 import com.example.channels.musicPlayer.MusicListFragment
-import com.example.channels.settings.SettingsFragment
-import com.example.channels.navigatorView.NavigatorView
 import com.example.channels.radioPlayer.RadioPlayerFragment
 import com.example.channels.viewModels.AdsViewModel
+import com.example.channels.viewModels.UserViewModel
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
+
+lateinit var USER_VIEW_MODEL: UserViewModel
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         installSplashScreen()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initDatabase(this)
+        USER_VIEW_MODEL = this.viewModels<UserViewModel>().value
         initNavigatorView()
         adsViewModel.initializeAdsManager(this)
         if (savedInstanceState == null) {
@@ -49,16 +49,12 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?) {
-        launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
-        /*val listener = object : AdShownListener {
+        val listener = object : AdShownListener {
             override fun onAdLoadedAndShown() {
                 launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
             }
         }
-        val instreamAd = adsViewModel.showInterOrInstreamAd(listener)
-        if (instreamAd != null) {
-            launchFragment(VideoAdsFragment(instreamAd))
-        }*/
+        adsViewModel.showInterAd(listener)
     }
 
     private fun initNavigatorView() {
@@ -67,7 +63,7 @@ class MainActivity : AppCompatActivity(), Navigator {
                 R.id.nav_tv -> showChannelFragment()
                 R.id.nav_radio -> showRadioFragment()
                 R.id.nav_login -> showLoginFragment()
-                R.id.nav_settings -> showSettingsFragment()
+                R.id.nav_music -> showMusicFragment()
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -92,10 +88,6 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     override fun showMusicFragment() {
         launchFragment(MusicListFragment())
-    }
-
-    override fun showSettingsFragment() {
-        launchFragment(SettingsFragment())
     }
 
     override fun showChannelFragment() {
