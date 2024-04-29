@@ -1,7 +1,9 @@
 package com.example.channels.authorization
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -9,7 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.bumptech.glide.Glide
@@ -34,12 +38,15 @@ class ChangeUserInfoDialog : DialogFragment() {
                 changedImageUri?.let { uri -> setImageView(uri) }
             }
         }
+    private lateinit var pLauncher: ActivityResultLauncher<String>
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChangeUserInfoDialogBinding.inflate(inflater, container, false)
+        registerPermissionListener()
         return binding.root
     }
 
@@ -57,15 +64,15 @@ class ChangeUserInfoDialog : DialogFragment() {
         }
 
         binding.changeProfileImage.setOnClickListener {
-            val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-            changeImage.launch(pickImg)
+            checkImagesPermission()
         }
 
         binding.submit.setOnClickListener {
             if (binding.changeProfileName.text.isEmpty()) {
                 Toast.makeText(requireContext(), "Введите имя", Toast.LENGTH_SHORT).show()
             } else {
-                val newName = "${binding.changeProfileName.text} ${binding.changeProfileSirname.text}"
+                val newName =
+                    "${binding.changeProfileName.text} ${binding.changeProfileSirname.text}"
                 submitChanges(newName)
             }
         }
@@ -73,6 +80,38 @@ class ChangeUserInfoDialog : DialogFragment() {
         binding.exit.setOnClickListener {
             exitFromAccount()
         }
+    }
+
+    private fun checkImagesPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_MEDIA_IMAGES
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                initIntentForImages()
+            }
+
+            else -> {
+                pLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+            }
+        }
+    }
+
+    private fun registerPermissionListener() {
+        pLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            if (it) {
+                initIntentForImages()
+            } else {
+                Toast.makeText(requireContext(), "Необходимо разрешение", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun initIntentForImages() {
+        val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        changeImage.launch(pickImg)
     }
 
     private fun exitFromAccount() {

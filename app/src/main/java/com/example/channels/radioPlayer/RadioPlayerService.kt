@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -19,11 +20,14 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerNotificationManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.transition.Transition
+import com.example.channels.MainActivity
+import com.example.channels.R
 
 const val CHANNEL_ID = "RadioChannel"
 const val NOTIFICATION_RADIO_ID = 1
 
-//TODO настроить уведомления
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class RadioPlayerService: Service(), RadioPlayerController {
 
@@ -31,6 +35,7 @@ class RadioPlayerService: Service(), RadioPlayerController {
     private lateinit var playerNotificationManager: PlayerNotificationManager
     private lateinit var mediaSessionCompat: MediaSessionCompat
     private val binder: IBinder = RadioBinder()
+    private var currentRadioImage: String? = null
 
     inner class RadioBinder : Binder() {
         val service: RadioPlayerService
@@ -63,7 +68,8 @@ class RadioPlayerService: Service(), RadioPlayerController {
             .build()
     }
 
-    fun changeTheRadio(currentRadio: String, currentTitle: String) {
+    fun changeTheRadio(currentRadio: String, currentTitle: String, image: String) {
+        currentRadioImage = image
         val mediaMetadata = MediaMetadata.Builder()
             .setTitle(currentTitle)
             .build()
@@ -92,7 +98,7 @@ class RadioPlayerService: Service(), RadioPlayerController {
         val pendingIntent = PendingIntent.getActivity(
             this,
             0,
-            Intent(this, RadioPlayerService::class.java),
+            Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)
@@ -133,6 +139,7 @@ class RadioPlayerService: Service(), RadioPlayerController {
         radioPlayer.release()
         stopForeground(true)
         mediaSessionCompat.release()
+        playerNotificationManager.setPlayer(null)
     }
 
     @UnstableApi
@@ -141,13 +148,33 @@ class RadioPlayerService: Service(), RadioPlayerController {
         override fun getCurrentContentTitle(player: Player): CharSequence =
             player.currentMediaItem?.mediaMetadata?.title ?: "Загрузка"
 
-        override fun createCurrentContentIntent(player: Player): PendingIntent? = null
+        override fun createCurrentContentIntent(player: Player): PendingIntent? = PendingIntent.getActivity(
+            this@RadioPlayerService,
+            0,
+            Intent(this@RadioPlayerService, RadioPlayerService::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         override fun getCurrentContentText(player: Player): CharSequence? = null
 
         override fun getCurrentLargeIcon(
             player: Player,
             callback: PlayerNotificationManager.BitmapCallback
-        ): Bitmap? = null
+        ): Bitmap? {
+            if (currentRadioImage != null) {
+                Glide.with(this@RadioPlayerService)
+                    .asBitmap()
+                    .load(currentRadioImage)
+                    .into(object : com.bumptech.glide.request.target.CustomTarget<Bitmap>() {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                            callback.onBitmap(resource)
+                        }
+
+                        override fun onLoadCleared(placeholder: Drawable?) {}
+                    })
+                return null
+            }
+            return null
+        }
     }
 }

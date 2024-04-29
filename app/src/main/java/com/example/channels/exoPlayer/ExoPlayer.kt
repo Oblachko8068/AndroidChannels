@@ -1,12 +1,16 @@
 package com.example.channels.exoPlayer
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.os.PowerManager.WakeLock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -45,8 +49,6 @@ const val autoQualityId = -1
 
 class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
 
-    private var visibilityView: Boolean = true
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var _binding: FragmentExoplayerBinding? = null
     private val binding get() = _binding!!
     private lateinit var player: ExoPlayer
@@ -55,6 +57,9 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
     private var currentResolution = autoQualityId
     private var tracksList = mutableListOf<Int>()
     private val playerListener = initListener()
+    private var visibilityView: Boolean = true
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private lateinit var wakeLock: WakeLock
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,6 +77,8 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initLayout()
+        val powerManager = requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = powerManager.newWakeLock(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, "ExoPlayerFragment:WakeLock")
         if (savedInstanceState != null) {
             playbackState = savedInstanceState.getInt("playbackState")
             if (playbackState == Player.STATE_READY) {
@@ -184,12 +191,18 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
     override fun onPlayClick() {
         player.play()
         setPipPauseParams()
+        if (!wakeLock.isHeld){
+            wakeLock.acquire(10*60*1000L)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onPauseClick() {
         player.pause()
         setPipPlayParams()
+        if (wakeLock.isHeld){
+            wakeLock.release()
+        }
     }
 
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
@@ -225,6 +238,9 @@ class ExoPlayerFragment : Fragment(), Player.Listener, PiPModeActionsListener {
         showSystemUi()
         coroutineScope.cancel()
         _binding = null
+        if (wakeLock.isHeld) {
+            wakeLock.release()
+        }
     }
 
     private fun clearPlayer() {

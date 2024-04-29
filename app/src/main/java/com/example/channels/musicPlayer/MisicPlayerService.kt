@@ -12,16 +12,17 @@ import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.Action
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.domain.model.Music
-//TODO добавить уведомления
+
 class MusicPlayerService : Service(), MusicPlayerController {
 
-    private lateinit var musicPlayer: ExoPlayer
+    lateinit var musicPlayer: ExoPlayer
     private lateinit var mediaSessionCompat: MediaSessionCompat
     private val binder = MusicBinder()
 
@@ -36,17 +37,6 @@ class MusicPlayerService : Service(), MusicPlayerController {
         super.onCreate()
         initializePlayer()
         mediaSessionCompat = MediaSessionCompat(this, "MusicPlayerService")
-        /*val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            Intent(this, MusicPlayerService::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentIntent(pendingIntent)
-            .build()
-        mediaSessionCompat.setSessionActivity(pendingIntent)
-        startForeground(2, notification)*/
     }
 
     @OptIn(UnstableApi::class)

@@ -84,7 +84,7 @@ class RadioPlayerFragment : Fragment() {
             .fitCenter()
             .into(binding.radioImage)
         binding.radioTitle.text = radioList[idRadio].name
-        radioPlayerService?.changeTheRadio(radioList[idRadio].stream, radioList[idRadio].name)
+        radioPlayerService?.changeTheRadio(radioList[idRadio].stream, radioList[idRadio].name, radioList[idRadio].image)
     }
 
     private fun initServiceConnection() {
