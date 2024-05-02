@@ -62,18 +62,6 @@ class ChannelViewModel @Inject constructor(
 
     fun getMediatorLiveData(): MediatorLiveData<Pair<List<Channel>, List<Epg>>> = mediatorLiveData
 
-    fun getFilteredChannels(isFavoriteFragment: Boolean): List<Channel> {
-        val channels = getChannelList(isFavoriteFragment)
-        val searchQuery = _searchTextLiveData.value
-        return if (!searchQuery.isNullOrEmpty()) {
-            channels.filter {
-                it.name.contains(searchQuery, ignoreCase = true)
-            }
-        } else {
-            channels
-        }
-    }
-
     fun favoriteChannelClicked(channel: Channel) {
         val favoriteChannels = favoriteChannelLiveData.value ?: emptyList()
         val channelExistsInFavList = favoriteChannels.any { it.channelId == channel.id }
@@ -85,12 +73,4 @@ class ChannelViewModel @Inject constructor(
     }
 
     fun getFavoriteChannelLiveData(): LiveData<List<FavoriteChannel>> = favoriteChannelLiveData
-
-    companion object {
-        private val _searchTextLiveData = MutableLiveData<String>()
-        val searchTextLiveData: LiveData<String> = _searchTextLiveData
-        fun setSearchText(searchText: String) {
-            _searchTextLiveData.value = searchText
-        }
-    }
 }

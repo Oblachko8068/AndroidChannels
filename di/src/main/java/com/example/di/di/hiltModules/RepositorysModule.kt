@@ -7,6 +7,8 @@ import com.example.data.repository.EpgRepositoryImpl
 import com.example.data.repository.FavoriteChannelsRepositoryImpl
 import com.example.data.repository.FbDatabaseRepositoryImpl
 import com.example.data.repository.FbStorageRepositoryImpl
+import com.example.data.repository.MusicDownloadRepositoryImpl
+import com.example.data.repository.MusicRepositoryImpl
 import com.example.data.repository.RadioDownloadRepositoryImpl
 import com.example.data.repository.RadioRepositoryImpl
 import com.example.data.repository.UserRepositoryImpl
@@ -17,6 +19,8 @@ import com.example.domain.repository.EpgRepository
 import com.example.domain.repository.FavoriteChannelsRepository
 import com.example.domain.repository.FbDatabaseRepository
 import com.example.domain.repository.FbStorageRepository
+import com.example.domain.repository.MusicDownloadRepository
+import com.example.domain.repository.MusicRepository
 import com.example.domain.repository.RadioDownloadRepository
 import com.example.domain.repository.RadioRepository
 import com.example.domain.repository.UserRepository
@@ -89,4 +93,16 @@ abstract class RepositorysModule {
     abstract fun bindFbStorageRepository(
         fbStorageRepository: FbStorageRepositoryImpl
     ): FbStorageRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMusicRepository(
+        musicRepository: MusicRepositoryImpl
+    ): MusicRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMusicDownloadRepository(
+        musicDownloadRepository: MusicDownloadRepositoryImpl
+    ): MusicDownloadRepository
 }

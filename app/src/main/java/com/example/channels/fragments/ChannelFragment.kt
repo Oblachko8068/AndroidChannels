@@ -30,16 +30,6 @@ class ChannelFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initBannerAd()
-        /*binding.searchViewTvChannels.setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = false
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                ChannelViewModel.setSearchText(newText.orEmpty())
-                return true
-            }
-        })*/
-
         val fragmentAdapter = FragmentAdapter(childFragmentManager)
         binding.viewpagerForTabs.adapter = fragmentAdapter
         binding.tabs.setupWithViewPager(binding.viewpagerForTabs)

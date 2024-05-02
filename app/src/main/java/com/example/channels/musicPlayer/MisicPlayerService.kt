@@ -13,6 +13,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Action
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -25,6 +26,7 @@ class MusicPlayerService : Service(), MusicPlayerController {
     lateinit var musicPlayer: ExoPlayer
     private lateinit var mediaSessionCompat: MediaSessionCompat
     private val binder = MusicBinder()
+    lateinit var musicListMA: List<Music>
 
     inner class MusicBinder : Binder() {
         val service: MusicPlayerService
@@ -109,8 +111,6 @@ class MusicPlayerService : Service(), MusicPlayerController {
             _currentMusicPosition = value
             currentMusicPositionLiveData.postValue(value)
         }
-
-    override var musicListMA: ArrayList<Music> = arrayListOf()
 
     override fun startPlayer() {
         musicPlayer.playWhenReady = true
