@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.example.channels.navigator
 import com.example.channels.viewModels.ChannelViewModel
-import com.example.channels.viewModels.ChannelViewModel.Companion.searchTextLiveData
 import com.example.domain.model.Channel
 import com.example.domain.model.Epg
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,10 +64,6 @@ abstract class BaseChannelFragment : Fragment(), RecyclerAdapter.OnChannelItemCl
                 channelViewModel.getChannelList(this is FavoritesFragment),
                 it
             )
-        }
-
-        searchTextLiveData.observe(viewLifecycleOwner) {
-            adapter?.filterChannels(channelViewModel.getFilteredChannels(this is FavoritesFragment))
         }
     }
 

@@ -6,6 +6,7 @@ import com.example.data.room.AppDatabase
 import com.example.data.room.ChannelDao
 import com.example.data.room.EpgDao
 import com.example.data.room.FavoriteChannelDao
+import com.example.data.room.MusicDao
 import com.example.data.room.RadioDao
 import com.example.data.room.UserDao
 import dagger.Module
@@ -47,4 +48,8 @@ class DaosModule {
     @Singleton
     fun provideRadioDao(appDatabase: AppDatabase): RadioDao =
         appDatabase.getRadioDao()
+
+    @Provides
+    @Singleton
+    fun provideMusicDao(appDatabase: AppDatabase): MusicDao = appDatabase.getMusicDao()
 }

@@ -7,16 +7,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -25,14 +24,17 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.media3.common.Player
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.channels.R
 import com.example.channels.databinding.FragmentMusicListBinding
+import com.example.channels.viewModels.MusicViewModel
+import com.example.channels.viewModels.MusicViewModel.Companion.searchTextLiveData
+import com.example.channels.viewModels.MusicViewModel.Companion.setSearchText
 import com.example.domain.model.Music
-import java.io.File
 import kotlin.concurrent.thread
 
 class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
@@ -43,6 +45,7 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
     private lateinit var connection: ServiceConnection
     private var isBound = false
     private lateinit var pLauncher: ActivityResultLauncher<String>
+    private val musicViewModel: MusicViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
@@ -56,35 +59,6 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
         registerPermissionListener()
         checkAudioPermission()
         return binding.root
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    private fun checkAudioPermission() {
-        when {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.READ_MEDIA_AUDIO
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                initializeLayout()
-            }
-
-            else -> {
-                pLauncher.launch(Manifest.permission.READ_MEDIA_AUDIO)
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    private fun registerPermissionListener() {
-        pLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) {
-            if (it) {
-                initializeLayout()
-            } else {
-                Toast.makeText(requireContext(), "Необходимо разрешение", Toast.LENGTH_LONG).show()
-            }
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -111,6 +85,7 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
                 musicPlayerService.currentMusicPositionLiveData.observe(viewLifecycleOwner) {
                     applyMiniPlayer(musicPlayerService.getCurrentMusic())
                 }
+                musicPlayerService.musicListMA = musicViewModel.getMusicList()
                 musicPlayerService.musicPlayer.addListener(object : Player.Listener {
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
                         super.onIsPlayingChanged(isPlaying)
@@ -146,14 +121,33 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
     private fun initializeLayout() {
         thread {
             if (isBound) {
-                musicPlayerService.musicListMA = getAllAudio()
+                musicPlayerService.musicListMA = musicViewModel.getMusicList()
             }
             requireActivity().runOnUiThread {
-                binding.playlistRV.setHasFixedSize(true)
-                binding.playlistRV.layoutManager = LinearLayoutManager(requireContext())
-                val musicAdapter =
-                    MusicAdapter(requireContext(), musicPlayerService.musicListMA, this)
-                binding.playlistRV.adapter = musicAdapter
+                val recyclerView = binding.playlistRV
+                recyclerView.setHasFixedSize(true)
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                recyclerView.adapter = MusicAdapter(requireContext(), emptyList(), this)
+                val adapter = recyclerView.adapter as MusicAdapter
+                val musicLiveData = musicViewModel.getMusicLiveData()
+                musicLiveData.observe(viewLifecycleOwner) {
+                    if (isBound) {
+                        musicPlayerService.musicListMA = it
+                    }
+                    adapter.updateData(it)
+                }
+                binding.searchView.setOnQueryTextListener(object :
+                    SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean = false
+
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        setSearchText(newText.orEmpty())
+                        return true
+                    }
+                })
+                searchTextLiveData.observe(viewLifecycleOwner) {
+                    adapter.updateData(musicViewModel.getFilteredMusic())
+                }
             }
         }
     }
@@ -202,73 +196,38 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
         }, 500)
     }
 
-    @SuppressLint("Recycle", "Range")
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun getAllAudio(): ArrayList<Music> {
-        val tempList = ArrayList<Music>()
-        val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
-        val projection = arrayOf(
-            MediaStore.Audio.Media._ID,
-            MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.ALBUM,
-            MediaStore.Audio.Media.ARTIST,
-            MediaStore.Audio.Media.DURATION,
-            MediaStore.Audio.Media.DATE_ADDED,
-            MediaStore.Audio.Media.DATA,
-            MediaStore.Audio.Media.ALBUM_ID
-        )
-        val cursor = requireContext().contentResolver.query(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-            projection,
-            selection,
-            null,
-            MediaStore.Audio.Media.DATE_ADDED + " DESC",
-            null
-        )
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                do {
-                    val titleC =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
-                            ?: "Unknown"
-                    val idC =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                            ?: "Unknown"
-                    val albumC =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
-                            ?: "Unknown"
-                    val artistC =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                            ?: "Unknown"
-                    val pathC = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                    val durationC =
-                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                    val albumIdC =
-                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
-                            .toString()
-                    val uri = Uri.parse("content://media/external/audio/albumart")
-                    val artUriC = Uri.withAppendedPath(uri, albumIdC).toString()
-                    val music = Music(
-                        id = idC,
-                        title = titleC,
-                        album = albumC,
-                        artist = artistC,
-                        path = pathC,
-                        duration = durationC,
-                        artUri = artUriC
-                    )
-                    val file = File(music.path)
-                    if (file.exists())
-                        tempList.add(music)
-                } while (cursor.moveToNext())
+    private fun checkAudioPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_MEDIA_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                initializeLayout()
             }
-            cursor.close()
+
+            else -> {
+                pLauncher.launch(Manifest.permission.READ_MEDIA_AUDIO)
+            }
         }
-        return tempList
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun registerPermissionListener() {
+        pLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            if (it) {
+                initializeLayout()
+            } else {
+                Toast.makeText(requireContext(), "Необходимо разрешение", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        requireContext().unbindService(connection)
         _binding = null
     }
 }
