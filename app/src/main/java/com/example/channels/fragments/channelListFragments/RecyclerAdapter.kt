@@ -57,13 +57,6 @@ class RecyclerAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun filterChannels(filteredChannelList: List<Channel>) {
-        val diffCallback = DiffUtilCallback(channels, filteredChannelList, favoriteChannel, favoriteChannel)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        channels = filteredChannelList
-        diffResult.dispatchUpdatesTo(this)
-    }
-
     fun updateFavoriteChannelList(newChannelItemList: List<Channel>, favChannels: List<FavoriteChannel>) {
         val diffCallback = DiffUtilCallback(channels, newChannelItemList, favoriteChannel, favChannels)
         val diffResult = DiffUtil.calculateDiff(diffCallback)

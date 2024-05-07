@@ -10,7 +10,7 @@ import com.example.data.model.UserDbEntity
 import com.example.data.model.RadioDbEntity
 
 @Database(
-    version = 1,
+    version = 2,
     entities = [
         ChannelDbEntity::class,
         EpgDbEntity::class,
