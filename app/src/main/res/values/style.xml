@@ -31,8 +31,13 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="ButtonsStyle" parent="Theme.Channels.Light">
+    <style name="ButtonsStyle" parent="Widget.Material3.Button">
         <item name="android:background">?attr/blocksBackground</item>
+        <item name="backgroundColor">?attr/blocksBackground</item>
+        <item name="backgroundTint">?attr/blocksBackground</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">?attr/textActive</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
 </resources>

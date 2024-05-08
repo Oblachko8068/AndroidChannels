@@ -57,13 +57,6 @@ class RecyclerAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun filterChannels(filteredChannelList: List<Channel>) {
-        val diffCallback = DiffUtilCallback(channels, filteredChannelList, favoriteChannel, favoriteChannel)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        channels = filteredChannelList
-        diffResult.dispatchUpdatesTo(this)
-    }
-
     fun updateFavoriteChannelList(newChannelItemList: List<Channel>, favChannels: List<FavoriteChannel>) {
         val diffCallback = DiffUtilCallback(channels, newChannelItemList, favoriteChannel, favChannels)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
@@ -89,7 +82,7 @@ class RecyclerAdapter(
                 .into(binding.channelIcon)
             binding.channelName.text = channelItem.name
             binding.channelDesc.text = epgItem.title
-            binding.iconFav.setImageResource(R.drawable.baseline_star_24)
+            binding.iconFav.setImageResource(R.drawable.icon_favorite)
             binding.iconFav.setColorFilter(
                 ContextCompat.getColor(context, if (isFavorite) R.color.star_icon_enable else R.color.star_icon_disable)
             )

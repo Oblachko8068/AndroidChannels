@@ -21,16 +21,13 @@
 
     <Button
         android:id="@+id/change_profile_image"
-        style="@style/RoundedCornerButton"
+        style="@style/ButtonsStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:text="Изменить фото"
-        android:textAlignment="center"
-        android:textColor="?attr/textActive"
-        android:textSize="12sp"
+        android:text="ИЗМЕНИТЬ ФОТО"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_pic" />
@@ -65,28 +62,24 @@
         android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/ButtonsStyle"
         android:layout_marginTop="10dp"
-        style="@style/RoundedCornerButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/change_profile_sirname"
-        android:text="Применить"
-        android:textSize="12sp"
-        android:textColor="?attr/textActive"/>
+        android:text="ПРИМЕНИТЬ"/>
 
     <Button
         android:id="@+id/exit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/ButtonsStyle"
         android:layout_marginTop="10dp"
-        style="@style/RoundedCornerButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/submit"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="Выйти"
-        android:textSize="12sp"
-        android:textColor="?attr/textActive"/>
+        android:text="ВЫЙТИ"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

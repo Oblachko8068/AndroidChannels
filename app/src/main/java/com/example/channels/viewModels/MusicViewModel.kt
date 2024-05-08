@@ -1,6 +1,7 @@
 package com.example.channels.viewModels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,20 +15,24 @@ import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class MusicViewModel @Inject constructor(
-    musicRepository: MusicRepository,
-    musicDownloadRepository: MusicDownloadRepository,
+    private val musicRepository: MusicRepository,
+    private val musicDownloadRepository: MusicDownloadRepository,
     coroutineContext: CoroutineContext
 ): ViewModel() {
 
-    private var musicLiveData = musicRepository.getMusicList()
+    private var musicLiveData: LiveData<List<Music>> = musicRepository.getMusicList()
+    private var mediatorLiveData = MediatorLiveData<List<Music>>()
 
     init {
+        mediatorLiveData.addSource(musicLiveData){
+            mediatorLiveData.value = it
+        }
         viewModelScope.launch(coroutineContext) {
             musicDownloadRepository.fetchMusic()
         }
     }
 
-    fun getMusicLiveData() : LiveData<List<Music>> = musicLiveData
+    fun getMusicLiveData() : MediatorLiveData<List<Music>> = mediatorLiveData
 
     fun getMusicList(): List<Music> = musicLiveData.value ?: emptyList()
 

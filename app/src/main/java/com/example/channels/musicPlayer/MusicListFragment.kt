@@ -15,7 +15,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -128,15 +128,17 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
                 recyclerView.setHasFixedSize(true)
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 recyclerView.adapter = MusicAdapter(requireContext(), emptyList(), this)
-                val adapter = recyclerView.adapter as MusicAdapter
+                val adapter = recyclerView.adapter as? MusicAdapter
                 val musicLiveData = musicViewModel.getMusicLiveData()
                 musicLiveData.observe(viewLifecycleOwner) {
                     if (isBound) {
                         musicPlayerService.musicListMA = it
                     }
-                    adapter.updateData(it)
+                    adapter?.updateData(it)
                 }
-                binding.searchView.setOnQueryTextListener(object :
+                val searchView = activity?.findViewById<SearchView>(R.id.search_view)
+                searchView?.visibility = View.VISIBLE
+                searchView?.setOnQueryTextListener(object :
                     SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean = false
 
@@ -146,7 +148,7 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
                     }
                 })
                 searchTextLiveData.observe(viewLifecycleOwner) {
-                    adapter.updateData(musicViewModel.getFilteredMusic())
+                    adapter?.updateData(musicViewModel.getFilteredMusic())
                 }
             }
         }
@@ -228,6 +230,8 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         requireContext().unbindService(connection)
+        val searchView = activity?.findViewById<SearchView>(R.id.search_view)
+        searchView?.visibility = View.GONE
         _binding = null
     }
 }

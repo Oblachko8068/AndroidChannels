@@ -49,12 +49,13 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun showVideoPlayerFragment(channel: Channel, selectedEpgDb: Epg?) {
-        val listener = object : AdShownListener {
+        launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
+        /*val listener = object : AdShownListener {
             override fun onAdLoadedAndShown() {
                 launchFragment(ExoPlayerFragment.newInstance(channel, selectedEpgDb))
             }
         }
-        adsViewModel.showInterAd(listener)
+        adsViewModel.showInterAd(listener)*/
     }
 
     private fun initNavigatorView() {

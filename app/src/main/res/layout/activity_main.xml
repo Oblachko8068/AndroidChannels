@@ -24,8 +24,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <!--<androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView_tv_channels"
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
                 android:theme="@style/SearchViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -34,13 +34,10 @@
                 android:layout_marginEnd="24dp"
                 android:background="@drawable/search_view_background"
                 android:imeOptions="flagNoExtractUi"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:searchHintIcon="@null"
                 app:closeIcon="@null"
-                app:queryHint="Напишите название телеканала"
-                android:visibility="invisible"/> -->
+                app:queryHint="Ищем..."
+                android:visibility="gone"/>
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.fragment.app.FragmentContainerView
