@@ -82,7 +82,7 @@ class RecyclerAdapter(
                 .into(binding.channelIcon)
             binding.channelName.text = channelItem.name
             binding.channelDesc.text = epgItem.title
-            binding.iconFav.setImageResource(R.drawable.baseline_star_24)
+            binding.iconFav.setImageResource(R.drawable.icon_favorite)
             binding.iconFav.setColorFilter(
                 ContextCompat.getColor(context, if (isFavorite) R.color.star_icon_enable else R.color.star_icon_disable)
             )

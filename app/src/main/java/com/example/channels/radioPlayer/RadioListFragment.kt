@@ -36,7 +36,7 @@ class RadioListFragment : BottomSheetDialogFragment(), RadioAdapter.OnRadioItemC
     override fun onRadioItemClicked(position: Int) {
         val resultData = Bundle()
         resultData.putInt("radio_position", position)
-        setFragmentResult(RADIO_POSITION_CHOOSED, resultData)
+        setFragmentResult(RADIO_POSITION_CHOOSE, resultData)
         dismiss()
     }
 

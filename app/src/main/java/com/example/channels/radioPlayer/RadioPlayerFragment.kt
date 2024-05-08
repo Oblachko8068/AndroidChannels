@@ -20,7 +20,7 @@ import com.example.channels.databinding.FragmentRadioplayerBinding
 import com.example.channels.viewModels.RadioViewModel
 import com.example.domain.model.Radio
 
-const val RADIO_POSITION_CHOOSED = "RADIO_POSITION_CHOOSED"
+const val RADIO_POSITION_CHOOSE = "RADIO_POSITION_CHOOSE"
 
 class RadioPlayerFragment : Fragment() {
 
@@ -71,7 +71,7 @@ class RadioPlayerFragment : Fragment() {
             radioListFragment.show(parentFragmentManager, radioListFragment.tag)
         }
 
-        parentFragmentManager.setFragmentResultListener(RADIO_POSITION_CHOOSED, viewLifecycleOwner){_, res->
+        parentFragmentManager.setFragmentResultListener(RADIO_POSITION_CHOOSE, viewLifecycleOwner){_, res->
             val result = res.getInt("radio_position")
             applyView(result)
         }
@@ -80,8 +80,7 @@ class RadioPlayerFragment : Fragment() {
     private fun applyView(idRadio: Int) {
         Glide.with(this)
             .load(radioList[idRadio].image)
-            .transform(RoundedCorners(20))
-            .fitCenter()
+            .transform(RoundedCorners(100))
             .into(binding.radioImage)
         binding.radioTitle.text = radioList[idRadio].name
         radioPlayerService?.changeTheRadio(radioList[idRadio].stream, radioList[idRadio].name, radioList[idRadio].image)
