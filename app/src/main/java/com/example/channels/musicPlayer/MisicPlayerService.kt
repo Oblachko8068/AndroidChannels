@@ -1,31 +1,41 @@
 package com.example.channels.musicPlayer
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import android.widget.SeekBar
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.Action
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.util.NotificationUtil.createNotificationChannel
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media.app.NotificationCompat.MediaStyle
-import androidx.media3.common.MediaMetadata
 import com.example.channels.R
 import com.example.domain.model.Music
 
 const val CHANNEL_ID = "MusicChannel"
 const val NOTIFICATION_MUSIC_ID = 12
-
 class MusicPlayerService : Service(), MusicPlayerController {
 
-    private lateinit var musicPlayer: ExoPlayer
+    lateinit var musicPlayer: ExoPlayer
     private lateinit var mediaSessionCompat: MediaSessionCompat
     private val binder = MusicBinder()
+    lateinit var musicListMA: List<Music>
 
     inner class MusicBinder : Binder() {
         val service: MusicPlayerService
@@ -72,6 +82,14 @@ class MusicPlayerService : Service(), MusicPlayerController {
 
     fun getCurrentMusic(): Music = musicListMA[currentMusicPosition]
 
+    private lateinit var seekBar: SeekBar // Добавьте это поле
+
+    fun setSeekBar(seekBar: SeekBar) {
+        this.seekBar = seekBar
+    }
+
+
+
     private val ACTION_PLAY_PAUSE = "com.example.channels.musicPlayer.ACTION_PLAY_PAUSE"
     private val ACTION_PREVIOUS = "com.example.channels.musicPlayer.ACTION_PREVIOUS"
     private val ACTION_NEXT = "com.example.channels.musicPlayer.ACTION_NEXT"
@@ -86,9 +104,9 @@ class MusicPlayerService : Service(), MusicPlayerController {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val mediaStyle = MediaStyle()
+        val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
             .setMediaSession(mediaSessionCompat.sessionToken)
-            .setShowActionsInCompactView(0, 1, 2)
+            .setShowActionsInCompactView(0)
 
         val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentIntent(pendingIntent)
@@ -118,7 +136,6 @@ class MusicPlayerService : Service(), MusicPlayerController {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_MUSIC_ID, createNotification())
         when (intent?.action) {
@@ -147,12 +164,11 @@ class MusicPlayerService : Service(), MusicPlayerController {
     }
 
 
-
     override fun onDestroy() {
         super.onDestroy()
         musicPlayer.release()
-        stopForeground(true)
         mediaSessionCompat.release()
+        stopForeground(true)
     }
 
     override val isPlaying: Boolean
@@ -166,8 +182,6 @@ class MusicPlayerService : Service(), MusicPlayerController {
             _currentMusicPosition = value
             currentMusicPositionLiveData.postValue(value)
         }
-
-    override var musicListMA: ArrayList<Music> = arrayListOf()
 
     override fun startPlayer() {
         musicPlayer.playWhenReady = true
