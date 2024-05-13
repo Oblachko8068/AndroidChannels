@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/mainBackground"
+    android:background="?attr/blocksBackground"
     android:padding="40dp"
     tools:context=".authorization.LoginFragment">
 
@@ -76,6 +76,7 @@
             android:id="@+id/progressBar"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:indeterminateTint="?attr/textActive"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_input" />

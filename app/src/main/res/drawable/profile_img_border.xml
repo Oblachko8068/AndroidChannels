@@ -3,5 +3,5 @@
     <solid android:color="@android:color/transparent" />
     <stroke
         android:width="3dp"
-    android:color="@color/text_active_channel_name" />
+    android:color="?attr/chooseQuality" />
 </shape>

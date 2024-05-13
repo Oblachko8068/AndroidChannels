@@ -38,4 +38,9 @@ class MainFragment : Fragment() {
             navigator().showMusicFragment()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

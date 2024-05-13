@@ -11,6 +11,5 @@
         android:layout_height="48dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textSize="16sp"
-        />
+        android:textSize="16sp" />
 </LinearLayout>

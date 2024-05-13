@@ -10,9 +10,18 @@ interface AuthRepository {
 
     fun getGoogleSignInIntent(): Intent
 
-    fun authWithPhone(sendCode: String, inputCode: String, phoneNumber: String, listener: UserViewModelProvider)
+    fun authWithPhone(
+        sendCode: String,
+        inputCode: String,
+        phoneNumber: String,
+        listener: UserViewModelProvider
+    )
 
-    fun generatePhoneCode(phoneNumber: String, requireActivity: FragmentActivity, listener: UserViewModelProvider)
+    fun generatePhoneCode(
+        phoneNumber: String,
+        requireActivity: FragmentActivity,
+        listener: UserViewModelProvider
+    )
 
     fun signOut()
 }

@@ -2,14 +2,13 @@
 
     <!-- темная тема-->
     <style name="Theme.Channels.Light" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/main_background_dark</item>
+        <item name="colorPrimary">@color/blocks_background_dark</item>
         <item name="colorSecondary">@color/main_background_dark</item>
         <!--кнопки-->
         <item name="mainButton">@color/main_button_dark</item>
         <!-- фоны-->
         <item name="mainBackground">@color/main_background_dark</item>
         <item name="blocksBackground">@color/blocks_background_dark</item>
-        <item name="backgroundOfFragment">@color/background_of_fragments_dark</item>
 
         <!-- текста-->
         <item name="textActive">@color/text_active_dark</item>
@@ -24,6 +23,8 @@
         <item name="starIconDisable">@color/star_icon_disable</item>
         <!-- выбор качества -->
         <item name="chooseQuality">@color/choose_quality_dark</item>
+        <item name="firstAllColor">@color/first_all_color_dark</item>
+        <item name="secondAllColor">@color/second_all_color_dark</item>
     </style>
 
 </resources>

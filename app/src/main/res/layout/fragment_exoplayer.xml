@@ -10,13 +10,14 @@
         android:id="@+id/exoplayerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/dark_primary"
+        android:background="#FF000000"
         app:use_controller="false"/>
 
     <ProgressBar
         android:id="@+id/loading_bar"
         android:layout_width="70dp"
         android:layout_height="70dp"
+        android:indeterminateTint="?attr/textActive"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

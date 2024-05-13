@@ -22,12 +22,6 @@ class UserViewModel @Inject constructor(
     private var listener: UserViewModelProvider? = null
     private var userLiveData: LiveData<List<User>> = userRepository.getUsersDataFromRoom()
 
-    fun getUserData() = userLiveData
-
-    fun setListener(listener: UserViewModelProvider) {
-        this.listener = listener
-    }
-
     fun authWithGoogle(data: Intent?) {
         listener?.let {
             authRepository.authWithGoogle(data, it)
@@ -51,8 +45,14 @@ class UserViewModel @Inject constructor(
     fun signOutFromAccount() {
         authRepository.signOut()
         viewModelScope.launch {
-            userRepository.deleteUser()
+            userRepository.signOut()
         }
+    }
+
+    fun getUserData() = userLiveData
+
+    fun setListener(listener: UserViewModelProvider) {
+        this.listener = listener
     }
 
     fun updateUserPhoto(user: User, newImage: String) {

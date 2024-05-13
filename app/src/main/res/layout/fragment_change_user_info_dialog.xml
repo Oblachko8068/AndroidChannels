@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:padding="30dp"
-    android:background="?attr/backgroundOfFragment"
+    android:background="?attr/mainBackground"
     tools:context=".authorization.ChangeUserInfoDialog">
 
     <androidx.appcompat.widget.AppCompatImageButton

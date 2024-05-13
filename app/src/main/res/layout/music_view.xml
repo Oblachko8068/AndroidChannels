@@ -5,6 +5,8 @@
     android:layout_height="65dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="15dp"
+    app:cardBackgroundColor="?attr/mainBackground"
+    app:strokeColor="?attr/firstAllColor"
     android:layout_marginBottom="5dp">
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -23,7 +25,7 @@
         android:layout_toEndOf="@id/imageMV"
         android:gravity="center_vertical"
         android:singleLine="true"
-        android:textColor="@color/dark_primary"
+        android:textColor="?attr/textActive"
         android:layout_marginStart="70dp"
         android:layout_marginEnd="50dp"/>
 
@@ -33,6 +35,7 @@
         android:layout_height="25dp"
         android:layout_toEndOf="@id/imageMV"
         android:layout_toStartOf="@id/songDuration"
+        android:textColor="?attr/textActive"
         android:layout_marginTop="30dp"
         android:gravity="center_vertical"
         android:singleLine="true"
@@ -46,7 +49,7 @@
         android:layout_alignParentEnd="true"
         android:gravity="center"
         android:layout_gravity="end"
-        android:textColor="@color/dark_primary"
+        android:textColor="?attr/textActive"
         android:layout_marginHorizontal="5dp"/>
 
 </com.google.android.material.card.MaterialCardView>

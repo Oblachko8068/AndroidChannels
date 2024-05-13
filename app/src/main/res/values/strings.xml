@@ -2,35 +2,14 @@
 
     <string name="app_name">Channels</string>
 
-    <!--Поиск-->
     <string name="searchView_tv_channels_hint">Напишите название телеканала</string>
-
-    <!--Список-->
-    <string-array name="channel_fav_selected">
-        <item>false</item>
-        <item>false</item>
-        <item>false</item>
-        <item>false</item>
-        <item>false</item>
-        <item>false</item>
-        <item>false</item>
-        <item>false</item>
-    </string-array>
-    <integer-array name="default_int_array">
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-    </integer-array>
-    <!---->
-
-    <string name="instream_content_url">https://storage.mds.yandex.net/get-ads-mobile-sdk/212922/d170b1d2-0871-40ef-af57-9a0ae7428622</string>
 
     <string name="open_nav">Open Navigation Drawer</string>
     <string name="close_nav">Close Navigation Drawer</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="radio">Радио</string>
+    <string name="TV">ТВ</string>
+    <string name="Music">Музыка</string>
+    <string name="login">Войти</string>
+    <string name="auto">AUTO</string>
 </resources>

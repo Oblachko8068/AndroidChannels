@@ -32,7 +32,19 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositorysModule {
+abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(
+        authRepository: AuthRepositoryImpl
+    ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        userRepository: UserRepositoryImpl
+    ): UserRepository
 
     @Binds
     @Singleton
@@ -57,18 +69,6 @@ abstract class RepositorysModule {
     abstract fun bindFavoriteChannelRepository(
         favoriteChannelsRepository: FavoriteChannelsRepositoryImpl
     ): FavoriteChannelsRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindUserRepository(
-        userRepository: UserRepositoryImpl
-    ): UserRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindAuthRepository(
-        authRepository: AuthRepositoryImpl
-    ): AuthRepository
 
     @Binds
     @Singleton

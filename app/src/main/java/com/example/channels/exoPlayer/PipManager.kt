@@ -40,7 +40,7 @@ object PipManager {
         PiPModeActionsReceiver.setListener(exoPlayer)
         val icon = Icon.createWithResource(
             context,
-            if (toPlay) R.drawable.img_pause_button else R.drawable.img_play_button
+            if (toPlay) R.drawable.icon_pause else R.drawable.icon_play
         )
         val intent = PiPModeActionsReceiver.createIntent(context as Context, toPlay)
         val pendingIntent = PendingIntent.getBroadcast(
