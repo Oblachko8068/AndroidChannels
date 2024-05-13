@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Стиль для текста -->
-    <style name="TextStyle">
-        <item name="android:textColor">@color/text_default</item>
-        <item name="android:textSize">@dimen/defaultTextSize</item>
-        <item name="android:gravity">top</item>
-    </style>
-
     <!-- Стиль для расположения контейнера в центре внутри родительского контейнера -->
     <style name="CenterElements">
         <item name="layout_constraintStart_toStartOf">parent</item>

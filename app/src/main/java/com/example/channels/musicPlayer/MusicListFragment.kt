@@ -183,7 +183,9 @@ class MusicListFragment : Fragment(), MusicAdapter.OnMusicItemClickListener {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                musicPlayerService.startPlayer()
+                if (musicPlayerService.isPlaying) {
+                    musicPlayerService.startPlayer()
+                }
             }
         })
     }

@@ -1,5 +1,0 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <corners android:radius="10dp" /> <!-- Задайте радиус закругления, как вам угодно -->
-    <solid android:color="?attr/blocksBackground" /> <!-- Цвет фона вашего ConstraintLayout -->
-</shape>

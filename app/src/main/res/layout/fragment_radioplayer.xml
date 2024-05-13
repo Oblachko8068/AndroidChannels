@@ -7,7 +7,6 @@
     android:background="?attr/blocksBackground"
     tools:context=".radioPlayer.RadioPlayerFragment">
 
-
     <ImageView
         android:id="@+id/radio_image"
         android:layout_width="300dp"

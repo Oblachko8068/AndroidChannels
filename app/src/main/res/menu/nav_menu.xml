@@ -12,19 +12,19 @@
             android:id="@+id/nav_tv"
             android:checkable="false"
             android:icon="@drawable/icon_tv"
-            android:title="ТВ"/>
+            android:title="@string/TV"/>
 
         <item
             android:id="@+id/nav_radio"
             android:checkable="false"
             android:icon="@drawable/icon_radio"
-            android:title="Радио"/>
+            android:title="@string/radio"/>
 
         <item
             android:id="@+id/nav_music"
             android:checkable="false"
             android:icon="@drawable/icon_music"
-            android:title="Музыка"/>
+            android:title="@string/Music"/>
 
     </group>
     <group
@@ -35,7 +35,7 @@
             android:checkable="false"
             android:visible="true"
             android:icon="@drawable/icon_login"
-            android:title="Войти"/>
+            android:title="@string/login"/>
     </group>
 
 </menu>

@@ -29,7 +29,7 @@ class UserRepositoryImpl @Inject constructor(
     override fun getUsersDataFromRoom(): LiveData<List<User>> =
         userDao.getUsersData().map { userDbEntities -> userDbEntities.map { it.toUserDb() } }
 
-    override suspend fun setUsersDataToRoom(user: User) {
+    private suspend fun setUsersDataToRoom(user: User) {
         withContext(Dispatchers.IO) {
             userDao.setUsersData(user.toDbEntity())
         }
@@ -52,7 +52,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteUser() {
+    override suspend fun signOut() {
         withContext(Dispatchers.IO) {
             userDao.deleteAllUsers()
         }
@@ -79,7 +79,7 @@ class UserRepositoryImpl @Inject constructor(
             })
     }
 
-    override fun saveUser(user: User) {
+    private fun saveUser(user: User) {
         saveToFirebase(user)
         makeUserToSave(user)
     }
@@ -110,7 +110,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun saveUserToRoom(user: User) {
+    private fun saveUserToRoom(user: User) {
         GlobalScope.launch {
             setUsersDataToRoom(user)
         }

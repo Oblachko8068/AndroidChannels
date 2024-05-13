@@ -2,14 +2,13 @@
 
     <!-- светлая тема-->
     <style name="Theme.Channels.Light" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/main_background</item>
+        <item name="colorPrimary">@color/blocks_background</item>
         <item name="colorSecondary">@color/main_background</item>
         <!--кнопки-->
         <item name="mainButton">@color/main_button</item>
         <!-- фоны-->
         <item name="mainBackground">@color/main_background</item>
         <item name="blocksBackground">@color/blocks_background</item>
-        <item name="backgroundOfFragment">@color/background_of_fragments</item>
         <!-- текста-->
         <item name="textActive">@color/text_active</item>
         <item name="textOfTabsActive">@color/text_of_the_tabs_active</item>
@@ -23,6 +22,9 @@
         <item name="starIconDisable">@color/star_icon_disable</item>
         <!-- выбор качества -->
         <item name="chooseQuality">@color/choose_quality</item>
+
+        <item name="firstAllColor">@color/first_all_color</item>
+        <item name="secondAllColor">@color/second_all_color</item>
     </style>
 
     <style name ="Theme.AnimatedSplash.MySplash" parent="Theme.SplashScreen">

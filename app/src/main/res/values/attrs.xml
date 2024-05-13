@@ -5,7 +5,6 @@
 
     <!-- фоны-->
     <attr name="mainBackground" format="color" />
-    <attr name="backgroundOfFragment" format="color" />
     <attr name="blocksBackground" format="color" />
     <!-- текста-->
     <attr name="textActive" format="color" />
@@ -21,4 +20,7 @@
     <attr name="starIconEnable" format="color"/>
     <!-- выбор качества -->
     <attr name="chooseQuality" format="color"/>
+    <!-- разное -->
+    <attr name="firstAllColor" format="color"/>
+    <attr name="secondAllColor" format="color"/>
 </resources>
